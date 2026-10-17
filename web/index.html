@@ -1,38 +1,38 @@
 <!doctype html>
 <html lang="de"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b141c">
-<title>DisAHRsterRadio · MeshCore · Ahrtal</title>
+<meta name="theme-color" content="#141214">
+<title>HaldenFunk · MeshCore · Mansfelder Land</title>
 <link rel="manifest" href="app.webmanifest"><link rel="icon" href="app-icon.png">
 <style>
-:root{font-family:system-ui,-apple-system,sans-serif;color:#eaf2f7;color-scheme:dark;--line:#294b3d;--mesh:#9ee576;--sage:#b7d6b7;--wine:#b7506b;--card:#14263ad9}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;min-height:100dvh;padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}html{background:#0b141c}
-body::before{content:"";position:fixed;inset:0;z-index:-2;background:url(bg.webp) top center/min(100vw,1083px) auto no-repeat,linear-gradient(#0b141cb8,#0b141cb8),url(bg.webp) center 70%/cover no-repeat;}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#0b141c00 0,#0b141c00 min(24vw,260px),#0b141c66 min(40vw,430px),#0b141c33 100%)}
+:root{font-family:system-ui,-apple-system,sans-serif;color:#f3ebe3;color-scheme:dark;--line:#5a4034;--mesh:#e8955a;--sage:#e3c39d;--wine:#b7506b;--card:#2a2220d9}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;min-height:100dvh;padding-bottom:calc(112px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}html{background:#141214}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:url(bg.webp) top center/min(100vw,1083px) auto no-repeat,linear-gradient(#141214b8,#141214b8),url(bg.webp) center 70%/cover no-repeat;}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#14121400 0,#14121400 min(24vw,260px),#14121466 min(40vw,430px),#14121433 100%)}
 @media (min-width:900px){body{max-width:900px;margin:0 auto;width:100%}}
-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:8px 12px;background:#0b141ccc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;padding:8px 12px;background:#141214cc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 header .t{flex:1}header h1{margin:0;font-size:1.15rem;line-height:1.1}header small{color:var(--sage)}
 #st{padding:3px 9px;border-radius:12px;font-size:.8rem;background:#0008}
 #st.ok{color:var(--mesh)}#st.bad{color:#ff9aa8}
 .warn{background:#3a1d26cc;border-left:4px solid var(--wine);padding:6px 10px;font-size:.85rem}
-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:auto;background:#0b141cf2;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);overflow-x:auto}nav button{flex:1 0 auto;background:none;border:0;color:#cfe;min-width:0;min-height:48px;padding:10px 4px;font-size:.85rem;border-bottom:3px solid transparent}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:900px;margin:auto;background:#141214f2;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line);overflow-x:auto}nav button{flex:1 0 auto;background:none;border:0;color:#f0dcc8;min-width:0;min-height:48px;padding:10px 4px;font-size:.85rem;border-bottom:3px solid transparent}
 nav button.on{border-color:var(--mesh);color:var(--mesh)}
-main{flex:1;display:flex;flex-direction:column;min-height:0}section{display:none;padding:10px;margin:8px;border-radius:12px;background:#0b141c59;flex:1;flex-direction:column;gap:8px}section.on{display:flex}
+main{flex:1;display:flex;flex-direction:column;min-height:0}section{display:none;padding:10px;margin:8px;border-radius:12px;background:#14121459;flex:1;flex-direction:column;gap:8px}section.on{display:flex}
 #log{flex:1;overflow-y:auto;min-height:200px;display:flex;flex-direction:column;gap:5px}
-.m{background:var(--card);border-radius:8px;padding:6px 9px;max-width:92%;word-wrap:break-word}.m.self{align-self:flex-end;background:#1f3d2cdd}.m.sys{align-self:center;background:#0b141c99;color:#9ab;font-size:.85rem}
+.m{background:var(--card);border-radius:8px;padding:6px 9px;max-width:92%;word-wrap:break-word}.m.self{align-self:flex-end;background:#5a3420dd}.m.sys{align-self:center;background:#14121499;color:#9ab;font-size:.85rem}
 .m .n{color:var(--mesh);font-weight:600;margin-right:4px}.m .tm{color:#789;font-size:.7rem;margin-left:6px}.m .pend{color:#fc6}
-form{display:flex;gap:6px}input,select,textarea{flex:1;background:#0b141c;color:#eaf2f7;border:1px solid var(--line);border-radius:8px;padding:9px;font-size:1rem}
-button.b{background:var(--mesh);color:#102;border:0;border-radius:8px;padding:9px 14px;font-weight:600;font-size:1rem}button.b2{background:#24384a;color:#eaf2f7}
-.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}.quick-btn{background:var(--card);color:#eaf2f7;border:1px solid var(--line);border-radius:10px;padding:12px 8px;font-size:.95rem;text-align:left}.quick-btn b{display:block;font-size:1.4rem}
+form{display:flex;gap:6px}input,select,textarea{flex:1;background:#141214;color:#f3ebe3;border:1px solid var(--line);border-radius:8px;padding:9px;font-size:1rem}
+button.b{background:var(--mesh);color:#1a0f08;border:0;border-radius:8px;padding:9px 14px;font-weight:600;font-size:1rem}button.b2{background:#3a2e2a;color:#f3ebe3}
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}.quick-btn{background:var(--card);color:#f3ebe3;border:1px solid var(--line);border-radius:10px;padding:12px 8px;font-size:.95rem;text-align:left}.quick-btn b{display:block;font-size:1.4rem}
 .quick-btn.H{border-left:4px solid var(--wine)}.quick-btn.I{border-left:4px solid #6ab0e0}.quick-btn.A{border-left:4px solid var(--mesh)}
 .muted{color:#9ab;font-size:.85rem;margin:0}.places{display:flex;flex-direction:column;gap:4px}.places button{text-align:left}
-table{border-collapse:collapse;font-size:.9rem}td{padding:3px 8px;border-bottom:1px solid #1d3346}
+table{border-collapse:collapse;font-size:.9rem}td{padding:3px 8px;border-bottom:1px solid #3a2e2a}
 h2{margin:4px 0;font-size:1.05rem}
-.post{background:var(--card);border-radius:10px;padding:8px 10px;border-left:4px solid #3c5a6e}.post.pin{border-left-color:#ffb84d;background:#2a2618}
+.post{background:var(--card);border-radius:10px;padding:8px 10px;border-left:4px solid #6b5448}.post.pin{border-left-color:#ffb84d;background:#2a2618}
 .post .h{font-size:.78rem;color:#9ab;display:flex;justify-content:space-between;gap:6px}.post .tx{margin-top:3px;white-space:pre-wrap;word-wrap:break-word}
 #posts{display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1}
 .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.row label{font-size:.9rem;display:flex;gap:4px;align-items:center}.row select{flex:0 1 auto}
-#mapwrap{position:relative;min-height:200px;height:55vh;height:55dvh;flex:none;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0d1a22;touch-action:none}
+#mapwrap{position:relative;min-height:200px;height:55vh;height:55dvh;flex:none;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#17151a;touch-action:none}
 #cv{display:block;position:absolute;inset:0;width:100%;height:100%}#mapattr{position:absolute;right:4px;bottom:2px;font-size:.62rem;color:#9ab;background:#0009;padding:1px 4px}
 #mapctl{position:absolute;left:6px;top:6px;display:flex;flex-direction:column;gap:4px}#mapctl button{width:44px;height:44px;padding:0;font-size:1.1rem}
 .legend{font-size:.78rem;color:#9ab;display:flex;gap:10px;flex-wrap:wrap}.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:3px;vertical-align:-1px}
@@ -42,10 +42,10 @@ h2{margin:4px 0;font-size:1.05rem}
 #admin{display:none;flex-direction:column;gap:6px}
 section h2,section p,.row label{text-shadow:0 1px 3px #000,0 0 8px #000}
 .hero{height:min(24vw,260px);flex:none}
-@media (min-width:1100px){body::before{background:linear-gradient(#0b141c00 560px,#0b141c 722px) top center/100% 100% no-repeat,linear-gradient(90deg,#0b141c,#0b141c00 3%,#0b141c00 97%,#0b141c) top center/1083px 722px no-repeat,url(bg.webp) top center/1083px auto no-repeat,#0b141c}}
+@media (min-width:1100px){body::before{background:linear-gradient(#14121400 560px,#141214 722px) top center/100% 100% no-repeat,linear-gradient(90deg,#141214,#14121400 3%,#14121400 97%,#141214) top center/1083px 722px no-repeat,url(bg.webp) top center/1083px auto no-repeat,#141214}}
 </style></head><body>
 <div class="hero" aria-hidden="true"></div>
-<header><div class="t"><h1>DisAHRsterRadio</h1><small>Ahrtal · MeshCore-Funknetz ohne Internet</small></div><div id="st" class="bad">getrennt</div></header>
+<header><div class="t"><h1>⚒ HaldenFunk</h1><small>Glück Auf – Mesh fürs Mansfelder Land</small></div><div id="st" class="bad">getrennt</div></header>
 <div class="warn">Kein zertifiziertes Notrufsystem. In Lebensgefahr immer <b>112</b> wählen, wenn irgendwie möglich.</div>
 <nav><button data-tab="chat" class="on">Chat</button><button data-tab="quick">Schnellmeldung</button><button data-tab="board">Brett</button><button data-tab="map">Karte</button><button data-tab="loc">Standort</button><button data-tab="info">Gerät</button></nav>
 <main>
@@ -64,26 +64,26 @@ section h2,section p,.row label{text-shadow:0 1px 3px #000,0 0 8px #000}
 <div id="posts"></div>
 <textarea id="btext" rows="2" maxlength="100" placeholder="Aushang (max. 100 Byte)"></textarea>
 <div class="row"><button class="b" id="bsend" type="button">Aushängen</button></div></section>
-<section id="map"><div class="row"><select id="mapsel"><option value="ahrtal">Ahrtal (Übersicht)</option><option value="heimersheim">Heimersheim (Detail)</option><option value="dernau">Dernau · Ahrweiler</option><option value="altenahr">Altenahr · Mayschoß · Rech</option><option value="sinzig">Sinzig</option></select><button class="b b2" id="mapme" type="button">📍 Ich</button><button class="b b2" id="mapfit" type="button">Alles</button></div>
+<section id="map"><div class="row"><select id="mapsel"><option value="mansfelder-land">Mansfelder Land (Übersicht)</option><option value="sangerhausen">Sangerhausen (Detail)</option><option value="eisleben">Lutherstadt Eisleben</option><option value="mansfeld-hettstedt">Mansfeld · Hettstedt</option><option value="kelbra-kyffhaeuser">Kelbra · Roßla · Kyffhäuser</option></select><button class="b b2" id="mapme" type="button">📍 Ich</button><button class="b b2" id="mapfit" type="button">Alles</button></div>
 <div id="mapwrap"><canvas id="cv"></canvas><div id="mapctl"><button class="b b2" id="zin" type="button">+</button><button class="b b2" id="zout" type="button">−</button></div><div id="mapattr">© OpenStreetMap-Mitwirkende · ODbL</div></div>
-<div class="legend"><span><i style="background:#9ee576"></i>ich</span><span><i style="background:#6ab0e0"></i>Knoten / Meldungen</span><span><i style="background:#ffb84d"></i>Brett</span><span><i style="background:#ff7d8f"></i>Apotheke/Arzt</span><span><i style="background:#4dd2ff"></i>Wasser</span></div>
+<div class="legend"><span><i style="background:#e8955a"></i>ich</span><span><i style="background:#6ab0e0"></i>Knoten / Meldungen</span><span><i style="background:#ffb84d"></i>Brett</span><span><i style="background:#ff7d8f"></i>Apotheke/Arzt</span><span><i style="background:#4dd2ff"></i>Wasser</span></div>
 <p class="muted" id="mapinfo">Knoten mit Standort in ihrer Bekanntgabe und Positionen aus Nachrichten werden angezeigt. Keine Navigation.</p></section>
 <section id="loc"><h2>Standort</h2><p class="muted">GPS des Telefons funktioniert im Browser oft nur über HTTPS. Sonst bitte Ort aus der Liste wählen.</p>
 <form onsubmit="return false" class="row"><button class="b b2" id="gps" type="button">📍 GPS-Position holen</button></form>
 <p id="gpsres" class="muted"></p>
 <div class="row"><button class="b" id="psend" type="button">Position in Chat senden</button><button class="b b2" id="padv" type="button">Als Knoten-Standort setzen + bekanntgeben</button></div>
 <p class="muted small">„Bekanntgeben“ sendet eine MeshCore-Bekanntgabe (Advert) mit dieser Position an alle in Funkreichweite.</p>
-<h2>Orte im Ahrtal</h2><div class="places" id="pl"></div></section>
+<h2>Orte im Mansfelder Land</h2><div class="places" id="pl"></div></section>
 <section id="info"><h2>Gerät</h2><table id="it"></table>
 <div class="row"><button class="b b2" id="refresh" type="button">Kontakte neu lesen</button><button class="b b2" id="adv" type="button">Bekanntgabe senden</button><button class="b b2" id="admbtn" type="button">Admin</button></div>
 <div id="admin"><input id="apass" type="password" placeholder="Admin-Passwort (seriell beim ersten Start)"><button class="b b2" id="alogin" type="button">Admin anmelden</button>
 <input id="nname" maxlength="24" placeholder="Knotenname"><button class="b b2" id="setname" type="button">Name setzen</button>
 <div class="row"><select id="cslot"></select><input id="cname" maxlength="24" placeholder="Kanalname"><input id="ckey" maxlength="32" placeholder="Schlüssel (32 Hex)"></div><button class="b b2" id="setch" type="button">Kanal speichern</button></div>
 <p class="muted" id="ifb"></p>
-<p class="muted">MeshCore (MIT) · Oberfläche aus <a href="https://github.com/Pietwars/DisAHRsterRadio" style="color:var(--sage)">DisAHRsterRadio</a> / <a href="https://github.com/Pietwars/DisasterMesh" style="color:var(--sage)">DisasterMesh</a>.</p></section>
+<p class="muted">MeshCore (MIT) · Oberfläche aus <a href="https://github.com/Pietwars/HaldenFunk" style="color:var(--sage)">HaldenFunk</a> / <a href="https://github.com/Pietwars/DisAHRsterRadio-MeshCore" style="color:var(--sage)">DisAHRsterRadio-MeshCore</a> / <a href="https://github.com/Pietwars/DisasterMesh" style="color:var(--sage)">DisasterMesh</a>.</p></section>
 </main>
 <script>
-const PLACES=[['Ahrweiler',50.5430,7.0965],['Bad Bodendorf',50.5579,7.2200],['Bad Neuenahr',50.5449,7.1377],['Dernau',50.5344,7.0435],['Heimersheim',50.5426,7.1761],['Heppingen',50.5512,7.1646],['Kripp (Ahrmündung)',50.5609,7.2691],['Lohrsdorf',50.5515,7.1865],['Mayschoß',50.5220,7.0198],['Rech',50.5132,7.0369],['Sinzig',50.5452,7.2491],['Walporzheim',50.5312,7.0794]];
+const PLACES=[['Allstedt',51.4019,11.3867],['Hettstedt',51.6496,11.5115],['Kelbra (Kyffhäuser)',51.4353,11.0390],['Kyffhäuser-Denkmal',51.4128,11.1078],['Lutherstadt Eisleben',51.5279,11.5480],['Mansfeld',51.5960,11.4540],['Roßla',51.4640,11.0750],['Sangerhausen',51.4729,11.2979],['Sangerhausen – Hohe Linde (Halde)',51.4880,11.3290],['Stolberg (Harzrand)',51.5745,10.9563],['Wallhausen',51.4580,11.2050],['Wippra (Harzrand)',51.5710,11.2770]];
 const QUICK=[['H','Trinkwasser benötigt, Personen: ','💧','Trinkwasser'],['H','Strom zum Laden benötigt (Handy/Gerät)','⚡','Strom / Laden'],['H','Medikamente benötigt: ','💊','Medikamente'],['H','Verletzte Person, Hilfe benötigt','🚑','Verletzt'],['I','Evakuierung / Sammelpunkt: ','🏃','Evakuierung'],['I','Mir geht es gut, bin hier erreichbar','✅','Mir geht es gut'],['A','Biete Hilfe an: ','🤝','Ich biete Hilfe'],['A','Strom/Ladestation verfügbar','🔋','Strom vorhanden']];
 const KIND={H:'HILFE',I:'INFO',A:'ANGEBOT'};
 const $=s=>document.querySelector(s),enc=new TextEncoder(),dec=new TextDecoder();
@@ -167,26 +167,26 @@ function notePos(t,who,brett){const m=String(t).match(/(-?\d{1,2}\.\d{3,})\s*,\s
 async function getMap(k){if(MAPS.has(k)){const d=MAPS.get(k);MAPS.delete(k);MAPS.set(k,d);return d;}let r=await fetch('map/'+k+'.json').catch(()=>null);let d;
  if(r&&r.ok&&(r.headers.get('content-type')||'').includes('json'))d=await r.json();else{r=await fetch('map/'+k+'.json.gz');d=JSON.parse(await new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).text())}
  d.l.forEach(l=>{for(let i=3;i<l.length;i+=2){l[i]+=l[i-2];l[i+1]+=l[i-1]}});MAPS.set(k,d);while(MAPS.size>2)MAPS.delete(MAPS.keys().next().value);return d}
-async function loadMap(k){k=k||$('#mapsel').value;const request=++mapRequest;try{$('#mapinfo').textContent='Karte wird geladen …';const data=await getMap(k);if(request!==mapRequest)return;M=data;fit();if(DEMO&&me&&k=='ahrtal'){view.la=me[0];view.lo=me[1];view.s=12000;drawMap()}$('#mapinfo').textContent=M.name+' · '+M.l.length+' Linien · Positionen aus Nachrichten: '+Object.keys(marks).length}catch(e){if(request===mapRequest)$('#mapinfo').textContent='Karte nicht verfügbar: '+e.message}}
+async function loadMap(k){k=k||$('#mapsel').value;const request=++mapRequest;try{$('#mapinfo').textContent='Karte wird geladen …';const data=await getMap(k);if(request!==mapRequest)return;M=data;fit();if(DEMO&&me&&k=='mansfelder-land'){view.la=me[0];view.lo=me[1];view.s=12000;drawMap()}$('#mapinfo').textContent=M.name+' · '+M.l.length+' Linien · Positionen aus Nachrichten: '+Object.keys(marks).length}catch(e){if(request===mapRequest)$('#mapinfo').textContent='Karte nicht verfügbar: '+e.message}}
 function size(){const r=$('#mapwrap').getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;cx.setTransform(d,0,0,d,0,0);return r}
 function fit(){const r=size(),b=M.view||M.bbox,k=Math.cos((b[1]+b[3])/2*Math.PI/180);const s=Math.min(r.width/((b[2]-b[0])*k),r.height/(b[3]-b[1]));view={lo:(b[0]+b[2])/2,la:(b[1]+b[3])/2,s:s*0.95,k};drawMap()}
 function P(lo,la){const r=cv.width/(devicePixelRatio||1),h=cv.height/(devicePixelRatio||1);return[r/2+(lo-view.lo)*view.k*view.s,h/2-(la-view.la)*view.s]}
-const ST={wd:['#163a26',0,1],v:['#3b3a1a',0,1],wa:['#1f4f74',0,1],b:['#3a4651',0,1],s:['#3d7fb0',1],w:['#4da3e0',3],f:['#54606a',.6],r:['#8a97a2',1],rw:['#b08ad0',1.4],h:['#e8c07a',2.2]};
+const ST={wd:['#1f2e22',0,1],v:['#5a3b2a',0,1],wa:['#1f4f74',0,1],b:['#3a4651',0,1],s:['#3d7fb0',1],w:['#4da3e0',3],f:['#54606a',.6],r:['#8a97a2',1],rw:['#b08ad0',1.4],h:['#e8c07a',2.2]};
 const ORDER=['wd','v','wa','b','s','w','f','r','rw','h'];const PC={apo:'#ff7d8f',med:'#ff7d8f',h2o:'#4dd2ff',fw:'#ff5a3c',pol:'#7aa0ff',sh:'#c9b38a',shop:'#d6a0ff',amt:'#cccccc',wc:'#888',sch:'#999'};
-function drawMap(){if(!M||!view||!cv.offsetParent)return;const W=cv.width/(devicePixelRatio||1),H=cv.height/(devicePixelRatio||1);cx.fillStyle='#0d1a22';cx.fillRect(0,0,W,H);
+function drawMap(){if(!M||!view||!cv.offsetParent)return;const W=cv.width/(devicePixelRatio||1),H=cv.height/(devicePixelRatio||1);cx.fillStyle='#17151a';cx.fillRect(0,0,W,H);
  const z=view.s/1e5,ppd=view.s;// Pixel pro Grad
  for(const o of ORDER){const st=ST[o];if((o=='f'||o=='b')&&ppd<20000)continue;if(o=='r'&&ppd<6000)continue;cx.beginPath();
   for(const l of M.l){if(l[0]!==o)continue;let [x,y]=P(l[1]/1e5,l[2]/1e5);cx.moveTo(x,y);for(let i=3;i<l.length;i+=2){[x,y]=P(l[i]/1e5,l[i+1]/1e5);cx.lineTo(x,y)}if(!st[1])cx.closePath()}
   if(st[1]){cx.strokeStyle=st[0];cx.lineWidth=st[1]*Math.max(1,Math.min(2.5,ppd/15000));cx.stroke()}else{cx.fillStyle=st[0];cx.fill()}}
  cx.font='12px system-ui';cx.textAlign='center';
  for(const p of M.p){const [x,y]=P(p[2]/1e5,p[3]/1e5);if(x<-20||y<-20||x>W+20||y>H+20)continue;
-  if(p[0].startsWith('pl:')){const big=/town|city/.test(p[0]),vil=/village|suburb/.test(p[0]);if(!big&&!(vil&&ppd>=6000)&&ppd<20000)continue;cx.fillStyle=big?'#eaf2f7':'#b7c7d0';cx.font=(big?'bold 13px':'11px')+' system-ui';cx.fillText(p[1],x,y)}
+  if(p[0].startsWith('pl:')){const big=/town|city/.test(p[0]),vil=/village|suburb/.test(p[0]);if(!big&&!(vil&&ppd>=6000)&&ppd<20000)continue;cx.fillStyle=big?'#f3ebe3':'#d8c8b8';cx.font=(big?'bold 13px':'11px')+' system-ui';cx.fillText(p[1],x,y)}
   else if(ppd>9000){cx.fillStyle=PC[p[0]]||'#aaa';cx.beginPath();cx.arc(x,y,3.5,0,7);cx.fill();if(ppd>25000&&p[1]){cx.font='10px system-ui';cx.fillStyle='#cdd';cx.fillText(p[1].slice(0,24),x,y-6)}}}
- if(ppd<8000)for(const q of PLACES){const [x,y]=P(q[2],q[1]);cx.fillStyle='#b7d6b7';cx.font='11px system-ui';cx.beginPath();cx.arc(x,y,2.5,0,7);cx.fill();cx.fillText(q[0],x,y-6)}
+ if(ppd<8000)for(const q of PLACES){const [x,y]=P(q[2],q[1]);cx.fillStyle='#e3c39d';cx.font='11px system-ui';cx.beginPath();cx.arc(x,y,2.5,0,7);cx.fill();cx.fillText(q[0],x,y-6)}
  const pin=(la,lo,c,label)=>{const [x,y]=P(lo,la);cx.fillStyle=c;cx.strokeStyle='#000';cx.lineWidth=1.5;cx.beginPath();cx.arc(x,y,7,0,7);cx.fill();cx.stroke();
-  cx.font='bold 12px system-ui';cx.textAlign='left';cx.lineWidth=3;cx.strokeStyle='#0d1a22';cx.strokeText(label,x+10,y+4);cx.fillStyle='#fff';cx.fillText(label,x+10,y+4);cx.textAlign='center'};
+  cx.font='bold 12px system-ui';cx.textAlign='left';cx.lineWidth=3;cx.strokeStyle='#17151a';cx.strokeText(label,x+10,y+4);cx.fillStyle='#fff';cx.fillText(label,x+10,y+4);cx.textAlign='center'};
  for(const m of Object.values(marks))pin(m.la,m.lo,m.brett?'#ffb84d':'#6ab0e0',(m.brett?'📌 ':'')+m.n);
- if(me)pin(me[0],me[1],'#9ee576','Ich')}
+ if(me)pin(me[0],me[1],'#e8955a','Ich')}
 let pts=new Map(),last=null;
 cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY])};
 cv.onpointermove=e=>{if(!pts.has(e.pointerId)||!view)return;const o=pts.get(e.pointerId);
@@ -206,10 +206,10 @@ function demoChan(i,name){const p=new Uint8Array(50);p[0]=18;p[1]=i;p.set(enc.en
 function chMsg(ch,stamp,body){const b=enc.encode(body),p=new Uint8Array(11+b.length);p[0]=17;p[4]=ch;new DataView(p.buffer).setUint32(7,stamp,true);p.set(b,11);return hx(p)}
 function roomMsg(room6,author4,stamp,body){const b=enc.encode(body),p=new Uint8Array(20+b.length);p[0]=16;for(let i=0;i<6;i++)p[4+i]=parseInt(room6.substr(i*2,2),16);p[11]=2;new DataView(p.buffer).setUint32(12,stamp,true);for(let i=0;i<4;i++)p[16+i]=parseInt(author4.substr(i*2,2),16);p.set(b,20);return hx(p)}
 function demoApi(path){const t=now()-3600;const J=o=>({json:async()=>o,text:async()=>typeof o=='string'?o:JSON.stringify(o)});
- if(path=='state')return J({ready:true,heap:142000,seq:7,result:'',channels:[demoChan(0,'Öffentlich'),demoChan(1,'Ahrtal-Hilfe'),'','','','','',''],contacts:[demoContact('a1b2c3d4e5f6',1,'Anna',50.5515,7.1865),demoContact('b2c3d4e5f6a7',1,'Jonas',50.5449,7.1377),demoContact('c3d4e5f6a7b8',3,'Brett Heimersheim',50.5426,7.1761),demoContact('d4e5f6a7b8c9',2,'Repeater Landskrone',50.5560,7.1520)],room:{target:'dc3d4e5f6a7b8',rights:2,pending:false},diagnostics:{firmware:'v1.18.0-dar0.9.0-alpha',wifiClients:2,txFlood:12,txDirect:3,rxFlood:40,rxDirect:5,uptimeSeconds:5321}});
- if(path=='history')return J(['1:'+chMsg(0,t,'Anna: Heimersheim: Wasser steht in der Bachstraße, Brücke gesperrt.'),'2:'+chMsg(0,t+600,'Jonas: [HILFE] Trinkwasser benötigt, Personen: 4 @ Lohrsdorf 50.5515,7.1865'),'3:'+chMsg(0,t+900,'Peter: Bin auf dem Weg, bringe 2 Kanister mit.'),'4:'+chMsg(0,t+1500,'Mia: [ANGEBOT] Strom/Ladestation verfügbar @ Bad Neuenahr 50.5449,7.1377'),
-  '5:'+roomMsg('c3d4e5f6a7b8','a1b2c3d4',t-7200,'WICHTIG: Trinkwasser-Ausgabe am Bürgerhaus Heimersheim 14–17 Uhr 50.5426,7.1761'),'6:'+roomMsg('c3d4e5f6a7b8','b2c3d4e5',t-3000,'Apotheke Bad Neuenahr Notdienst bis 20 Uhr'),'7:'+roomMsg('c3d4e5f6a7b8','a1b2c3d4',t+100,'Brücke Bachstraße gesperrt, Umweg über Lohrsdorf.')].join('\n'));
+ if(path=='state')return J({ready:true,heap:142000,seq:7,result:'',channels:[demoChan(0,'Öffentlich'),demoChan(1,'Mansfelder-Land-Hilfe'),'','','','','',''],contacts:[demoContact('a1b2c3d4e5f6',1,'Anna',51.4580,11.2050),demoContact('b2c3d4e5f6a7',1,'Jonas',51.5279,11.5480),demoContact('c3d4e5f6a7b8',3,'Brett Sangerhausen',51.4729,11.2979),demoContact('d4e5f6a7b8c9',2,'Repeater Hohe Linde',51.4880,11.3290)],room:{target:'dc3d4e5f6a7b8',rights:2,pending:false},diagnostics:{firmware:'v1.18.0-hf0.1.0-alpha',wifiClients:2,txFlood:12,txDirect:3,rxFlood:40,rxDirect:5,uptimeSeconds:5321}});
+ if(path=='history')return J(['1:'+chMsg(0,t,'Anna: Sangerhausen: Stromausfall in der Kylischen Straße, Ampeln aus.'),'2:'+chMsg(0,t+600,'Jonas: [HILFE] Trinkwasser benötigt, Personen: 4 @ Wallhausen 51.4580,11.2050'),'3:'+chMsg(0,t+900,'Peter: Bin auf dem Weg, bringe 2 Kanister mit.'),'4:'+chMsg(0,t+1500,'Mia: [ANGEBOT] Strom/Ladestation verfügbar @ Lutherstadt Eisleben 51.5279,11.5480'),
+  '5:'+roomMsg('c3d4e5f6a7b8','a1b2c3d4',t-7200,'WICHTIG: Trinkwasser-Ausgabe am Markt Sangerhausen 14–17 Uhr 51.4729,11.2979'),'6:'+roomMsg('c3d4e5f6a7b8','b2c3d4e5',t-3000,'Apotheke Eisleben Notdienst bis 20 Uhr'),'7:'+roomMsg('c3d4e5f6a7b8','a1b2c3d4',t+100,'B86 bei Wallhausen gesperrt, Umweg über Riethnordhausen. Glück Auf!')].join('\n'));
  return J('Demo: nicht gesendet')}
-targets();poll();setInterval(poll,4000);if(DEMO&&!me)me=[50.5440,7.1700];
+targets();poll();setInterval(poll,4000);if(DEMO&&!me)me=[51.4729,11.2979];
 const h0=location.hash.slice(1);if(h0){const b=document.querySelector('nav button[data-tab="'+h0+'"]');if(b)b.click()}
 </script></body></html>

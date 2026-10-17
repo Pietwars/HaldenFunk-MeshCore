@@ -219,7 +219,7 @@ void setup() {
 #endif
 
 #if defined(BLE_PIN_CODE) && defined(DISASTER_PORTAL)
-  // DisAHRsterRadio: zufaellige, pro Geraet dauerhaft gespeicherte BLE-PIN (seriell + Display)
+  // HaldenFunk-MeshCore: zufaellige, pro Geraet dauerhaft gespeicherte BLE-PIN (seriell + Display)
   if (the_mesh.getNodePrefs()->ble_pin == 0) {
     uint32_t pin = 100000 + (esp_random() % 900000);
     the_mesh.getNodePrefs()->ble_pin = pin;

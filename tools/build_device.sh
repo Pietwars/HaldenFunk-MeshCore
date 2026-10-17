@@ -2,12 +2,12 @@
 # Baut alle Envs eines Geraets aus tools/devices.json und packt ein Release-Asset.
 # Aufruf: tools/build_device.sh <Geraet> [Ausgabeordner]
 set -uo pipefail
-ROOT=$(cd "$(dirname "$0")/.." && pwd); DEV=$1; OUT=${2:-$ROOT/dist/devices}; VERSION=${VERSION:-0.9.0-alpha}
+ROOT=$(cd "$(dirname "$0")/.." && pwd); DEV=$1; OUT=${2:-$ROOT/dist/devices}; VERSION=${VERSION:-0.1.0-alpha}
 ESPTOOL=${ESPTOOL:-"python3 -m esptool"}; cd "$ROOT"; mkdir -p "$OUT"
 read -r CHIP WEBUI ENVS < <(python3 -c "
 import json,sys;d={e['device']:e for e in json.load(open('tools/devices.json'))}['$DEV']
 print(d['chip'],int(d['webui']),' '.join(k+'='+v for k,v in d['envs'].items()))")
-NAME=DisAHRsterRadio-MeshCore-$VERSION-$DEV; D=$OUT/$NAME; rm -rf "$D"; mkdir -p "$D"; FAIL=0
+NAME=HaldenFunk-MeshCore-$VERSION-$DEV; D=$OUT/$NAME; rm -rf "$D"; mkdir -p "$D"; FAIL=0
 for kv in $ENVS; do role=${kv%%=*}; env=${kv#*=}
   if ! pio run -e "$env" > "$OUT/$DEV-$role.log" 2>&1; then echo "FEHLER $DEV $role ($env)"; FAIL=1; continue; fi
   B=.pio/build/$env

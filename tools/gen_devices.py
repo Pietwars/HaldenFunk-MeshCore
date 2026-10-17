@@ -5,7 +5,7 @@ import json,re
 from pathlib import Path
 from platformio.project.config import ProjectConfig
 ROOT=Path(__file__).resolve().parents[1]
-VER='0.9.0-alpha'
+VER='0.1.0-alpha'
 devs=json.loads((ROOT/'tools/devices.upstream.json').read_text())
 # Bereits handgepflegte Portal-Profile
 MANUAL={'LilyGo_T3S3_sx1262':'disaster_t3s3_sx1262_wifi','LilyGo_TLora_V2_1_1_6':'disaster_tlora_v2_1_sx1276_wifi','Heltec_v2':'disaster_heltec_v2_sx1276_wifi'}
@@ -41,7 +41,7 @@ for d in sorted(devs,key=str.lower):
             ini+=[f'[env:{e}]',f'extends = env:{base}','test_framework = custom','lib_ldf_mode = deep+','build_unflags =',*['  '+u for u in unf],
                   'board_build.partitions = huge_app.csv',
                   'build_flags =',f'  ${{env:{base}.build_flags}}','  -D LORA_TX_POWER=10','  -D MAX_GROUP_CHANNELS=8','  -D DISASTER_PORTAL=1','  -D OFFLINE_QUEUE_SIZE=64',
-                  '  -D DISASTER_WIFI_DELAY_MS=1500',f"  -D FIRMWARE_VERSION='\"v1.18.0-dar{VER}-wifi\"'",
+                  '  -D DISASTER_WIFI_DELAY_MS=1500',f"  -D FIRMWARE_VERSION='\"v1.18.0-hf{VER}-wifi\"'",
                   'lib_deps =',f'  ${{env:{base}.lib_deps}}','  densaugeo/base64 @ ~1.4.0','']
     else:
         if d in NOROLES: entry['note']=NOROLES[d][1]
@@ -50,7 +50,7 @@ for d in sorted(devs,key=str.lower):
             if r=='companion_radio_usb' and 'companion_radio_ble' in roles: continue
             base=f'{d}_{r}'; key='companion' if r.startswith('companion') else r
             e=f'dar_{d}_{key}'; entry['envs'][key]=e
-            ini+=[f'[env:{e}]',f'extends = env:{base}','build_flags =',f'  ${{env:{base}.build_flags}}',f"  -D FIRMWARE_VERSION='\"v1.18.0-dar{VER}\"'",'']
+            ini+=[f'[env:{e}]',f'extends = env:{base}','build_flags =',f'  ${{env:{base}.build_flags}}',f"  -D FIRMWARE_VERSION='\"v1.18.0-hf{VER}\"'",'']
     out.append(entry)
 (ROOT/'platformio.devices.ini').write_text('\n'.join(ini)+'\n')
 (ROOT/'tools/devices.json').write_text(json.dumps(out,indent=1)+'\n')

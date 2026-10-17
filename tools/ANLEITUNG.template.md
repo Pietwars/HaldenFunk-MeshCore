@@ -8,7 +8,9 @@ MeshCore-Companion mit WLAN-Weboberfläche · Version @VERSION@ · Commit @COMMI
 
 **Antenne anschrauben, bevor das Board Strom bekommt.**
 
-## Neu in 0.9.0-alpha
+## Neu in 0.1.0-alpha (HaldenFunk-MeshCore)
+
+- Regionalvariante fürs Mansfelder Land: Kupfer/Anthrazit-Design, Orte und Offline-Karten (Sangerhausen, Eisleben, Mansfeld/Hettstedt, Kelbra/Kyffhäuser), WLAN `HaldenFunk-XXXXXX`.
 
 - Parallel zum WLAN-Portal kann sich die offizielle MeshCore-App per **Bluetooth** verbinden. Die PIN ist pro Gerät zufällig und steht seriell (`[BLE] MeshCore-App: Bluetooth-PIN …`) und auf dem Display.
 - Neue Partitionstabelle (3 MB App, kein OTA): beim Umstieg von einer älteren Version **einmal komplett mit der factory-Datei** flashen.
@@ -28,7 +30,7 @@ Enthalten: Bootloader (@BOOT@), Partitionen (0x8000), boot_app0 (0xe000), Firmwa
 Seriell mit **115200** Baud verbinden (esptool-js → Disconnect → Console) und **RST** drücken:
 
 ```
-WLAN: DisAHRsterRadio-XXXXXX
+WLAN: HaldenFunk-XXXXXX
 Passwort: xxxxxxxxxxxxxxxx
 ADMIN-PASSWORT (nur lokal aufbewahren): ...
 ```

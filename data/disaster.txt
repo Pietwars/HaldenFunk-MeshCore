@@ -1,1 +1,1 @@
-DisAHRsterRadio filesystem initialized. Do not run uploadfs again after setup unless deliberately resetting node identity and history.
+HaldenFunk-MeshCore filesystem initialized. Do not run uploadfs again after setup unless deliberately resetting node identity and history.

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #ifndef ESP32
-#error "DisAHRsterRadio repeater provisioning currently supports ESP32 only"
+#error "HaldenFunk-MeshCore repeater provisioning currently supports ESP32 only"
 #endif
 #if LORA_TX_POWER != 10 || !defined(DISABLE_WIFI_OTA)
-#error "Unexpected DisAHRsterRadio repeater defaults"
+#error "Unexpected HaldenFunk-MeshCore repeater defaults"
 #endif
 #if defined(ENABLE_PRIVATE_KEY_EXPORT) || defined(ENABLE_PRIVATE_KEY_IMPORT)
 #error "Private key transfer must be disabled"
@@ -26,5 +26,5 @@ static void disasterRepeaterCredentials(MyMesh &mesh) {
     prefs->password[14] = 0;
     mesh.savePrefs();
   }
-  Serial.printf("\nDisAHRsterRadio Server\nAdmin-Passwort: %s\nUSB-CLI: 115200 Baud, Zeilenende CR\n", prefs->password);
+  Serial.printf("\nHaldenFunk-MeshCore Server\nAdmin-Passwort: %s\nUSB-CLI: 115200 Baud, Zeilenende CR\n", prefs->password);
 }

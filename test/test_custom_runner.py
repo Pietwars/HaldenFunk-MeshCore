@@ -5,4 +5,4 @@ class CustomTestRunner(TestRunnerBase):
     EXTRA_LIB_DEPS = []
 
     def stage_testing(self):
-        raise RuntimeError("Use the DisAHRsterRadio root tests/ scripts; embedded tests are not implemented.")
+        raise RuntimeError("Use the HaldenFunk-MeshCore root tests/ scripts; embedded tests are not implemented.")

@@ -212,7 +212,7 @@ public:
     }
     prefs.end();
     uint64_t mac=ESP.getEfuseMac(); char suffix[7]; snprintf(suffix,sizeof(suffix),"%06X",(unsigned)(mac&0xffffff));
-    apName=String("DisAHRsterRadio-")+suffix;
+    apName=String("HaldenFunk-")+suffix;
     apPassword=password;
     WiFi.mode(WIFI_AP); WiFi.setSleep(false);
 #ifdef DISASTER_WIFI_TX
@@ -298,7 +298,7 @@ public:
       if(!permitted())return;
       File f=archive.open(http.arg("part")=="previous");
       if(!f){http.send(404,"text/plain","Archiv nicht verfuegbar");return;}
-      http.sendHeader("Content-Disposition","attachment; filename=disahrsterradio-archive.bin");
+      http.sendHeader("Content-Disposition","attachment; filename=haldenfunk-archive.bin");
       http.streamFile(f,"application/octet-stream");f.close();
     });
     http.on("/api/outbox",HTTP_GET,[this](){

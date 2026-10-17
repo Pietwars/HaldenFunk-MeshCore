@@ -1,4 +1,4 @@
-name: DisAHRsterRadio-Build
+name: HaldenFunk-MeshCore-Build
 on:
   push:
   pull_request:

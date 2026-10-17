@@ -9,7 +9,7 @@ if (d/'.offsets').exists():
     for l in (d/'.offsets').read_text().split():
         r,ch,b,fs=l.split('|'); off[r]=(ch,b,fs)
 files=sorted(p.name for p in d.iterdir() if p.is_file() and not p.name.startswith('.'))
-L=[f'# DisAHRsterRadio-MeshCore {ver} für {dev}','',f'Chip: **{e["chip"]}** · Web-Oberfläche: **{"ja" if e["webui"] else "nein – ohne Web-Oberfläche"}** · https://github.com/Pietwars/DisAHRsterRadio-MeshCore','',
+L=[f'# HaldenFunk-MeshCore {ver} für {dev}','',f'Chip: **{e["chip"]}** · Web-Oberfläche: **{"ja" if e["webui"] else "nein – ohne Web-Oberfläche"}** · https://github.com/Pietwars/HaldenFunk-MeshCore','',
 '> ⚠️ Kein zertifiziertes Notrufsystem. In Lebensgefahr immer **112** wählen. Diese Firmware ist auf diesem Gerät **nicht auf echter Hardware getestet** (getestet ist nur LILYGO T3 V1.6.1 mit der Schwester-Firmware).','',
 '**Antenne anschrauben, bevor das Gerät Strom bekommt.** Funkprofil: MeshCore-Standard EU/UK 869,618 MHz, 62,5 kHz, SF8 – auf allen Geräten gleich einstellen.','']
 if e['chip'].startswith('esp32'):
@@ -19,13 +19,13 @@ if e['chip'].startswith('esp32'):
             f'2. Flash Address **`0x0`**, Datei `*-{r}-factory.bin`, **Program**, danach RST.',
             f'3. Update ohne Datenverlust: nur `teile-{r}/firmware.bin` an **`0x10000`**.','',
             f'Teile: bootloader.bin {b}, partitions.bin 0x8000, boot_app0.bin 0xe000, firmware.bin 0x10000'+(f', spiffs.bin {fs}' if fs!='-' else '')+'.','']
-        if r=='wifi': L+=['Danach mit dem WLAN `DisAHRsterRadio-XXXXXX` verbinden. Das Passwort steht seriell (115200 Baud) und auf dem Display (falls vorhanden). Im Browser http://192.168.4.1 öffnen.','','Parallel kann sich die offizielle MeshCore-App per **Bluetooth** verbinden (falls das Gerät BLE hat). Die Bluetooth-PIN ist pro Gerät zufällig und steht seriell (`[BLE] … PIN`) und auf dem Display.','']
+        if r=='wifi': L+=['Danach mit dem WLAN `HaldenFunk-XXXXXX` verbinden. Das Passwort steht seriell (115200 Baud) und auf dem Display (falls vorhanden). Im Browser http://192.168.4.1 öffnen.','','Parallel kann sich die offizielle MeshCore-App per **Bluetooth** verbinden (falls das Gerät BLE hat). Die Bluetooth-PIN ist pro Gerät zufällig und steht seriell (`[BLE] … PIN`) und auf dem Display.','']
 elif e['chip'] in('nrf52','rp2040'):
     L+=['## Flashen per UF2','','1. Gerät per USB anschließen und **zweimal schnell Reset** drücken (RP2040: BOOTSEL gedrückt halten beim Einstecken). Es erscheint ein USB-Laufwerk.',
         '2. Die passende `.uf2`-Datei auf das Laufwerk kopieren. Das Gerät startet neu.','',
         'nRF52: Die `.zip` ist ein DFU-Paket (z. B. für die Nordic-DFU-App oder `adafruit-nrfutil`).','',
         'Rollen: `companion` = MeshCore-Companion für die MeshCore-App (Bluetooth bzw. USB), `repeater` = Repeater, `room_server` = Room-Server (Schwarzes Brett).','',
-        'Konfiguration über die offizielle MeshCore-App bzw. https://config.meshcore.dev / https://meshcore.co.uk/configurator/ – **keine** DisAHRsterRadio-Web-Oberfläche (kein WLAN auf diesem Chip).','']
+        'Konfiguration über die offizielle MeshCore-App bzw. https://config.meshcore.dev / https://meshcore.co.uk/configurator/ – **keine** HaldenFunk-Web-Oberfläche (kein WLAN auf diesem Chip).','']
 else:
     L+=['## STM32','','`.bin`/`.hex` mit STM32CubeProgrammer oder einem SWD-Programmer flashen. Ohne Web-Oberfläche.','']
 L+=['## Dateien','']+[f'- `{f}`' for f in files]+['','Prüfsummen: `SHA256SUMS`.']
