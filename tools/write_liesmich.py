@@ -11,7 +11,7 @@ if (d/'.offsets').exists():
 files=sorted(p.name for p in d.iterdir() if p.is_file() and not p.name.startswith('.'))
 L=[f'# HaldenFunk-MeshCore {ver} für {dev}','',f'Chip: **{e["chip"]}** · Web-Oberfläche: **{"ja" if e["webui"] else "nein – ohne Web-Oberfläche"}** · https://github.com/Pietwars/HaldenFunk-MeshCore','',
 '> ⚠️ Kein zertifiziertes Notrufsystem. In Lebensgefahr immer **112** wählen. Diese Firmware ist auf diesem Gerät **nicht auf echter Hardware getestet** (getestet ist nur LILYGO T3 V1.6.1 mit der Schwester-Firmware).','',
-'**Antenne anschrauben, bevor das Gerät Strom bekommt.** Funkprofil: MeshCore-Standard EU/UK 869,618 MHz, 62,5 kHz, SF8 – auf allen Geräten gleich einstellen.','']
+'**Antenne anschrauben, bevor das Gerät Strom bekommt.** Funkprofil: MeshCore-Standard EU/UK 869,618 MHz, 62,5 kHz, SF8, CR 4/8 – auf allen Geräten gleich einstellen.','']
 if e['chip'].startswith('esp32'):
     for r,(ch,b,fs) in off.items():
         L+=[f'## {"WLAN-Portal mit Web-Oberfläche" if r=="wifi" else r}','',
