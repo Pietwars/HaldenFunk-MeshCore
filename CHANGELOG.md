@@ -1,5 +1,13 @@
 # Änderungen
 
+## Unveröffentlicht · Fix Bootschleife klassischer ESP32 (T3 V1.6.1, Heltec V2)
+
+- **Fehler:** Auf klassischen ESP32 ohne PSRAM endete der Start nach `WLAN … Passwort … Browser` in `abort()` (`operator new` → `__cxa_allocate_exception` → `abort`, aus `DisasterPortal::begin()` beim ersten `http.on("/")`) und das Gerät startete endlos neu. Ursache: Bluedroid-BLE (Controller im Dual-Mode inkl. Classic-BT) + WLAN-softAP haben den internen Heap (~195 KB) vollständig verbraucht.
+- Klassische ESP32-Portal-Profile (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) nutzen jetzt **NimBLE** (`h2zero/NimBLE-Arduino 1.4.3`, `-D DISASTER_NIMBLE`): Controller nur BLE, Classic-BT-Speicher (~15 KB) freigegeben, deutlich kleinerer Host; Flash T3 V1.6.1 85 % → 70 %. Gleicher Dienst, gleiche UUIDs, PIN-Kopplung (Bonding+MITM+SC). Bereits gekoppelte Handys einmal neu koppeln.
+- WLAN-Portal startet **vor** Bluetooth; Bluetooth nur bei genug freiem Heap (`DISASTER_BLE_MIN_HEAP`, Standard 70 000 Bytes, und `DISASTER_BLE_MIN_BLOCK`).
+- Start-Wächter (`DisasterBootGuard.h`): Startstufe im RTC-RAM; nach einem Absturz beim/kurz nach dem Bluetooth-Start bleibt Bluetooth bis zum Aus-/Einschalten aus, das Portal läuft weiter – keine Bootschleife mehr. Serielle `[BOOT]`/`[HEAP]`-Zeilen zeigen den Speicher nach jeder Stufe.
+- Mit Bluetooth bleibt WLAN-Modem-Sleep an (Pflicht bei WLAN+BT-Koexistenz).
+
 ## 0.1.0-alpha · 17.10.2026 · erste Vorabversion HaldenFunk-MeshCore
 
 [Release v0.1.0-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.0-alpha) – Vorabversion, auf keinem Board abgenommen.

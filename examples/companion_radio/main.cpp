@@ -15,6 +15,8 @@ static uint32_t _atoi(const char* sp) {
 #ifdef DISASTER_PORTAL
 #include "DisasterPortal.h"
 DisasterPortal disaster_portal;
+#include "DisasterBootGuard.h"
+disaster::BootGuard boot_guard;
 #endif
 
 // interface manager
@@ -23,7 +25,11 @@ MultiSerialInterface interface_manager;
 
 // include bluetooth interface
 #if defined(BLE_PIN_CODE)
-  #ifdef ESP32
+  #if defined(ESP32) && defined(DISASTER_NIMBLE)
+    // klassische ESP32 mit WLAN-Portal: NimBLE (weniger Heap, Classic-BT-Speicher freigegeben)
+    #include <helpers/esp32/SerialNimBLEInterface.h>
+    SerialNimBLEInterface bluetooth_interface;
+  #elif defined(ESP32)
     // include esp32 bluetooth interface
     #include <helpers/esp32/SerialBLEInterface.h>
     SerialBLEInterface bluetooth_interface;
@@ -155,6 +161,9 @@ void setup() {
   Serial.printf("\n[DIAG] boot, reset reason=%d\n", (int)esp_reset_reason());
   Serial.flush();
 #endif
+#ifdef DISASTER_PORTAL
+  boot_guard.begin();
+#endif
   DIAG("board.begin");
   board.begin();
   DIAG("board ok");
@@ -248,10 +257,11 @@ void setup() {
 #endif
 
 // add bluetooth interface
-#if defined(BLE_PIN_CODE)
+#if defined(BLE_PIN_CODE) && !defined(DISASTER_PORTAL)
   bluetooth_interface.begin(BLE_NAME_PREFIX, the_mesh.getNodePrefs()->node_name, the_mesh.getBLEPin());
   interface_manager.addInterface(InterfaceType::Bluetooth, &bluetooth_interface);
 #endif
+// DisAHRsterRadio: Bluetooth erst NACH dem WLAN-Portal und nur mit genug Heap (siehe unten).
 
 // add wifi interface
 #ifdef ENABLE_WIFI_INTERFACE
@@ -326,9 +336,31 @@ void setup() {
   delay(1500);
 #endif
   DIAG("portal.begin (softAP)");
+  boot_guard.heap("vor WLAN");
+  boot_guard.enter(disaster::STAGE_PORTAL);
+#if defined(BLE_PIN_CODE)
+  // WLAN+BLE-Koexistenz verlangt WLAN-Modem-Sleep (sonst IDF-Abbruch im STA-Betrieb); AP bleibt unberuehrt.
+  disaster_portal.setModemSleep(!boot_guard.bleBlocked);
+#endif
   disaster_portal.begin();
   DIAG("portal ok");
+  boot_guard.heap("nach WLAN");
   interface_manager.addInterface(InterfaceType::WiFi, &disaster_portal);
+#if defined(BLE_PIN_CODE)
+  // Das WLAN-Portal hat Vorrang. Bluetooth (MeshCore-App) nur, wenn danach noch genug Heap bleibt
+  // und der letzte Start nicht beim Bluetooth-Start abgestuerzt ist (sonst Bootschleife).
+  if (boot_guard.allowBle()) {
+    boot_guard.enter(disaster::STAGE_BLE);
+    bluetooth_interface.begin(BLE_NAME_PREFIX, the_mesh.getNodePrefs()->node_name, the_mesh.getBLEPin());
+    interface_manager.addInterface(InterfaceType::Bluetooth, &bluetooth_interface);
+    boot_guard.enter(disaster::STAGE_RUN_BLE);
+    boot_guard.heap("nach Bluetooth");
+    Serial.printf("[BLE] MeshCore-App: Bluetooth an, PIN %06lu\n", (unsigned long)the_mesh.getBLEPin());
+  } else {
+    disaster_portal.setBlePin(0);
+    Serial.printf("[BLE] Bluetooth AUS (%s). WLAN-Portal: http://192.168.4.1\n", boot_guard.reason);
+  }
+#endif
 #endif
 
   the_mesh.startInterface(interface_manager);
@@ -352,6 +384,7 @@ void setup() {
 void loop() {
   the_mesh.loop();
 #ifdef DISASTER_PORTAL
+  boot_guard.loop();
   disaster_portal.serviceAP();
 #ifdef DISPLAY_CLASS
   {

@@ -42,7 +42,9 @@ for d in sorted(devs,key=str.lower):
                   'board_build.partitions = huge_app.csv',
                   'build_flags =',f'  ${{env:{base}.build_flags}}','  -D LORA_TX_POWER=10','  -D MAX_GROUP_CHANNELS=8','  -D DISASTER_PORTAL=1','  -D OFFLINE_QUEUE_SIZE=64',
                   '  -D DISASTER_WIFI_DELAY_MS=1500',f"  -D FIRMWARE_VERSION='\"v1.18.0-hf{VER}-wifi\"'",
-                  'lib_deps =',f'  ${{env:{base}.lib_deps}}','  densaugeo/base64 @ ~1.4.0','']
+                  *(['  ${dar_classic_nimble.build_flags}'] if ch=='esp32' else []),
+                  'lib_deps =',f'  ${{env:{base}.lib_deps}}','  densaugeo/base64 @ ~1.4.0',
+                  *(['  ${dar_classic_nimble.lib_deps}'] if ch=='esp32' else []),'']
     else:
         if d in NOROLES: entry['note']=NOROLES[d][1]
         for r in roles:
