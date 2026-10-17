@@ -1,3 +1,5 @@
+> Neuer Entwicklungsstand: WLAN ohne Passwort; MeshCore-Bluetooth ohne PIN. Alte Kopplungen bei Bedarf am Handy entfernen. Betreiberzugang bleibt getrennt geschützt. Details: https://github.com/Pietwars/HaldenFunk-MeshCore/blob/main/docs/OFFENER_ZUGANG.md
+
 # @PREFIX@ für @BOARD@
 
 MeshCore-Companion mit WLAN-Weboberfläche · Version @VERSION@ · Commit @COMMIT@ · @REPO@
@@ -12,7 +14,7 @@ MeshCore-Companion mit WLAN-Weboberfläche · Version @VERSION@ · Commit @COMMI
 
 - Regionalvariante fürs Mansfelder Land: Kupfer/Anthrazit-Design, Orte und Offline-Karten (Sangerhausen, Eisleben, Mansfeld/Hettstedt, Kelbra/Kyffhäuser), WLAN `HaldenFunk-XXXXXX`.
 
-- Parallel zum WLAN-Portal kann sich die offizielle MeshCore-App per **Bluetooth** verbinden. Die PIN ist pro Gerät zufällig und steht seriell (`[BLE] MeshCore-App: Bluetooth-PIN …`) und auf dem Display.
+- Parallel zum WLAN-Portal kann sich die offizielle MeshCore-App per **Bluetooth** verbinden. Die Verbindung benötigt keine PIN; Funkkonfiguration bleibt USB/Web-Admin vorbehalten.
 - Neue Partitionstabelle (3 MB App, kein OTA): beim Umstieg von einer älteren Version **einmal komplett mit der factory-Datei** flashen.
 
 ## 2. Erstinstallation
@@ -25,19 +27,9 @@ MeshCore-Companion mit WLAN-Weboberfläche · Version @VERSION@ · Commit @COMMI
 
 Enthalten: Bootloader (@BOOT@), Partitionen (0x8000), boot_app0 (0xe000), Firmware mit Weboberfläche (0x10000), SPIFFS-Dateisystem (@FSOFF@).
 
-## 3. WLAN-Passwort und Admin-Passwort
+## 3. Ohne Passwort verbinden
 
-Seriell mit **115200** Baud verbinden (esptool-js → Disconnect → Console) und **RST** drücken:
-
-```
-WLAN: HaldenFunk-XXXXXX
-Passwort: xxxxxxxxxxxxxxxx
-ADMIN-PASSWORT (nur lokal aufbewahren): ...
-```
-
-Das WLAN-Passwort wird außerdem alle 30 s seriell ausgegeben und abwechselnd mit dem WLAN-Namen auf dem OLED angezeigt. Das Admin-Passwort erscheint nur beim allerersten Start – notieren! (Neu setzen: BOOT-Taste 10 s halten.)
-
-Dann ins WLAN und `http://192.168.4.1` öffnen.
+Am Handy das WLAN `HaldenFunk-XXXXXX` auswählen und ohne Passwort verbinden. Bei „Kein Internet“ verbunden bleiben, dann `http://192.168.4.1` öffnen. Das separate Adminpasswort wird beim ersten Start über USB (115200 Baud) ausgegeben und bleibt geschützt. Bluetooth verbindet ohne PIN; bei alten Kopplungen am Handy entkoppeln und neu verbinden.
 
 ## 4. Update (nur Firmware)
 
@@ -57,3 +49,4 @@ Dann ins WLAN und `http://192.168.4.1` öffnen.
 | teile/spiffs.bin | @FSOFF@ |
 
 MeshCore © Scott Powell / rippleradios.com u. a. (MIT). Karten © OpenStreetMap-Mitwirkende (ODbL).
+

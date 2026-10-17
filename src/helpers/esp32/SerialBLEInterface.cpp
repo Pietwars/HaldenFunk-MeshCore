@@ -29,8 +29,8 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
   BLEDevice::setMTU(MAX_FRAME_SIZE);
 
   BLESecurity  sec;
-  sec.setStaticPIN(pin_code);
-  sec.setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND);
+  sec.setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
+  sec.setCapability(ESP_IO_CAP_NONE); // Just Works: encrypted, no typed PIN
 
   //BLEDevice::setPower(ESP_PWR_LVL_N8);
 
@@ -43,11 +43,11 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
 
   // Create a BLE Characteristic
   pTxCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID_TX, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
-  pTxCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENC_MITM);
+  pTxCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENC);
   pTxCharacteristic->addDescriptor(new BLE2902());
 
   BLECharacteristic * pRxCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID_RX, BLECharacteristic::PROPERTY_WRITE);
-  pRxCharacteristic->setAccessPermissions(ESP_GATT_PERM_WRITE_ENC_MITM);
+  pRxCharacteristic->setAccessPermissions(ESP_GATT_PERM_WRITE_ENC);
   pRxCharacteristic->setCallbacks(this);
 
   pServer->getAdvertising()->addServiceUUID(SERVICE_UUID);
@@ -249,3 +249,4 @@ size_t SerialBLEInterface::checkRecvFrame(uint8_t dest[]) {
 bool SerialBLEInterface::isConnected() const {
   return deviceConnected;  //pServer != NULL && pServer->getConnectedCount() > 0;
 }
+

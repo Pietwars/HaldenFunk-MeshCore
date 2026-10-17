@@ -1,5 +1,14 @@
 # Änderungen
 
+## Unveröffentlicht – offener Zugang
+
+- Offenes WLAN ohne Passwort, auch bei bestehenden Installationen.
+- MeshCore-Companion: PIN-freies BLE, öffentliche Befehle von Betreiberbefehlen getrennt.
+- Verkürzte Companion-Steuerbefehle und Pfadlängen vor Zugriff prüfen.
+- LoRaLayer2: Telnet-Konsole entfernt, kombinierte BLE-UART-Testprofile ergänzt.
+- Zugangsanleitung und Tests ergänzt; Hardwareabnahme steht aus.
+
+
 ## 0.1.0-alpha · 17.10.2026 · erste Vorabversion HaldenFunk-MeshCore
 
 [Release v0.1.0-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.0-alpha) – Vorabversion, auf keinem Board abgenommen.
@@ -38,3 +47,4 @@ Historie der Basis DisAHRsterRadio-MeshCore:
 - Live-Demo auf GitHub Pages: https://pietwars.github.io/DisAHRsterRadio-MeshCore/
 
 **Im Notfall immer 112.**
+

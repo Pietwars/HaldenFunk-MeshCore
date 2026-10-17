@@ -18,8 +18,8 @@ static const uint8_t CHARACTERISTIC_UUID_TX[16] = NUS_UUID(0x03);
 
 SerialBLEInterface::SerialBLEInterface()
   : BLEService(BLEUUID(SERVICE_UUID)),
-    _rx(BLEUUID(CHARACTERISTIC_UUID_RX), BLEWrite, nullptr, ATT_SECURITY_AUTHENTICATED, ATT_SECURITY_AUTHENTICATED),
-    _tx(BLEUUID(CHARACTERISTIC_UUID_TX), BLERead | BLENotify, nullptr, ATT_SECURITY_AUTHENTICATED, ATT_SECURITY_AUTHENTICATED)
+    _rx(BLEUUID(CHARACTERISTIC_UUID_RX), BLEWrite, nullptr, ATT_SECURITY_ENCRYPTED, ATT_SECURITY_ENCRYPTED),
+    _tx(BLEUUID(CHARACTERISTIC_UUID_TX), BLERead | BLENotify, nullptr, ATT_SECURITY_ENCRYPTED, ATT_SECURITY_ENCRYPTED)
 {
   _isEnabled = false;
   _tx_pending = false;
@@ -51,9 +51,9 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
   BLE.server()->setCallbacks(this);
 
   // static passkey pairing with MITM protection, matching the esp32/nrf52 interfaces
-  sm_set_io_capabilities(IO_CAPABILITY_DISPLAY_ONLY);
-  sm_set_authentication_requirements(SM_AUTHREQ_MITM_PROTECTION | SM_AUTHREQ_BONDING);
-  sm_use_fixed_passkey_in_display_role(pin_code);
+  sm_set_io_capabilities(IO_CAPABILITY_NO_INPUT_NO_OUTPUT);
+  sm_set_authentication_requirements(SM_AUTHREQ_BONDING);
+  (void)pin_code; // Just Works, no static passkey
 
   size_t n = strlen(dev_name);
   if (n > sizeof(_scan_rsp) - 2) n = sizeof(_scan_rsp) - 2;
@@ -199,3 +199,4 @@ size_t SerialBLEInterface::checkRecvFrame(uint8_t dest[]) {
   return len;
 }
 #endif
+
