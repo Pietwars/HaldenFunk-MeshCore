@@ -227,33 +227,14 @@ void setup() {
   #error "need to define filesystem"
 #endif
 
-#if defined(BLE_PIN_CODE) && defined(DISASTER_PORTAL)
-  // HaldenFunk-MeshCore: zufaellige, pro Geraet dauerhaft gespeicherte BLE-PIN (seriell + Display)
-  if (the_mesh.getNodePrefs()->ble_pin == 0) {
-    uint32_t pin = 100000 + (esp_random() % 900000);
-    the_mesh.getNodePrefs()->ble_pin = pin;
+// Open access is the project default, including upgrades with a saved PIN.
+  if (the_mesh.getNodePrefs()->ble_pin != 0) {
+    the_mesh.getNodePrefs()->ble_pin = 0;
     the_mesh.savePrefs();
   }
-  the_mesh.setBLEPin(the_mesh.getNodePrefs()->ble_pin);
-  disaster_portal.setBlePin(the_mesh.getBLEPin());
-  Serial.printf("[BLE] MeshCore-App: Bluetooth-PIN %06lu\n", (unsigned long)the_mesh.getBLEPin());
-#elif defined(BLE_PIN_CODE) // 123456 by default
-  if (the_mesh.getNodePrefs()->ble_pin == 0) {
-#ifdef DISPLAY_CLASS
-    if (disp != NULL && BLE_PIN_CODE == 123456) {
-      StdRNG rng;
-      the_mesh.setBLEPin(rng.nextInt(100000, 999999)); // random pin each session
-    } else {
-      the_mesh.setBLEPin(BLE_PIN_CODE); // otherwise static pin
-    }
-#else
-    the_mesh.setBLEPin(BLE_PIN_CODE); // otherwise static pin
-#endif
-  } else {
-    the_mesh.setBLEPin(the_mesh.getNodePrefs()->ble_pin);
-  }
-#else
   the_mesh.setBLEPin(0);
+#if defined(BLE_PIN_CODE)
+  Serial.println("[BLE] Verbindung ohne PIN; Konfiguration ueber USB/Web-Admin");
 #endif
 
 // add bluetooth interface
@@ -354,9 +335,8 @@ void setup() {
     interface_manager.addInterface(InterfaceType::Bluetooth, &bluetooth_interface);
     boot_guard.enter(disaster::STAGE_RUN_BLE);
     boot_guard.heap("nach Bluetooth");
-    Serial.printf("[BLE] MeshCore-App: Bluetooth an, PIN %06lu\n", (unsigned long)the_mesh.getBLEPin());
+    Serial.println("[BLE] MeshCore-App: Bluetooth an, Kopplung ohne PIN");
   } else {
-    disaster_portal.setBlePin(0);
     Serial.printf("[BLE] Bluetooth AUS (%s). WLAN-Portal: http://192.168.4.1\n", boot_guard.reason);
   }
 #endif
@@ -365,7 +345,8 @@ void setup() {
   // der selbst laufend Befehle erzeugt (Start-Abfragen, CMD_SYNC_NEXT_MESSAGE jede Sekunde); steht es
   // vorn, kommen BLE-Befehle der App und das Leeren der BLE-Sendewarteschlange erst danach dran.
   // Wie im Original-MeshCore steht Bluetooth deshalb an erster Stelle.
-  interface_manager.addInterface(InterfaceType::WiFi, &disaster_portal);
+  // Eigener Transporttyp: HTTP-Handler pruefen den Admin-Bereich selbst (nicht "oeffentlich" wie BLE/WLAN-Companion).
+  interface_manager.addInterface(InterfaceType::Portal, &disaster_portal);
 #endif
 
   the_mesh.startInterface(interface_manager);
@@ -394,9 +375,9 @@ void loop() {
 #ifdef DISPLAY_CLASS
   {
     static unsigned long lastOled = 0; static bool showPw = false;
-    if (millis() - lastOled > 15000) {  // abwechselnd WLAN-Name und Passwort auf dem OLED
+    if (millis() - lastOled > 15000) {  // abwechselnd WLAN-Name und offener Zugang auf dem OLED
       lastOled = millis(); showPw = !showPw;
-      String t = showPw ? String("PW: ") + disaster_portal.wifiPassword()
+      String t = showPw ? String("WLAN offen / BLE ohne PIN")
                         : (disaster_portal.apRunning() ? String("WLAN ") : String("WLAN FEHLER ")) + disaster_portal.ssid().substring(16);
       ui_task.showAlert(t.c_str(), 6000);
     }
@@ -459,3 +440,4 @@ void loop() {
   }
 #endif
 }
+

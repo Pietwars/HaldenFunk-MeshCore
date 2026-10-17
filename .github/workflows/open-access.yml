@@ -1,0 +1,13 @@
+name: Open access regression
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  companion-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and run transport and command-boundary tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -I tests/open_access_fakes tests/open_access.test.cpp -o /tmp/open-access-test
+          /tmp/open-access-test

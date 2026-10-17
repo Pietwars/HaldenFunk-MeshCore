@@ -1,5 +1,8 @@
 # HaldenFunk-MeshCore
 
+> **Neuer Entwicklungsstand: WLAN ohne Passwort.** MeshCore-Bluetooth verbindet ohne PIN; Konfiguration bleibt über USB/Web-Admin geschützt. [Zugang, Update und Abnahme](docs/OFFENER_ZUGANG.md). Frühere Releases/Flyer können noch Passwortzugänge beschreiben.
+
+
 **Glück Auf – Mesh fürs Mansfelder Land**
 
 **🔴 Live-Demo (simulierte Daten, kein Gerät nötig): https://pietwars.github.io/HaldenFunk-MeshCore/**
@@ -8,7 +11,7 @@
 
 **HaldenFunk-MeshCore ist für [HaldenFunk](https://github.com/Pietwars/HaldenFunk), was [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) für DisAHRsterRadio ist:** der Code von DisAHRsterRadio-MeshCore (MeshCore 1.18, WLAN-Weboberfläche plus Bluetooth für die offizielle MeshCore-App, Gerätematrix der MeshCore-Konfigurator-Liste) mit dem regionalen Design und den Inhalten von HaldenFunk: Kupfer/Anthrazit, Haldenmotiv als Hintergrund, Orte und Offline-Karten des Mansfelder Landes (Sangerhausen, Lutherstadt Eisleben, Mansfeld/Hettstedt, Kelbra/Roßla/Kyffhäuser).
 
-Das Board ist ein MeshCore-Companion und spannt ein eigenes WLAN **`HaldenFunk-XXXXXX`** (Zufallspasswort pro Gerät) auf. Man verbindet sich mit dem Handy und nutzt im Browser Chat, Schnellmeldungen, Brett, Karte und Standort – ohne App und ohne Internet. Parallel kann sich die MeshCore-App per Bluetooth verbinden.
+Das Board ist ein MeshCore-Companion und spannt ein eigenes WLAN **`HaldenFunk-XXXXXX`** (offen, ohne Passwort) auf. Man verbindet sich mit dem Handy und nutzt im Browser Chat, Schnellmeldungen, Brett, Karte und Standort – ohne App und ohne Internet. Parallel kann sich die MeshCore-App per Bluetooth verbinden.
 
 > ⚠️ **Kein zertifiziertes Notrufsystem.** In Lebensgefahr immer **112** wählen, wenn irgendwie möglich.
 
@@ -88,16 +91,16 @@ Weitere Profile (T3-S3 SX1276, SD-Archiv, Heltec-Diagnose) sind in `platformio.l
 
 Heltec V2 mit WLAN-Fix: Brownout-Detektor früh aus, Startmarken `[DIAG …]` seriell, WLAN startet zuletzt und erst 2 s nach dem Funkmodul, WLAN-Sendeleistung 8,5 dBm.
 
-Alle Boards: WLAN **`HaldenFunk-XXXXXX`** mit geräteindividuellem Zufallspasswort, gespeichert im NVS. Das Passwort steht beim Start und danach alle 30 s seriell (115200 Baud) und erscheint abwechselnd mit dem WLAN-Namen auf dem OLED. Startet der Zugangspunkt nicht, versucht es das Gerät alle 5 s erneut.
+Alle WLAN-Portal-Boards: offenes WLAN **`HaldenFunk-XXXXXX`** ohne Passwort. Auf dem OLED stehen WLAN-Name und Zugangshinweis. Bei einem fehlgeschlagenen AP-Start erfolgt alle 5 s ein neuer Versuch.
 
 ## WLAN-Portal und MeshCore-App gleichzeitig (Bluetooth)
 
 Auf ESP32-Geräten mit Bluetooth sind Web-Portal und BLE-Companion beide am selben Companion angemeldet (MeshCore `MultiSerialInterface`): Jede Antwort und jede eingehende Nachricht geht an beide. Die offizielle MeshCore-App verbindet sich per Bluetooth, während Handys im WLAN die Weboberfläche nutzen.
 
-- **Bluetooth-PIN:** pro Gerät zufällig (6-stellig), beim ersten Start erzeugt und gespeichert. Steht seriell (115200 Baud, Zeile `[BLE] MeshCore-App: Bluetooth-PIN …`, alle 30 s wiederholt) und auf dem Display.
+- **Bluetooth ohne PIN:** Just-Works-Kopplung ohne Zahlencode. Alte Kopplung bei Bedarf am Handy entfernen. Betreiberbefehle über USB/Web-Admin; Details unter [Offener Zugang](docs/OFFENER_ZUGANG.md).
 - **Grenzen:** Ruft die App Nachrichten aus der Warteschlange ab, sieht das Portal sie im Verlauf mit, die App aber nicht umgekehrt die Abrufe des Portals. Gleichzeitige Befehle aus App und Portal können sich in seltenen Fällen kreuzen. WLAN + Bluetooth + Webserver brauchen viel RAM. Klassische ESP32 ohne PSRAM (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) nutzen deshalb ab 0.1.1-alpha **NimBLE** statt Bluedroid; das WLAN-Portal startet zuerst, Bluetooth nur bei genug freiem Heap, und ein Start-Wächter verhindert die Bootschleife (`[BOOT]`/`[HEAP]`-Zeilen seriell). Auf Hardware **noch nicht geprüft**.
 - **Speicher:** Portal-Profile nutzen die Partition `huge_app.csv` (3 MB App, kein OTA, 896 KB SPIFFS). Belegung 0.1.1-alpha: T3 V1.6.1 ca. 52 %, Heltec V2 ca. 52 %, T-Beam ca. 54 %, T3-S3 ca. 62 %.
-- **Upgrade 0.1.0-alpha → 0.1.1-alpha:** Partitionstabelle unverändert – es reicht `teile-wifi/firmware.bin` an **`0x10000`** zu flashen; Einstellungen, Identität, Kontakte, WLAN-Passwort und Bluetooth-PIN bleiben erhalten. Klassische ESP32 (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) wechseln auf NimBLE: die alte Kopplung in den Bluetooth-Einstellungen des Handys **entfernen und die MeshCore-App einmal neu koppeln** (gleiche PIN). Wer von einer Version **vor** 0.1.0-alpha kommt, flasht einmal komplett die `factory.bin` an `0x0` (neue Partitionstabelle, Identität wird neu erzeugt).
+- **Upgrade 0.1.0-alpha → 0.1.1-alpha:** Partitionstabelle unverändert – es reicht `teile-wifi/firmware.bin` an **`0x10000`** zu flashen; Einstellungen, Identität und Kontakte bleiben erhalten. Klassische ESP32 (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) wechseln auf NimBLE: die alte Kopplung in den Bluetooth-Einstellungen des Handys **entfernen und die MeshCore-App einmal neu koppeln**. Wer von einer Version **vor** 0.1.0-alpha kommt, flasht einmal komplett die `factory.bin` an `0x0` (neue Partitionstabelle, Identität wird neu erzeugt).
 
 ## So wird die Oberfläche auf MeshCore abgebildet
 
@@ -255,3 +258,4 @@ Gebaut werden alle 105 Geräte, für die MeshCore v1.18.0 Firmware anbietet (Que
 - Code-Basis: [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) (MIT).
 - Regionales Design, Hintergrundbild, Orte und Karten: aus [HaldenFunk](https://github.com/Pietwars/HaldenFunk), vom selben Autor, hier unter MIT.
 - Kartendaten © OpenStreetMap-Mitwirkende, ODbL 1.0 (`web/map/ODbL-1.0.txt`).
+

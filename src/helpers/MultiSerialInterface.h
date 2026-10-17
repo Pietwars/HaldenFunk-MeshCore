@@ -13,7 +13,8 @@ enum class InterfaceType : uint8_t {
   USB,
   WiFi,
   Ethernet,
-  HardwareSerial
+  HardwareSerial,
+  Portal // HTTP handlers enforce the independent web-admin boundary
 };
 
 class MultiSerialInterface : public BaseSerialInterface {
@@ -25,6 +26,7 @@ private:
   };
 
   bool _enabled = false;
+  InterfaceType _receivedFrom = InterfaceType::NONE;
   RegisteredInterface _interfaces[MAX_INTERFACES] = {};
 
 public:
@@ -167,6 +169,8 @@ public:
     bool allSuccessful = true;
     for(auto iface : _interfaces){
       if(iface.instance && iface.instance->isEnabled()){
+        // Never broadcast a USB private-key export to open wireless clients.
+        if(src[0] == 14 && (iface.type == InterfaceType::Bluetooth || iface.type == InterfaceType::WiFi || iface.type == InterfaceType::Ethernet)) continue;
         if(iface.instance->writeFrame(src, len) != len){
           allSuccessful = false;
         }
@@ -177,7 +181,12 @@ public:
     return allSuccessful ? len : 0; 
   }
 
+  bool isPublicTransport() const override {
+    return _receivedFrom == InterfaceType::Bluetooth || _receivedFrom == InterfaceType::WiFi || _receivedFrom == InterfaceType::Ethernet;
+  }
+
   size_t checkRecvFrame(uint8_t dest[]) override {
+    _receivedFrom = InterfaceType::NONE;
     // don't read when disabled
     if(!_enabled){
       return 0;
@@ -188,6 +197,7 @@ public:
       if(iface.instance && iface.instance->isEnabled()){
         size_t frameSize = iface.instance->checkRecvFrame(dest);
         if(frameSize > 0){
+          _receivedFrom = iface.type;
           return frameSize; 
         }
       }
@@ -198,3 +208,4 @@ public:
   }
 
 };
+

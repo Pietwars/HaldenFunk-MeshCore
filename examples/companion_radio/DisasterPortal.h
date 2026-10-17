@@ -52,7 +52,7 @@ class DisasterPortal : public BaseSerialInterface {
   int activeJob=-1;
   uint32_t routeJob=0;uint8_t routeAttempt=255;
   WebServer http{80};
-  String apPassword; uint32_t blePin=0; bool modemSleep=false, apOk=false; unsigned long apRetry=0, apPrint=0;
+  bool modemSleep=false, apOk=false; unsigned long apRetry=0, apPrint=0;
   DNSServer dns;
   bool enabled = false, storageOK = true;
   uint8_t startup = 0, active = 0;
@@ -196,11 +196,8 @@ public:
     pinMode(PIN_USER_BTN, INPUT_PULLUP);
 #endif
     Preferences prefs; prefs.begin("disaster",false);
-    String password=prefs.getString("ap-pass","");
-    if(password.length()<12) {
-      uint8_t random[8]; esp_fill_random(random,sizeof(random)); password=hex(random,sizeof(random));
-      prefs.putString("ap-pass",password);
-    }
+    // Remove old AP credentials on upgrade; admin credentials are independent.
+    prefs.remove("ap-pass");
     adminSalt=prefs.getString("admin-salt", "");
     adminHash=prefs.getString("admin-hash", "");
     if(adminHash.length()!=64||adminSalt.length()!=32) {
@@ -213,14 +210,13 @@ public:
     prefs.end();
     uint64_t mac=ESP.getEfuseMac(); char suffix[7]; snprintf(suffix,sizeof(suffix),"%06X",(unsigned)(mac&0xffffff));
     apName=String("HaldenFunk-")+suffix;
-    apPassword=password;
     WiFi.mode(WIFI_AP); WiFi.setSleep(modemSleep);
 #ifdef DISASTER_WIFI_TX
     WiFi.setTxPower(DISASTER_WIFI_TX); Serial.println("[WLAN] reduzierte Sendeleistung"); Serial.flush(); delay(200);
 #endif
     apOk=startAP();
     dns.start(53,"*",WiFi.softAPIP());
-    Serial.printf("\nWLAN: %s\nPasswort: %s\nBrowser: http://192.168.4.1\n",apName.c_str(),password.c_str());
+    Serial.printf("\nWLAN: %s\nOffenes WLAN - kein Passwort\nBrowser: http://192.168.4.1\n",apName.c_str());
     const char *headers[]={"X-Disaster-Request","X-Disaster-Admin","X-Disaster-Client"}; http.collectHeaders(headers,3);
     http.on("/",HTTP_GET,[this](){
       http.sendHeader("Content-Security-Policy","default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'");
@@ -393,24 +389,22 @@ public:
     http.begin();
   }
   bool startAP() {
-    bool ok=WiFi.softAP(apName.c_str(),apPassword.c_str(),1,false,4);
+    bool ok=WiFi.softAP(apName.c_str(),nullptr,1,false,4);
 #ifdef DISASTER_WIFI_TX
     WiFi.setTxPower(DISASTER_WIFI_TX);
 #endif
     Serial.printf("[WLAN] softAP(\"%s\", Kanal 1) -> %s, TX %d (0,25 dBm)\n",apName.c_str(),ok?"OK":"FEHLER",(int)WiFi.getTxPower());Serial.flush();
     return ok;
   }
-  void setBlePin(uint32_t p){blePin=p;}
   void setModemSleep(bool on){modemSleep=on;}
   const String &ssid() const {return apName;}
-  const String &wifiPassword() const {return apPassword;}
   bool apRunning() const {return apOk;}
   // Alle 30 s Zugangsdaten seriell ausgeben, bei Fehlschlag alle 5 s neu versuchen
   void serviceAP() {
     if(!apOk&&millis()-apRetry>5000){apRetry=millis();apOk=startAP();}
     if(millis()-apPrint>30000||!apPrint){apPrint=millis()|1;
-      Serial.printf("[WLAN] %s | SSID: %s | Passwort: %s | http://192.168.4.1 | Clients: %d\n",apOk?"AP aktiv":"AP FEHLER",apName.c_str(),apPassword.c_str(),WiFi.softAPgetStationNum());
-      if(blePin)Serial.printf("[BLE] MeshCore-App: Bluetooth-PIN %06lu\n",(unsigned long)blePin);}
+      Serial.printf("[WLAN] %s | SSID: %s | offen, ohne Passwort | http://192.168.4.1 | Clients: %d\n",apOk?"AP aktiv":"AP FEHLER",apName.c_str(),WiFi.softAPgetStationNum());
+      }
   }
   void enable() override {enabled=true;}
   void disable() override {enabled=false;}
@@ -516,3 +510,4 @@ public:
     return n;
   }
 };
+
