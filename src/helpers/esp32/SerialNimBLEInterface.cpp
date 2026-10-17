@@ -33,10 +33,11 @@ void SerialNimBLEInterface::begin(const char* prefix, char* name, uint32_t pin_c
 
   NimBLEDevice::init(dev_name);           // gibt Classic-BT-Speicher frei, Controller nur BLE
   NimBLEDevice::setMTU(MAX_FRAME_SIZE);
-  // Kopplung wie Bluedroid-Variante: Bonding + MITM + Secure Connections, statische PIN, Geraet zeigt PIN an
-  NimBLEDevice::setSecurityAuth(true, true, true);
-  NimBLEDevice::setSecurityPasskey(pin_code);
-  NimBLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_ONLY);
+  // Offener Zugang wie Bluedroid-Variante: Just Works (Bonding + Secure Connections, ohne MITM/PIN).
+  // Verschluesselt, aber kein Zahlencode; das Handy zeigt hoechstens eine Kopplungsbestaetigung.
+  (void)pin_code;
+  NimBLEDevice::setSecurityAuth(true, false, true);
+  NimBLEDevice::setSecurityIOCap(BLE_HS_IO_NO_INPUT_OUTPUT);
 
   pServer = NimBLEDevice::createServer();
   pServer->setCallbacks(this, false);
@@ -54,7 +55,7 @@ void SerialNimBLEInterface::begin(const char* prefix, char* name, uint32_t pin_c
   // RX: nur "write with response" (wie Original). Kein WRITE_NR: ein Write-Command auf ein
   // verschluesseltes Attribut wuerde vor der Kopplung stillschweigend verworfen.
   NimBLECharacteristic *pRx = pService->createCharacteristic(CHARACTERISTIC_UUID_RX,
-      NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC | NIMBLE_PROPERTY::WRITE_AUTHEN);
+      NIMBLE_PROPERTY::WRITE | NIMBLE_PROPERTY::WRITE_ENC);
   pRx->setCallbacks(this);
   pServer->getAdvertising()->addServiceUUID(SERVICE_UUID);
   pServer->getAdvertising()->setScanResponse(true);
@@ -93,7 +94,8 @@ bool SerialNimBLEInterface::onConfirmPIN(uint32_t) { return true; }
 void SerialNimBLEInterface::onAuthenticationComplete(ble_gap_conn_desc* desc) {
   ev_enc = desc->sec_state.encrypted; ev_authn = desc->sec_state.authenticated; ev_bonded = desc->sec_state.bonded;
   __atomic_fetch_or(&ev_flags, EV_AUTH, __ATOMIC_SEQ_CST);
-  if (desc->sec_state.encrypted && desc->sec_state.authenticated) {
+  // Just Works ist verschluesselt, aber nicht "authenticated" (kein MITM-Schutz) -> nur Verschluesselung pruefen.
+  if (desc->sec_state.encrypted) {
     _auth_time = millis();
     deviceConnected = true;
   } else {
@@ -138,9 +140,9 @@ void SerialNimBLEInterface::logEvents() {
   }
   if (f & EV_MTU) Serial.printf("[BLE] MTU ausgehandelt: %u (max. Frame %u Bytes)\n", (unsigned)ev_mtu, (unsigned)(ev_mtu > 3 ? ev_mtu - 3 : 0));
   if (f & EV_AUTH) {
-    if (ev_enc && ev_authn) Serial.printf("[BLE] Kopplung OK (verschluesselt, PIN-authentifiziert%s)\n", ev_bonded ? ", gespeichert" : "");
-    else Serial.printf("[BLE] Kopplung FEHLGESCHLAGEN (verschluesselt=%u, PIN=%u) -> getrennt. Handy: Geraet entfernen, neu koppeln\n",
-      (unsigned)ev_enc, (unsigned)ev_authn);
+    if (ev_enc) Serial.printf("[BLE] Kopplung OK (verschluesselt, ohne PIN%s)\n", ev_bonded ? ", gespeichert" : "");
+    else Serial.printf("[BLE] Kopplung FEHLGESCHLAGEN (verschluesselt=%u) -> getrennt. Handy: Geraet entfernen, neu koppeln\n",
+      (unsigned)ev_enc);
   }
   if (f & EV_SUB) Serial.printf("[BLE] App-Abo TX-Notify: %s\n", (ev_sub & 3) ? "AN" : "aus");
   if (f & EV_RX_BAD) Serial.printf("[BLE] FEHLER: Befehl mit ungueltiger Laenge %u verworfen\n", (unsigned)ev_rx_bad);

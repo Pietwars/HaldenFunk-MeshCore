@@ -1,4 +1,5 @@
 #include "MyMesh.h"
+#include "OpenAccess.h"
 
 #include <Arduino.h> // needed for PlatformIO
 #ifdef ENABLE_WIFI_INTERFACE
@@ -1060,6 +1061,17 @@ void MyMesh::startInterface(BaseSerialInterface &serial) {
 }
 
 void MyMesh::handleCmdFrame(size_t len) {
+  if (!disaster::validCompanionLength(cmd_frame,len,MAX_FRAME_SIZE)) {
+    writeErrFrame(ERR_CODE_ILLEGAL_ARG); return;
+  }
+  if (_serial->isPublicTransport() && !disaster::publicCompanionCommand(cmd_frame[0])) {
+    writeDisabledFrame(); return;
+  }
+  // Clear stale bytes and terminate variable text fields within the allocated buffer.
+  memset(cmd_frame+len,0,sizeof(cmd_frame)-len);
+  if (cmd_frame[0] == CMD_ADD_UPDATE_CONTACT && len < 1+32+2+1+MAX_PATH_SIZE+32+4) {
+    writeErrFrame(ERR_CODE_ILLEGAL_ARG); return;
+  }
   if (cmd_frame[0] == CMD_DEVICE_QUERY && len >= 2) { // sent when app establishes connection
     app_target_ver = cmd_frame[1];                    // which version of protocol does app understand
 
@@ -1221,9 +1233,11 @@ void MyMesh::handleCmdFrame(size_t len) {
     // parse provided path if not flood
     uint8_t path[MAX_PATH_SIZE];
     if (path_len != OUT_PATH_UNKNOWN) {
+      if (size_t(i)+size_t(path_len & 63)*((path_len >> 6)+1)+2 > len) { writeErrFrame(ERR_CODE_ILLEGAL_ARG); return; }
       i += mesh::Packet::writePath(path, &cmd_frame[i], path_len);
     }
 
+    if (size_t(i)+2 > len) { writeErrFrame(ERR_CODE_ILLEGAL_ARG); return; }
     uint16_t data_type = ((uint16_t)cmd_frame[i]) | (((uint16_t)cmd_frame[i + 1]) << 8);
     i += 2;
     const uint8_t *payload = &cmd_frame[i];
@@ -1575,6 +1589,9 @@ void MyMesh::handleCmdFrame(size_t len) {
     uint8_t path_len = cmd_frame[i++];
     if (path_len >= 0 && mesh::Packet::isValidPathLen(path_len)) {
       uint8_t path[MAX_PATH_SIZE];
+      if (size_t(i)+size_t(path_len & 63)*((path_len >> 6)+1)+4 > len) {
+        writeErrFrame(ERR_CODE_ILLEGAL_ARG); return;
+      }
       i += mesh::Packet::writePath(path, &cmd_frame[i], path_len);
       if (i + 4 > len) {  // min payload 4 bytes
         writeErrFrame(ERR_CODE_ILLEGAL_ARG);
@@ -1854,18 +1871,10 @@ void MyMesh::handleCmdFrame(size_t len) {
     }
   } else if (cmd_frame[0] == CMD_SET_DEVICE_PIN && len >= 5) {
 
-    // get pin from command frame
-    uint32_t pin;
-    memcpy(&pin, &cmd_frame[1], 4);
-
-    // ensure pin is zero, or a valid 6 digit pin
-    if (pin == 0 || (pin >= 100000 && pin <= 999999)) {
-      _prefs.ble_pin = pin;
-      savePrefs();
-      writeOKFrame();
-    } else {
-      writeErrFrame(ERR_CODE_ILLEGAL_ARG);
-    }
+    // PIN-free firmware: a nonzero PIN cannot be enabled by an app or USB.
+    uint32_t pin; memcpy(&pin,&cmd_frame[1],4);
+    if(pin) { writeDisabledFrame(); }
+    else { _prefs.ble_pin=0; savePrefs(); writeOKFrame(); }
   } else if (cmd_frame[0] == CMD_GET_CUSTOM_VARS) {
     out_frame[0] = RESP_CODE_CUSTOM_VARS;
     char *dp = (char *)&out_frame[1];
@@ -2004,7 +2013,7 @@ void MyMesh::handleCmdFrame(size_t len) {
     writeOKFrame();
   } else if (cmd_frame[0] == CMD_SET_DEFAULT_FLOOD_SCOPE && len >= 1) {
     if (len >= 1+31+16) {
-      int n = strlen((char *) &cmd_frame[1]);
+      int n = strnlen((char *) &cmd_frame[1],31);
       if (n > 0 && n < 31) {
         strcpy(_prefs.default_scope_name, (char *) &cmd_frame[1]);
         memcpy(_prefs.default_scope_key, &cmd_frame[1+31], 16);
@@ -2468,3 +2477,4 @@ bool MyMesh::advert() {
 bool MyMesh::hasPendingWork() const {
   return _mgr->getOutboundTotal() > 0 || dirty_contacts_expiry != 0;
 }
+

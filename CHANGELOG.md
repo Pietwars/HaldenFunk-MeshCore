@@ -1,5 +1,12 @@
 # Änderungen
 
+## Unveröffentlicht – offener Zugang
+
+- **Offenes WLAN:** `softAP(ssid, nullptr, 1, false, 4)`, gespeichertes `ap-pass` wird beim Start gelöscht; seriell/OLED „offen“.
+- **Bluetooth ohne PIN:** Just Works für Bluedroid **und NimBLE** (klassische ESP32: ohne MITM/Passkey, Kopplung akzeptiert verschlüsselte, nicht PIN-authentifizierte Verbindungen), ebenso nRF52/RP2040; gespeicherte BLE-PIN wird auf 0 gesetzt, keine Zufalls-PIN mehr, App kann keine PIN setzen; nRF52 ohne Bluetooth-DFU.
+- Offene Bluetooth-/Netzwerk-Companions: Nachrichten, Kontakte, Uhrzeit-Abgleich, Status; Betreiberbefehle (Funk, Name, Kanäle, Schlüssel, Reset, CLI) nur USB/Admin-Bereich. Portal als eigener Transporttyp. Längen-/Pfadprüfungen für Companion-Befehle.
+- Doku, Flash-Anleitung, LIESMICH und Flyer ohne Zugangsdaten-Hinweise; Hosttest `tests/open_access.test.cpp`. Hardwareabnahme steht aus.
+
 ## 0.1.1-alpha · 17.10.2026 · Fix Bootschleife klassischer ESP32, schlanke Firmware
 
 [Release v0.1.1-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.1-alpha) – Vorabversion, auf keinem Board abgenommen. Firmwarekennung `v1.18.0-hf0.1.1-alpha`, Pakete `HaldenFunk-MeshCore-0.1.1-alpha-<Gerät>.zip`.
@@ -75,3 +82,4 @@ Historie der Basis DisAHRsterRadio-MeshCore:
 - Live-Demo auf GitHub Pages: https://pietwars.github.io/DisAHRsterRadio-MeshCore/
 
 **Im Notfall immer 112.**
+

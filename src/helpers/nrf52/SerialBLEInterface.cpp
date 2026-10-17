@@ -169,9 +169,8 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
   Bluefruit.setTxPower(BLE_TX_POWER);
   Bluefruit.setName(dev_name);
 
-  Bluefruit.Security.setMITM(true);
-  Bluefruit.Security.setPIN(charpin);
-  Bluefruit.Security.setIOCaps(true, false, false);
+  Bluefruit.Security.setMITM(false);
+  Bluefruit.Security.setIOCaps(false, false, false);
   Bluefruit.Security.setPairPasskeyCallback(onPairingPasskey);
   Bluefruit.Security.setPairCompleteCallback(onPairingComplete);
 
@@ -181,7 +180,7 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
 
   Bluefruit.setEventCallback(onBLEEvent);
 
-  bleuart.setPermission(SECMODE_ENC_WITH_MITM, SECMODE_ENC_WITH_MITM);
+  bleuart.setPermission(SECMODE_ENC_NO_MITM, SECMODE_ENC_NO_MITM);
   bleuart.begin();
   bleuart.setRxCallback(onBleUartRX);
 
@@ -190,7 +189,7 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
   // Register DFU on the main BLE stack so paired clients can discover it
   // without switching the device into a separate OTA-only BLE mode first.
   bledfu.setPermission(SECMODE_ENC_WITH_MITM, SECMODE_ENC_WITH_MITM);
-  bledfu.begin();
+  // DFU is not exposed on the open companion service; update over USB.
 
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
@@ -408,3 +407,4 @@ bool SerialBLEInterface::isConnected() const {
 bool SerialBLEInterface::isWriteBusy() const {
   return send_queue_len >= (FRAME_QUEUE_SIZE * 2 / 3);
 }
+

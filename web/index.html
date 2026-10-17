@@ -59,7 +59,7 @@ section h2,section p,.row label{text-shadow:0 1px 3px #000,0 0 8px #000}
 <form id="qf"><select id="qplace"></select><select id="qtarget"></select><button class="b">Senden</button></form></section>
 <section id="board"><h2>Schwarzes Brett (Room-Server)</h2><p class="muted">Das Brett ist ein MeshCore-Room-Server im Funknetz. Beiträge liegen dort und werden nach der Anmeldung abgerufen.</p>
 <div class="tgt"><select id="room"></select></div>
-<form id="rf" onsubmit="return false"><input id="rpass" type="password" maxlength="15" placeholder="Raum-Passwort"><button class="b b2" id="rlogin" type="button">Anmelden</button></form>
+<form id="rf" onsubmit="return false"><input id="rpass" type="password" maxlength="15" placeholder="Raum-Code, nur falls der Room-Server einen verlangt"><button class="b b2" id="rlogin" type="button">Anmelden</button></form>
 <p class="muted" id="rstate"></p>
 <div id="posts"></div>
 <textarea id="btext" rows="2" maxlength="100" placeholder="Aushang (max. 100 Byte)"></textarea>
@@ -76,7 +76,7 @@ section h2,section p,.row label{text-shadow:0 1px 3px #000,0 0 8px #000}
 <h2>Orte im Mansfelder Land</h2><div class="places" id="pl"></div></section>
 <section id="info"><h2>Gerät</h2><table id="it"></table>
 <div class="row"><button class="b b2" id="refresh" type="button">Kontakte neu lesen</button><button class="b b2" id="adv" type="button">Bekanntgabe senden</button><button class="b b2" id="admbtn" type="button">Admin</button></div>
-<div id="admin"><input id="apass" type="password" placeholder="Admin-Passwort (seriell beim ersten Start)"><button class="b b2" id="alogin" type="button">Admin anmelden</button>
+<div id="admin"><input id="apass" type="password" placeholder="Admin-Zugang (nur Betreiber, seriell beim ersten Start)"><button class="b b2" id="alogin" type="button">Admin anmelden</button>
 <input id="nname" maxlength="24" placeholder="Knotenname"><button class="b b2" id="setname" type="button">Name setzen</button>
 <div class="row"><select id="cslot"></select><input id="cname" maxlength="24" placeholder="Kanalname"><input id="ckey" maxlength="32" placeholder="Schlüssel (32 Hex)"></div><button class="b b2" id="setch" type="button">Kanal speichern</button></div>
 <p class="muted" id="ifb"></p>
