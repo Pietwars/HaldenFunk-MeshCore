@@ -345,7 +345,6 @@ void setup() {
   disaster_portal.begin();
   DIAG("portal ok");
   boot_guard.heap("nach WLAN");
-  interface_manager.addInterface(InterfaceType::WiFi, &disaster_portal);
 #if defined(BLE_PIN_CODE)
   // Das WLAN-Portal hat Vorrang. Bluetooth (MeshCore-App) nur, wenn danach noch genug Heap bleibt
   // und der letzte Start nicht beim Bluetooth-Start abgestuerzt ist (sonst Bootschleife).
@@ -361,6 +360,12 @@ void setup() {
     Serial.printf("[BLE] Bluetooth AUS (%s). WLAN-Portal: http://192.168.4.1\n", boot_guard.reason);
   }
 #endif
+  // Portal-Schnittstelle NACH Bluetooth eintragen: MultiSerialInterface fragt die Schnittstellen in
+  // Eintragsreihenfolge ab und bricht beim ersten Frame ab. Das Portal ist ein synthetischer Client,
+  // der selbst laufend Befehle erzeugt (Start-Abfragen, CMD_SYNC_NEXT_MESSAGE jede Sekunde); steht es
+  // vorn, kommen BLE-Befehle der App und das Leeren der BLE-Sendewarteschlange erst danach dran.
+  // Wie im Original-MeshCore steht Bluetooth deshalb an erster Stelle.
+  interface_manager.addInterface(InterfaceType::WiFi, &disaster_portal);
 #endif
 
   the_mesh.startInterface(interface_manager);
