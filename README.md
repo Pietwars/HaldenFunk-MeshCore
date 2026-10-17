@@ -21,12 +21,12 @@ Das Board ist ein MeshCore-Companion und spannt ein eigenes WLAN **`HaldenFunk-X
 | [Pietwars/HaldenFunk-MeshCore](https://github.com/Pietwars/HaldenFunk-MeshCore) | **dieses Repo:** MeshCore 1.18, WLAN-Oberfläche im HaldenFunk-Design + Bluetooth für die MeshCore-App, Gerätematrix | MeshCore | 0.1.1-alpha | [Live-Demo](https://pietwars.github.io/HaldenFunk-MeshCore/) |
 | [Pietwars/HaldenFunk](https://github.com/Pietwars/HaldenFunk) | Mansfelder-Land-Variante von DisAHRsterRadio, **ohne MeshCore** (LoRaLayer2) | LoRaLayer2 | 0.1.1-alpha | [Live-Demo](https://pietwars.github.io/HaldenFunk/) |
 | [Pietwars/DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) | Ahrtal-Original dieser Firmware: MeshCore 1.18, WLAN + Bluetooth, 105 Geräte | MeshCore | 0.9.0-alpha | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio-MeshCore/) |
-| [Pietwars/DisAHRsterRadio](https://github.com/Pietwars/DisAHRsterRadio) | Ahrtal, **ohne MeshCore**: modernisiertes disaster-radio | LoRaLayer2 | 0.1.1-dev | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio/) |
+| [Pietwars/DisAHRsterRadio](https://github.com/Pietwars/DisAHRsterRadio) | Ahrtal, **ohne MeshCore**: modernisiertes disaster-radio | LoRaLayer2 | 0.1.1-alpha | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio/) |
 | [Pietwars/DisasterMesh](https://github.com/Pietwars/DisasterMesh) | Original-Repo: MeshCore 1.18 mit großer Weboberfläche MeshAhrtal | MeshCore | 0.9.0-alpha | [Live-Demo](https://pietwars.github.io/DisasterMesh/demo/) |
 
 Gleiche Spalte „Funk“ = können miteinander funken (gleiches Funkprofil vorausgesetzt). Alle Demos sind simuliert. Hardware-Abnahme steht für alle MeshCore-Varianten aus.
 
-**Download:** [Release v0.1.1-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.1-alpha) (Vorabversion) – ein Paket pro Gerät (`HaldenFunk-MeshCore-0.1.1-alpha-<Gerät>.zip`, 105 Geräte) mit deutscher `ANLEITUNG.md` und `SHA256SUMS`, dazu beide Flyer. Ältere Fassung: [v0.1.0-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.0-alpha). Zwischenstände als Artefakte der [GitHub Actions](https://github.com/Pietwars/HaldenFunk-MeshCore/actions).
+**Download:** Neueste veröffentlichte Vorabversion ist [Release v0.1.0-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.0-alpha) (ein Paket pro Gerät mit deutscher `ANLEITUNG.md` und `SHA256SUMS`, dazu beide Flyer). Für **0.1.1-alpha** gibt es noch kein GitHub-Release (Ablauf siehe [RELEASE.md](RELEASE.md)); die Pakete `HaldenFunk-MeshCore-0.1.1-alpha-<Gerät>.zip` (105 Geräte) entstehen bei jedem Lauf von „Alle Geräte (MeshCore-Konfigurator-Liste)“ auf `main` als Artefakte der [GitHub Actions](https://github.com/Pietwars/HaldenFunk-MeshCore/actions) (GitHub-Anmeldung nötig).
 
 ## Funktionen im Überblick
 
@@ -242,7 +242,7 @@ Gebaut werden alle 105 Geräte, für die MeshCore v1.18.0 Firmware anbietet (Que
 ## Grenzen / offen
 
 - Nicht auf Hardware getestet, auch nicht das Zusammenspiel mit MeshCore 1.18
-- Karten für den Flash verkleinert (`tools/shrink_maps.py`: Linien vereinfacht, Raster ca. 7 m in der Übersicht / 2 m in den Detailkarten, kleine Wald-/Wasserflächen und kurze Wegstücke weggelassen; Orte, Halden und Schächte vollständig): 633 KB → 223 KB, Übersichtskarte 335 KB → 90 KB. T3 V1.6.1 damit bei ca. 85 % (vorher 98 %)
+- Karten für den Flash verkleinert (`tools/shrink_maps.py`: Linien vereinfacht, Raster ca. 7 m in der Übersicht / 2 m in den Detailkarten, kleine Wald-/Wasserflächen und kurze Wegstücke weggelassen; Orte, Halden und Schächte vollständig): 633 KB → 223 KB, Übersichtskarte 335 KB → 90 KB. Zusammen mit den schlanken Profilen (0.1.1-alpha) liegt T3 V1.6.1 jetzt bei ca. 52 % der App-Partition (siehe Boards)
 - Die Brett-Funktion braucht einen erreichbaren Room-Server (`disaster_t3s3_sx1262_room` bzw. `disaster_ttgo_room`, im CI gebaut, nicht auf Hardware geprüft)
 - Positionsfreigabe: Wer einen Standort als Knoten-Standort setzt, schaltet das Teilen der Position in Adverts ein (bei 0,0 wieder aus)
 - Funkprofil-Auswahl (Deutschland-Presets) aus DisasterMesh ist in der neuen Oberfläche nicht enthalten. Die API `/api/radio` existiert weiter
