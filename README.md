@@ -4,7 +4,7 @@
 
 **🔴 Live-Demo (simulierte Daten, kein Gerät nötig): https://pietwars.github.io/HaldenFunk-MeshCore/**
 
-**Version 0.1.0-alpha** · MeshCore **1.18** (Upstream `main` nach v1.18.0, Commit `81dbae59`) · Firmwarekennung `v1.18.0-hf0.1.0-alpha`
+**Version 0.1.0-alpha** · MeshCore **1.18** (Upstream `main` nach v1.18.0, Commit `81dbae59`) · Firmwarekennung `v1.18.0-hf0.1.0-alpha` · **Flyer (A5):** [Druck-PDF mit QR-Codes](docs/flyer/HaldenFunk-MeshCore-Flyer.pdf) · [Digital-PDF mit klickbaren Links](docs/flyer/HaldenFunk-MeshCore-Flyer-digital.pdf)
 
 **HaldenFunk-MeshCore ist für [HaldenFunk](https://github.com/Pietwars/HaldenFunk), was [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) für DisAHRsterRadio ist:** der Code von DisAHRsterRadio-MeshCore (MeshCore 1.18, WLAN-Weboberfläche plus Bluetooth für die offizielle MeshCore-App, Gerätematrix der MeshCore-Konfigurator-Liste) mit dem regionalen Design und den Inhalten von HaldenFunk: Kupfer/Anthrazit, Haldenmotiv als Hintergrund, Orte und Offline-Karten des Mansfelder Landes (Sangerhausen, Lutherstadt Eisleben, Mansfeld/Hettstedt, Kelbra/Roßla/Kyffhäuser).
 
@@ -19,7 +19,7 @@ Das Board ist ein MeshCore-Companion und spannt ein eigenes WLAN **`HaldenFunk-X
 | Repository | Inhalt | Funk | Version | Demo |
 |---|---|---|---|---|
 | [Pietwars/HaldenFunk-MeshCore](https://github.com/Pietwars/HaldenFunk-MeshCore) | **dieses Repo:** MeshCore 1.18, WLAN-Oberfläche im HaldenFunk-Design + Bluetooth für die MeshCore-App, Gerätematrix | MeshCore | 0.1.0-alpha | [Live-Demo](https://pietwars.github.io/HaldenFunk-MeshCore/) |
-| [Pietwars/HaldenFunk](https://github.com/Pietwars/HaldenFunk) | Mansfelder-Land-Variante von DisAHRsterRadio, **ohne MeshCore** (LoRaLayer2) | LoRaLayer2 | 0.1.0-alpha | [Live-Demo](https://pietwars.github.io/HaldenFunk/) |
+| [Pietwars/HaldenFunk](https://github.com/Pietwars/HaldenFunk) | Mansfelder-Land-Variante von DisAHRsterRadio, **ohne MeshCore** (LoRaLayer2) | LoRaLayer2 | 0.1.1-alpha | [Live-Demo](https://pietwars.github.io/HaldenFunk/) |
 | [Pietwars/DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) | Ahrtal-Original dieser Firmware: MeshCore 1.18, WLAN + Bluetooth, 105 Geräte | MeshCore | 0.9.0-alpha | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio-MeshCore/) |
 | [Pietwars/DisAHRsterRadio](https://github.com/Pietwars/DisAHRsterRadio) | Ahrtal, **ohne MeshCore**: modernisiertes disaster-radio | LoRaLayer2 | 0.1.1-dev | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio/) |
 | [Pietwars/DisasterMesh](https://github.com/Pietwars/DisasterMesh) | Original-Repo: MeshCore 1.18 mit großer Weboberfläche MeshAhrtal | MeshCore | 0.9.0-alpha | [Live-Demo](https://pietwars.github.io/DisasterMesh/demo/) |
