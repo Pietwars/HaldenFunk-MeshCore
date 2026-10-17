@@ -15,9 +15,9 @@ struct Port : BaseSerialInterface {
   size_t checkRecvFrame(uint8_t* p) override {size_t n=queued;queued=0;if(n)p[0]=11;return n;}
 };
 int main() {
-  const unsigned blocked[]={8,9,11,12,14,15,19,21,23,24,25,32,33,34,35,37,38,40,41,50,51,54,55,57,58,61,62,63,64,65,66,255};
+  const unsigned blocked[]={8,9,11,12,14,15,19,21,23,24,25,32,33,34,35,37,38,41,50,51,54,55,57,58,61,62,63,65,66,255};
   for(auto cmd:blocked) assert(!disaster::publicCompanionCommand(cmd));
-  for(auto cmd:{1,2,3,4,5,7,10,13,16,17,18,20,22,26,27,28,29,30,31,39,42,43,52,56,59,60}) assert(disaster::publicCompanionCommand(cmd));
+  for(auto cmd:{1,2,3,4,5,6,7,10,13,16,17,18,20,22,26,27,28,29,30,31,39,40,42,43,52,56,59,60,64}) assert(disaster::publicCompanionCommand(cmd));
   uint8_t frame[176]={};
   assert(!disaster::validCompanionLength(nullptr,1,176));
   assert(!disaster::validCompanionLength(frame,0,176));

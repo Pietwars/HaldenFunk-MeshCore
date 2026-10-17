@@ -1,69 +1,42 @@
-# Verbinden ohne Passwort
+# Verbinden – offen, ohne Eingabe
 
-Dieser Entwicklungsstand öffnet den lokalen WLAN-Zugang. Bestehende Releases und
-deren Flyer beschreiben teilweise noch den bisherigen Zugang mit Passwort.
+## WLAN-Portal (ESP32-Geräte mit Weboberfläche)
 
-1. Gerät einschalten und am Handy `DisAHRsterRadio-XXXXXX` beziehungsweise
-   `HaldenFunk-XXXXXX` auswählen. Es wird kein WLAN-Passwort eingegeben.
+1. Gerät einschalten und am Handy das WLAN `HaldenFunk-XXXXXX` auswählen – es ist offen, es muss nichts eingegeben werden.
 2. Bei „Kein Internet“ mit diesem WLAN verbunden bleiben.
 3. `http://192.168.4.1` öffnen. Chat, Karte und Meldungen brauchen kein Benutzerkonto.
 
 Der Zugangspunkt stellt lokale Kommunikation bereit, keinen Internetzugang.
-Das WLAN ist unverschlüsselt. Alle Nutzer teilen denselben Knoten und dessen
-Nachrichten/Kanäle. Für öffentliche Kommunikation einen eigenen Knoten verwenden.
-Gespeicherte frühere AP-Passwörter werden beim Start entfernt; Identität,
-Nachrichten und Betreiberpasswörter werden dadurch nicht zurückgesetzt.
+Das WLAN ist unverschlüsselt: Jede Person in Reichweite kann mitlesen und senden.
+Alle Nutzer teilen denselben Knoten und dessen Nachrichten/Kanäle. Höchstens 4 Handys je Gerät.
+Beim Update von einer älteren Firmware wird der früher gespeicherte WLAN-Schlüssel beim Start gelöscht;
+Identität, Kontakte und Verlauf bleiben erhalten.
 
-## MeshCore: Bluetooth ohne PIN
+## MeshCore-App über Bluetooth – ohne PIN
 
-Auf BLE-fähigen Companion-Geräten in der MeshCore-App den Knoten auswählen.
-Die Firmware verwendet Just Works ohne PIN-Eingabe; das Betriebssystem kann
-eine normale Kopplungsbestätigung anzeigen. Keine PIN `000000` eingeben.
-Bestehende Kopplungen bei Verbindungsproblemen am Handy entfernen und neu verbinden.
-Die gespeicherte frühere BLE-PIN wird einmalig auf 0 gesetzt.
+Auf BLE-fähigen Companion-Geräten in der offiziellen MeshCore-App den Knoten auswählen.
+Die Firmware koppelt per „Just Works“ (verschlüsselt, ohne Zahlencode). Das Handy zeigt
+höchstens eine normale Kopplungsbestätigung („Koppeln?“) – einfach bestätigen, nichts eintippen.
+War das Gerät früher mit Zahlencode gekoppelt: Kopplung am Handy entfernen und neu verbinden.
+Ein früher gespeicherter Code wird beim Start auf 0 (aus) gesetzt; die App kann keinen neuen setzen.
 
-Konfiguration, Neustart, Werkseinstellungen, private Schlüssel und beliebige CLI-
-Befehle sind über offene Bluetooth-/Netzwerk-Companion-Zugänge gesperrt.
-Nachrichten, Kontakte lesen/importieren, Raumanmeldung und Status bleiben verfügbar.
-Konfiguration erfolgt über USB; bei WLAN-Portalen außerdem über den bestehenden
-Web-Admin. Dessen Passwort ist unabhängig und bleibt erhalten. Private-Key-Antworten
-von USB werden nicht an die offenen Funkschnittstellen weitergereicht.
-Auf nRF52 wird der DFU-Dienst auf der offenen Companion-Verbindung nicht angeboten;
-Firmwareaktualisierung erfolgt über USB. Repeater-/Room-Server-Administration bleibt
-unverändert. Ein Room-Server kann weiterhin ein eigenes Raum-Passwort verlangen.
+Über die offene Bluetooth-Verbindung funktionieren Nachrichten (Kanäle, Direkt), Kontakte lesen/
+teilen/importieren, Uhrzeit-Abgleich, Bekanntgabe (Advert), Raumanmeldung, Status und Telemetrie.
+Gesperrt (Antwort „deaktiviert“) sind Betreiberfunktionen: Funkparameter, Knotenname, Kanäle
+anlegen, Standort setzen, Neustart, Werkseinstellungen, private Schlüssel, Signieren, Rohpakete
+und CLI. Diese laufen über USB oder den Admin-Bereich der Weboberfläche (nur Betreiber).
+Private-Key-Antworten an USB werden nie an Funk-/Bluetooth-Clients weitergereicht.
+Auf nRF52 wird das Bluetooth-DFU nicht angeboten; Firmware-Updates per USB.
 
-## LoRaLayer2: kombinierte WLAN-/BLE-Testprofile
+## Abnahme vor Freigabe (Hardware)
 
-DisAHRsterRadio und HaldenFunk ohne MeshCore verwenden weiterhin ihre eigenen
-Funk- und Nachrichtenformate. Die Standardprofile öffnen WLAN ohne Passwort.
-Die neuen Profile `t3s3-sx1262-ble`, `t3-v161-sx1276-ble` und
-`heltec-v2-sx1276-ble` aktivieren zusätzlich BLE-UART ohne PIN, gleichzeitig mit WLAN.
-Das ist kein MeshCore-Companion: Die MeshCore-App ist hierfür nicht kompatibel.
-Der UART-Dienst verwendet Nordic-UART-UUIDs (6E400001/2/3-B5A3-F393-E0A9-E50E24DCCA9E).
-Schreiben: vollständige disaster-radio-Nachricht, 4–233 Bytes, beispielsweise
-`00c|<Name> Hallo`; Notifikationen bilden einen Bytestrom und können nach MTU
-aufgeteilt werden. Nur Chat (`c`) und Brett (`b`) werden angenommen.
-Der alte BLE-Befehl zum Abschalten des WLANs/Neustarten ist entfernt.
-
-Diese kombinierten Profile nutzen `huge_app.csv` und eine andere Partitionierung.
-Vor dem Wechsel Firmware und Daten sichern; vollständige Partitionstabelle,
-Anwendung und Dateisystem zusammen flashen. Kein reines App-Update über eine alte
-Partitionierung. WLAN-Standardprofile behalten ihre bisherige Partitionstabelle.
-Telnet auf Port 23 ist deaktiviert; die Betreiberkonsole bleibt über USB verfügbar.
-
-## Abnahme vor Freigabe
-
-- Frisches Handy ohne gespeichertes WLAN/Kopplung: ohne Passwort/PIN verbinden.
-- Update eines vorhandenen Geräts mit bisherigem WLAN-Passwort/BLE-PIN:
-  danach ebenfalls offen, Identität und Nachrichten bleiben erhalten.
-- Zwei Geräte: Chat und Brett in beide Richtungen, Neustart und Wiederverbindung.
-- iPhone und Android: WLAN ohne Internet beibehalten, Bluetooth neu koppeln,
-  Karte → Chat/Brett und Bildschirmtastatur prüfen.
+- Frisches Handy ohne gespeichertes WLAN/Kopplung: WLAN verbinden ohne Eingabe; MeshCore-App
+  (Android und iPhone) koppelt ohne Zahlencode, lädt Geräteinfo, Kontakte, Kanäle, synchronisiert die Uhr.
+- Update eines Geräts mit älterer Firmware (früher mit WLAN-Schlüssel/Bluetooth-Code):
+  danach ebenfalls offen, Identität und Nachrichten bleiben erhalten; alte Kopplung entfernen.
+- Zwei Geräte: Kanal- und Direktnachrichten in beide Richtungen, Neustart und Wiederverbindung.
 - Vier WLAN-Clients plus BLE: wiederholte Nachrichten, RAM-Minimum, keine Resets.
-- Über BLE Funkparameter, CLI, Schlüssel-Export und Reset versuchen:
-  gesperrt. Danach dieselbe zulässige Konfiguration über USB/Web-Admin prüfen.
-- Verkürzte Radio-/Reset-/Kontaktbefehle senden: Fehlerantwort, keine Änderung.
-- LoRaLayer2-BLE: MTU 23 und 260, überlange/kurze Frames, Queue voll,
-  Abmelden/Neuanmelden und ausgeschaltetes Handy während der Übertragung prüfen.
+- Über die App Funkparameter, Name, Schlüssel-Export und Reset versuchen: „deaktiviert“, keine Änderung.
+  Danach dieselbe Konfiguration über USB bzw. Admin-Bereich prüfen.
 
-Die neuen Zugangswege sind ohne Hardwareabnahme Entwicklungsstand.
+Die offenen Zugangswege sind ohne Hardwareabnahme Entwicklungsstand.

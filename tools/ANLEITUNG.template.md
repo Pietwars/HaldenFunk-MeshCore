@@ -1,4 +1,4 @@
-> Neuer Entwicklungsstand: WLAN ohne Passwort; MeshCore-Bluetooth ohne PIN. Alte Kopplungen bei Bedarf am Handy entfernen. Betreiberzugang bleibt getrennt geschützt. Details: https://github.com/Pietwars/HaldenFunk-MeshCore/blob/main/docs/OFFENER_ZUGANG.md
+> Offenes WLAN, MeshCore-Bluetooth ohne Zahlencode – einfach verbinden. Alte Kopplungen bei Bedarf am Handy entfernen. Details: https://github.com/Pietwars/HaldenFunk-MeshCore/blob/main/docs/OFFENER_ZUGANG.md
 
 # @PREFIX@ für @BOARD@
 
@@ -15,7 +15,7 @@ MeshCore-Companion mit WLAN-Weboberfläche · Version @VERSION@ · Commit @COMMI
 - Klassische ESP32 (T3 V1.6.1, Heltec V2): Bootschleife beim Start von WLAN + Bluetooth behoben (NimBLE statt Bluedroid, WLAN-Portal zuerst, Bluetooth nur bei genug Speicher). Von 0.1.0-alpha reicht ein Update von `firmware.bin` an `0x10000` (Einstellungen bleiben); die MeshCore-App einmal neu koppeln.
 - Regionalvariante fürs Mansfelder Land: Kupfer/Anthrazit-Design, Orte und Offline-Karten (Sangerhausen, Eisleben, Mansfeld/Hettstedt, Kelbra/Kyffhäuser), WLAN `HaldenFunk-XXXXXX`.
 
-- Parallel zum WLAN-Portal kann sich die offizielle MeshCore-App per **Bluetooth** verbinden. Die Verbindung benötigt keine PIN; Funkkonfiguration bleibt USB/Web-Admin vorbehalten.
+- Parallel zum WLAN-Portal kann sich die offizielle MeshCore-App per **Bluetooth** verbinden. Kopplung ohne Zahlencode; Funkkonfiguration bleibt USB/Admin-Bereich vorbehalten.
 - Neue Partitionstabelle (3 MB App, kein OTA): beim Umstieg von einer älteren Version **einmal komplett mit der factory-Datei** flashen.
 
 ## 2. Erstinstallation
@@ -28,9 +28,11 @@ MeshCore-Companion mit WLAN-Weboberfläche · Version @VERSION@ · Commit @COMMI
 
 Enthalten: Bootloader (@BOOT@), Partitionen (0x8000), boot_app0 (0xe000), Firmware mit Weboberfläche (0x10000), SPIFFS-Dateisystem (@FSOFF@).
 
-## 3. Ohne Passwort verbinden
+## 3. Verbinden
 
-Am Handy das WLAN `HaldenFunk-XXXXXX` auswählen und ohne Passwort verbinden. Bei „Kein Internet“ verbunden bleiben, dann `http://192.168.4.1` öffnen. Das separate Adminpasswort wird beim ersten Start über USB (115200 Baud) ausgegeben und bleibt geschützt. Bluetooth verbindet ohne PIN; bei alten Kopplungen am Handy entkoppeln und neu verbinden.
+Am Handy das offene WLAN `HaldenFunk-XXXXXX` auswählen und verbinden (höchstens 4 Handys, nichts eingeben). Bei „Kein Internet“ verbunden bleiben, dann `http://192.168.4.1` öffnen. Achtung: offenes, unverschlüsseltes WLAN – jede Person in Reichweite kann mitlesen und senden. Bluetooth (MeshCore-App) koppelt ohne Zahlencode; bei alten Kopplungen am Handy entkoppeln und neu verbinden.
+
+Nur für Betreiber: Die Admin-Zugangsdaten für den Admin-Bereich (Knotenname, Kanäle, Funkprofil) erscheinen einmalig beim ersten Start über USB (115200 Baud); neu erzeugen mit 10 s BOOT-Taste.
 
 ## 4. Update (nur Firmware)
 

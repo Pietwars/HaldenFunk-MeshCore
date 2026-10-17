@@ -40,8 +40,10 @@ inline bool validCompanionLength(const uint8_t* frame,size_t len,size_t capacity
 inline bool publicCompanionCommand(uint8_t cmd) {
   switch(cmd) {
     case 1: case 2: case 3: case 4: case 5: case 7: case 10:
+    case 6:  // device time: MeshCore only moves the clock forward; the app syncs it on connect
     case 13: case 16: case 17: case 18: case 20: case 22:
     case 26: case 27: case 28: case 29: case 30: case 31:
+    case 40: case 64: // read-only (custom vars, default flood scope), queried by the app
     case 39: case 42: case 43: case 52: case 56: case 59: case 60:
       return true;
     default: return false;
