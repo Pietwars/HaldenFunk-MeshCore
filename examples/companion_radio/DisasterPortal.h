@@ -52,7 +52,7 @@ class DisasterPortal : public BaseSerialInterface {
   int activeJob=-1;
   uint32_t routeJob=0;uint8_t routeAttempt=255;
   WebServer http{80};
-  String apPassword; uint32_t blePin=0; bool apOk=false; unsigned long apRetry=0, apPrint=0;
+  String apPassword; uint32_t blePin=0; bool modemSleep=false, apOk=false; unsigned long apRetry=0, apPrint=0;
   DNSServer dns;
   bool enabled = false, storageOK = true;
   uint8_t startup = 0, active = 0;
@@ -214,7 +214,7 @@ public:
     uint64_t mac=ESP.getEfuseMac(); char suffix[7]; snprintf(suffix,sizeof(suffix),"%06X",(unsigned)(mac&0xffffff));
     apName=String("HaldenFunk-")+suffix;
     apPassword=password;
-    WiFi.mode(WIFI_AP); WiFi.setSleep(false);
+    WiFi.mode(WIFI_AP); WiFi.setSleep(modemSleep);
 #ifdef DISASTER_WIFI_TX
     WiFi.setTxPower(DISASTER_WIFI_TX); Serial.println("[WLAN] reduzierte Sendeleistung"); Serial.flush(); delay(200);
 #endif
@@ -401,6 +401,7 @@ public:
     return ok;
   }
   void setBlePin(uint32_t p){blePin=p;}
+  void setModemSleep(bool on){modemSleep=on;}
   const String &ssid() const {return apName;}
   const String &wifiPassword() const {return apPassword;}
   bool apRunning() const {return apOk;}

@@ -8,8 +8,9 @@ MeshCore-Companion mit WLAN-Weboberfläche · Version @VERSION@ · Commit @COMMI
 
 **Antenne anschrauben, bevor das Board Strom bekommt.**
 
-## Neu in 0.1.0-alpha (HaldenFunk-MeshCore)
+## Neu in @VERSION@ (HaldenFunk-MeshCore)
 
+- Klassische ESP32 (T3 V1.6.1, Heltec V2): Bootschleife beim Start von WLAN + Bluetooth behoben (NimBLE statt Bluedroid, WLAN-Portal zuerst, Bluetooth nur bei genug Speicher). Von 0.1.0-alpha reicht ein Update von `firmware.bin` an `0x10000` (Einstellungen bleiben); die MeshCore-App einmal neu koppeln.
 - Regionalvariante fürs Mansfelder Land: Kupfer/Anthrazit-Design, Orte und Offline-Karten (Sangerhausen, Eisleben, Mansfeld/Hettstedt, Kelbra/Kyffhäuser), WLAN `HaldenFunk-XXXXXX`.
 
 - Parallel zum WLAN-Portal kann sich die offizielle MeshCore-App per **Bluetooth** verbinden. Die PIN ist pro Gerät zufällig und steht seriell (`[BLE] MeshCore-App: Bluetooth-PIN …`) und auf dem Display.

@@ -2,7 +2,7 @@
 # Baut alle Envs eines Geraets aus tools/devices.json und packt ein Release-Asset.
 # Aufruf: tools/build_device.sh <Geraet> [Ausgabeordner]
 set -uo pipefail
-ROOT=$(cd "$(dirname "$0")/.." && pwd); DEV=$1; OUT=${2:-$ROOT/dist/devices}; VERSION=${VERSION:-0.1.0-alpha}
+ROOT=$(cd "$(dirname "$0")/.." && pwd); DEV=$1; OUT=${2:-$ROOT/dist/devices}; VERSION=${VERSION:-$(python3 "$ROOT/tools/version.py")}
 ESPTOOL=${ESPTOOL:-"python3 -m esptool"}; cd "$ROOT"; mkdir -p "$OUT"
 read -r CHIP WEBUI ENVS < <(python3 -c "
 import json,sys;d={e['device']:e for e in json.load(open('tools/devices.json'))}['$DEV']
