@@ -1,5 +1,10 @@
 # Änderungen
 
+## Unveröffentlicht · 17.10.2026 · Funkprofil EU/UK (Narrow)
+
+- Standard-Funkprofil vereinheitlicht auf das MeshCore-Preset **EU/UK (Narrow): 869,618 MHz, 62,5 kHz, SF8, CR 4/8**. Neu: `-D LORA_CR=8` global in `platformio.ini` – bisher bekamen nur die eigenen Profile CR 4/8, die übrigen Geräte der Matrix fielen auf CR 4/5 zurück. Sendeleistung unverändert (nicht erhöht), Syncword MeshCore-Standard.
+- Doku (`docs/cli_commands.md` u. a.): Standardwerte `869.618,62.5,8,8`.
+
 ## 0.1.0-alpha · 17.10.2026 · erste Vorabversion HaldenFunk-MeshCore
 
 [Release v0.1.0-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.0-alpha) – Vorabversion, auf keinem Board abgenommen.
