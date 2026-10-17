@@ -13,6 +13,7 @@
 - WLAN-Portal startet **vor** Bluetooth; Bluetooth nur bei genug freiem Heap (`DISASTER_BLE_MIN_HEAP`, Standard 70 000 Bytes, und `DISASTER_BLE_MIN_BLOCK`).
 - Start-Wächter (`DisasterBootGuard.h`): Startstufe im RTC-RAM; nach einem Absturz beim/kurz nach dem Bluetooth-Start bleibt Bluetooth bis zum Aus-/Einschalten aus, das Portal läuft weiter – keine Bootschleife mehr. Serielle `[BOOT]`/`[HEAP]`-Zeilen zeigen den Speicher nach jeder Stufe.
 - Mit Bluetooth bleibt WLAN-Modem-Sleep an (Pflicht bei WLAN+BT-Koexistenz).
+- **MeshCore-App bekam nach dem Koppeln keine Geräteinfo (Timeout, NimBLE):** TX-Characteristic ohne `READ_ENC/READ_AUTHEN` (sonst startet NimBLE beim Abo selbst eine Kopplung, und der erste App-Befehl scheitert), eigenes Senden über `ble_gattc_notify_custom()` mit Wiederholung bis Abo/MTU-Austausch, Sendewarteschlange 8; Bluetooth wieder vor dem Portal in `MultiSerialInterface`; `[BLE]`-Diagnose seriell.
 
 ### Speicher / schlanker Code
 
