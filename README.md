@@ -79,7 +79,7 @@ Karte → Chat/Brett und auf dem Board mehrere WLAN-Clients sowie BLE parallel p
 | PlatformIO-Env | Board | App-Partition belegt (3 MB, `huge_app.csv`) |
 |---|---|---|
 | `disaster_t3s3_sx1262_wifi` | LILYGO T3-S3 SX1262 | ca. 65 % |
-| `disaster_tlora_v2_1_sx1276_wifi` | LILYGO T3 V1.6.1 SX1276 | ca. 87 % |
+| `disaster_tlora_v2_1_sx1276_wifi` | LILYGO T3 V1.6.1 SX1276 | ca. 98 % (größere Mansfelder-Land-Karten) |
 | `disaster_heltec_v2_sx1276_wifi` | Heltec WiFi LoRa 32 V2 SX1276 | ca. 72 % |
 | `disaster_t3s3_sx1262_repeater` / `_room` | T3-S3 SX1262 als Repeater / Room-Server (Brett) | ca. 29 % |
 | `disaster_ttgo_repeater` / `_room` | T3 V1.6.1 / TTGO LoRa32 als Repeater / Room-Server | ca. 44 % |
@@ -96,7 +96,7 @@ Auf ESP32-Geräten mit Bluetooth sind Web-Portal und BLE-Companion beide am selb
 
 - **Bluetooth-PIN:** pro Gerät zufällig (6-stellig), beim ersten Start erzeugt und gespeichert. Steht seriell (115200 Baud, Zeile `[BLE] MeshCore-App: Bluetooth-PIN …`, alle 30 s wiederholt) und auf dem Display.
 - **Grenzen:** Ruft die App Nachrichten aus der Warteschlange ab, sieht das Portal sie im Verlauf mit, die App aber nicht umgekehrt die Abrufe des Portals. Gleichzeitige Befehle aus App und Portal können sich in seltenen Fällen kreuzen. WLAN + Bluetooth + Webserver brauchen viel RAM; auf klassischen ESP32 (T3 V1.6.1, Heltec V2) ist das auf Hardware **nicht geprüft**.
-- **Speicher:** Portal-Profile nutzen jetzt die Partition `huge_app.csv` (3 MB App, kein OTA, 896 KB SPIFFS). T3 V1.6.1: 87 % von 3 MB, T3-S3: 65 %, Heltec V2: 72 %. Nach dem Wechsel von 0.1.0/älter einmal komplett mit `factory.bin` flashen (Partitionstabelle ändert sich, Identität wird neu erzeugt).
+- **Speicher:** Portal-Profile nutzen jetzt die Partition `huge_app.csv` (3 MB App, kein OTA, 896 KB SPIFFS). T3 V1.6.1: ca. 98 % von 3 MB, T3-S3: 65 %, Heltec V2: 72 %. Nach dem Wechsel von 0.1.0/älter einmal komplett mit `factory.bin` flashen (Partitionstabelle ändert sich, Identität wird neu erzeugt).
 
 ## So wird die Oberfläche auf MeshCore abgebildet
 
@@ -238,7 +238,7 @@ Gebaut werden alle 105 Geräte, für die MeshCore v1.18.0 Firmware anbietet (Que
 ## Grenzen / offen
 
 - Nicht auf Hardware getestet, auch nicht das Zusammenspiel mit MeshCore 1.18
-- T3 V1.6.1 hat nur noch wenig Flash frei (ca. 5 %)
+- T3 V1.6.1 hat kaum noch Flash frei (ca. 2 %, 72 KB) – die Mansfelder-Land-Karten sind mit 633 KB gut doppelt so groß wie die Ahrtal-Karten
 - Die Brett-Funktion braucht einen erreichbaren Room-Server (`disaster_t3s3_sx1262_room` bzw. `disaster_ttgo_room`, im CI gebaut, nicht auf Hardware geprüft)
 - Positionsfreigabe: Wer einen Standort als Knoten-Standort setzt, schaltet das Teilen der Position in Adverts ein (bei 0,0 wieder aus)
 - Funkprofil-Auswahl (Deutschland-Presets) aus DisasterMesh ist in der neuen Oberfläche nicht enthalten. Die API `/api/radio` existiert weiter

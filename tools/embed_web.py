@@ -16,9 +16,10 @@ out += arr('PORTAL_ICON', (root / 'web/app-icon.png').read_bytes())
 out += '#define PORTAL_HAS_BG 1\n'
 out += arr('PORTAL_BG_WEBP', (root / 'web/bg.webp').read_bytes())
 maps = sorted((root / 'web/map').glob('*.json.gz'))
-for m in maps: out += arr('MAP_' + m.name.split('.')[0].upper(), m.read_bytes())
+ident = lambda m: 'MAP_' + m.name.split('.')[0].upper().replace('-', '_')
+for m in maps: out += arr(ident(m), m.read_bytes())
 out += 'struct PortalMap { const char *name; const uint8_t *data; size_t len; };\n'
-out += 'static const PortalMap PORTAL_MAPS[] = {' + ','.join('{"%s",MAP_%s,sizeof(MAP_%s)}' % (m.name.split('.')[0], m.name.split('.')[0].upper(), m.name.split('.')[0].upper()) for m in maps) + '};\n'
+out += 'static const PortalMap PORTAL_MAPS[] = {' + ','.join('{"%s",%s,sizeof(%s)}' % (m.name.split('.')[0], ident(m), ident(m)) for m in maps) + '};\n'
 (cr / 'PortalAssets.h').write_text(out, encoding='utf-8', newline='\n')
 print('Seite %d Bytes, Bild %d Bytes, %d Karten (%d Bytes)' % (len(html.encode()), (root / 'web/bg.webp').stat().st_size, len(maps), sum(m.stat().st_size for m in maps)))
 
