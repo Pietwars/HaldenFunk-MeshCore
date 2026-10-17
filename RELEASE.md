@@ -1,15 +1,38 @@
-# Releasing Firmware
+# Release von HaldenFunk-MeshCore
 
-GitHub Actions is set up to automatically build and release firmware.
+> Diese Datei ersetzt die Upstream-Anleitung von MeshCore (Tags `companion-v…`, `repeater-v…`, `room-server-v…`
+> und die zugehörigen Upstream-Workflows). Diese Workflows gibt es in diesem Repository **nicht**; Releases
+> entstehen wie unten beschrieben.
 
-It will automatically build firmware when one of the following tag formats are pushed.
+## 1. Version setzen (einzige Quelle)
 
-- `companion-v1.0.0`
-- `repeater-v1.0.0`
-- `room-server-v1.0.0`
+Die Version steht **nur** in `platformio.local.ini`:
 
-> NOTE: replace `v1.0.0` with the version you want to release as.
+```ini
+[hf]
+version = 0.1.1-alpha
+```
 
-- You can push one, or more tags on the same commit, and they will all build separately.
-- Once the firmware has been built, a new (draft) GitHub Release will be created.
-- You will need to update the release notes, and publish it.
+Alle Firmwarekennungen (`-D FIRMWARE_VERSION='"v1.18.0-hf${hf.version}…"'`) in `platformio.local.ini` und
+`platformio.devices.ini` lesen diesen Wert. `tools/version.py` gibt ihn für Skripte aus
+(`tools/build_device.sh`, `tools/package.sh`, `tools/gen_devices.py`, `tools/device_table.py`,
+`tools/build_pages.py` → Demo-Banner, `tools/verify_package.py`).
+
+Von Hand nachziehen: README (Kopfzeile, Projektfamilie, Gerätetabelle über `python3 tools/device_table.py`),
+`CHANGELOG.md` (Abschnitt `## <Version>`), Demo-Firmwarekennung in `web/index.html`
+(danach `python3 tools/embed_web.py`). `python3 tools/check_version.py` prüft das (läuft auch im CI).
+
+## 2. Bauen
+
+- CI „Alle Geräte (MeshCore-Konfigurator-Liste)“ (`.github/workflows/devices.yml`) baut auf `main` alle 105 Geräte
+  mit `tools/build_device.sh` und prüft jedes Paket mit `tools/verify_package.py`
+  (factory.bin, Teile, `spiffs.bin` bei WLAN-Portal, `SHA256SUMS`, deutsche `ANLEITUNG.md`).
+- Lokal: `tools/build_device.sh <Gerät>` – Firmware-Builds **nacheinander**, nie parallel.
+
+## 3. Veröffentlichen
+
+1. Artefakte des Devices-Laufs auf `main` laden: `gh run download <run-id> -R Pietwars/HaldenFunk-MeshCore`.
+2. `python3 tools/verify_package.py <Ordner mit allen Zips>` – muss „0 fehlerhaft/fehlend“ melden.
+3. Flyer neu erzeugen (Druck-PDF mit QR-Codes, Digital-PDF mit Links) und in `docs/flyer/` committen.
+4. Tag `v<Version>` auf den geprüften Commit, Vorabversion anlegen:
+   `gh release create v<Version> --prerelease -R Pietwars/HaldenFunk-MeshCore --notes-file … <Zips> docs/flyer/*.pdf`.

@@ -36,6 +36,8 @@ jobs:
       - run: pip install -U platformio esptool
       - name: Bauen und packen
         run: tools/build_device.sh "${{ matrix.device }}" dist/devices
+      - name: Paket pruefen (factory.bin, Teile, spiffs.bin, SHA256SUMS, ANLEITUNG)
+        run: python3 tools/verify_package.py dist/devices/*.zip
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -43,3 +45,4 @@ jobs:
           path: |
             dist/devices/*.zip
             dist/devices/*.log
+          if-no-files-found: error

@@ -1,12 +1,35 @@
 # Änderungen
 
-## Unveröffentlicht · Fix Bootschleife klassischer ESP32 (T3 V1.6.1, Heltec V2)
+## 0.1.1-alpha · 17.10.2026 · Fix Bootschleife klassischer ESP32, schlanke Firmware
+
+[Release v0.1.1-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.1-alpha) – Vorabversion, auf keinem Board abgenommen. Firmwarekennung `v1.18.0-hf0.1.1-alpha`, Pakete `HaldenFunk-MeshCore-0.1.1-alpha-<Gerät>.zip`.
+
+**Upgrade von 0.1.0-alpha:** Partitionstabelle unverändert – `teile-wifi/firmware.bin` an `0x10000` reicht, Einstellungen bleiben. Klassische ESP32 (NimBLE): MeshCore-App einmal neu koppeln.
+
+### Bootschleife (PR #1)
 
 - **Fehler:** Auf klassischen ESP32 ohne PSRAM endete der Start nach `WLAN … Passwort … Browser` in `abort()` (`operator new` → `__cxa_allocate_exception` → `abort`, aus `DisasterPortal::begin()` beim ersten `http.on("/")`) und das Gerät startete endlos neu. Ursache: Bluedroid-BLE (Controller im Dual-Mode inkl. Classic-BT) + WLAN-softAP haben den internen Heap (~195 KB) vollständig verbraucht.
 - Klassische ESP32-Portal-Profile (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) nutzen jetzt **NimBLE** (`h2zero/NimBLE-Arduino 1.4.3`, `-D DISASTER_NIMBLE`): Controller nur BLE, Classic-BT-Speicher (~15 KB) freigegeben, deutlich kleinerer Host; Flash T3 V1.6.1 85 % → 70 %. Gleicher Dienst, gleiche UUIDs, PIN-Kopplung (Bonding+MITM+SC). Bereits gekoppelte Handys einmal neu koppeln.
 - WLAN-Portal startet **vor** Bluetooth; Bluetooth nur bei genug freiem Heap (`DISASTER_BLE_MIN_HEAP`, Standard 70 000 Bytes, und `DISASTER_BLE_MIN_BLOCK`).
 - Start-Wächter (`DisasterBootGuard.h`): Startstufe im RTC-RAM; nach einem Absturz beim/kurz nach dem Bluetooth-Start bleibt Bluetooth bis zum Aus-/Einschalten aus, das Portal läuft weiter – keine Bootschleife mehr. Serielle `[BOOT]`/`[HEAP]`-Zeilen zeigen den Speicher nach jeder Stufe.
 - Mit Bluetooth bleibt WLAN-Modem-Sleep an (Pflicht bei WLAN+BT-Koexistenz).
+
+### Speicher / schlanker Code
+
+- **T3 V1.6.1 / TLora V2.1-1.6 wurde ohne Optimierung gebaut (-O0):** Die Upstream-Variante entfernt mit `build_unflags = -Os` die Optimierung, und das eigene `-Os` in `build_flags` wird dabei mit entfernt. Die HaldenFunk-Profile (`disaster_ttgo_wifi`, `disaster_tlora_v2_1_sx1276_wifi`, `_repeater`, `_room`) übernehmen dieses `build_unflags` nicht mehr → `-Os` wie bei allen anderen Boards (−515 KB).
+- Sensorbibliotheken aus `sensor_base` (INA3221/219/226/260, AHTX0, BME280/680, BMP280/085, SHTC3, SHT4x, LPS22HB, MLX90614, VL53L0X, MicroNMEA, BSEC) werden für diese Profile nicht mehr gebaut (`lib_deps` neu, `lib_ignore` in `[hf_classic_slim]`). `ENV_INCLUDE_*` waren dort schon aus; der Sensorcode in `EnvironmentSensorManager` fällt beim Kompilieren weg, Batterie-Telemetrie bleibt.
+- NimBLE-Profile (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) bauen die Bluedroid-Bibliothek `ESP32 BLE Arduino` und `SerialBLEInterface.cpp` nicht mehr mit (`[hf_no_bluedroid]`, ca. −10 KB).
+- Flash (3-MB-App-Partition): **T3 V1.6.1 85 % (0.1.0) → 69,6 % (NimBLE) → 52,4 %**; Heltec V2 70 % → 52,6 % (NimBLE) → 52,3 %; T-Beam SX1262 54,6 % → 54,3 %; Meshadventurer 53,0 % → 52,7 % (Werte ab „NimBLE“ = Stand PR #1); TTGO Repeater/Room 44 % → 29,5 %.
+
+### Sonstiges
+
+- **Einzige Versionsquelle** `[hf] version` in `platformio.local.ini`; alle `FIRMWARE_VERSION` nutzen `${hf.version}`, Skripte lesen `tools/version.py`; `tools/check_version.py` prüft README/CHANGELOG/Demo im CI.
+- `tools/verify_package.py`: prüft jedes Geräte-Paket (factory.bin, Teile, `spiffs.bin` bei WLAN-Portal, `SHA256SUMS`, deutsche `ANLEITUNG.md`), läuft im Geräte-CI.
+- Workflows: `if-no-files-found: error` bei allen `upload-artifact`-Schritten.
+- Ungenutztes `-D FW_VARIANT_T3V161=1` entfernt; `RELEASE.md` beschreibt jetzt den HaldenFunk-Release statt der Upstream-Tags.
+- `ANLEITUNG.md` der Pakete: Hinweis zum Upgrade von 0.1.0-alpha und zum neuen Koppeln (NimBLE).
+- README: Download-Link auf das Release, Upgrade-Hinweis 0.1.0 → 0.1.1, Flash-Tabelle; Demo-Banner mit Versionsnummer; Flyer 0.1.1-alpha.
+- `docs/nrf52_power_management.md`: tote infocenter-Links durch docs.nordicsemi.com ersetzt.
 
 ## 0.1.0-alpha · 17.10.2026 · erste Vorabversion HaldenFunk-MeshCore
 

@@ -220,6 +220,6 @@ DEBUG: PWRMGT: LPCOMP wake configured (AIN7, ref=3/8 VDD)
 
 ## References
 
-- [nRF52840 Product Specification - POWER](https://infocenter.nordicsemi.com/topic/ps_nrf52840/power.html)
-- [nRF52840 Product Specification - LPCOMP](https://infocenter.nordicsemi.com/topic/ps_nrf52840/lpcomp.html)
-- [SoftDevice S140 API - Power Management](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.1.0/group__nrf__sdm__api.html)
+- [nRF52840 Product Specification - POWER](https://docs.nordicsemi.com/bundle/ps_nrf52840/page/power.html)
+- [nRF52840 Product Specification - LPCOMP](https://docs.nordicsemi.com/bundle/ps_nrf52840/page/lpcomp.html)
+- [SoftDevice S140 v7.3.0 API - SoftDevice Manager (`nrf_sdm.h`)](https://docs.nordicsemi.com/bundle/s140_v7.3.0_api/page/index.html)

@@ -12,6 +12,8 @@ jobs:
         with:
           node-version: 22
       - run: node tests/web_regression.cjs
+      - name: Versionsangaben pruefen (einzige Quelle: platformio.local.ini [hf] version)
+        run: python3 tools/check_version.py
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -42,3 +44,4 @@ jobs:
             .pio/build/${{ matrix.env }}/bootloader.bin
             .pio/build/${{ matrix.env }}/partitions.bin
             .pio/build/${{ matrix.env }}/spiffs.bin
+          if-no-files-found: error

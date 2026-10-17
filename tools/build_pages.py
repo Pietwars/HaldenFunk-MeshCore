@@ -3,6 +3,9 @@
 import gzip,shutil,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'tools'))
+from version import version
+VER=version()
 SRC=ROOT/'web'; OUT=Path(sys.argv[1] if len(sys.argv)>1 else ROOT/'_site')
 if OUT.exists(): shutil.rmtree(OUT)
 shutil.copytree(SRC,OUT)
@@ -11,7 +14,7 @@ for gz in (OUT/'map').glob('*.json.gz'):
 html=(OUT/'index.html').read_text(encoding='utf-8')
 force='<script>if(!/demo/.test(location.search))location.replace("?demo=1"+location.hash)</script>'
 banner=('<div style="background:#f0d5a0;color:#3b2a1f;text-align:center;'
-        'font:600 13px/16px system-ui,sans-serif;padding:6px 8px;height:28px;box-sizing:border-box;white-space:nowrap;overflow:hidden">Demo – simulierte Daten · '
+        'font:600 13px/16px system-ui,sans-serif;padding:6px 8px;height:28px;box-sizing:border-box;white-space:nowrap;overflow:hidden">Demo '+VER+' – simulierte Daten · '
         '<a style="color:#3b2a1f" href="https://github.com/Pietwars/HaldenFunk-MeshCore">Quellcode &amp; Firmware</a> · '
         '<a style="color:#3b2a1f" href="flyer/HaldenFunk-MeshCore-Flyer-digital.pdf">Flyer</a></div>')
 html=html.replace('<head>','<head>'+force,1)

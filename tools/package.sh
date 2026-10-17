@@ -2,7 +2,7 @@
 # Flashpakete je Board: factory.bin (ab 0x0) + Teile + SHA256SUMS + ANLEITUNG.md
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd); OUT=${1:-$ROOT/dist}
-PREFIX=${PREFIX:-HaldenFunk-MeshCore}; VERSION=${VERSION:-0.1.0-alpha}; REPO=${REPO:-https://github.com/Pietwars/HaldenFunk-MeshCore}
+PREFIX=${PREFIX:-HaldenFunk-MeshCore}; VERSION=${VERSION:-$(python3 "$ROOT/tools/version.py")}; REPO=${REPO:-https://github.com/Pietwars/HaldenFunk-MeshCore}
 TEMPLATE=${TEMPLATE:-$ROOT/tools/ANLEITUNG.template.md}; PIODIR=${PIODIR:-$ROOT}; cd "$PIODIR"
 ESPTOOL=${ESPTOOL:-"python3 -m esptool"}
 COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo unbekannt)

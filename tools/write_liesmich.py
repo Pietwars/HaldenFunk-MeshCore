@@ -19,6 +19,7 @@ if e['chip'].startswith('esp32'):
             f'2. Flash Address **`0x0`**, Datei `*-{r}-factory.bin`, **Program**, danach RST.',
             f'3. Update ohne Datenverlust: nur `teile-{r}/firmware.bin` an **`0x10000`**.','',
             f'Teile: bootloader.bin {b}, partitions.bin 0x8000, boot_app0.bin 0xe000, firmware.bin 0x10000'+(f', spiffs.bin {fs}' if fs!='-' else '')+'.','']
+        if r=='wifi': L+=['**Update von 0.1.0-alpha:** gleiche Partitionstabelle – es reicht `teile-wifi/firmware.bin` an `0x10000`; Einstellungen, Identität, Kontakte, WLAN-Passwort und Bluetooth-PIN bleiben erhalten. Von älteren Versionen (vor 0.1.0-alpha) einmal komplett mit der factory-Datei an `0x0`.'+(' **Klassischer ESP32:** Bluetooth läuft ab 0.1.1-alpha mit NimBLE – die alte Kopplung in den Bluetooth-Einstellungen des Handys entfernen und die MeshCore-App einmal neu koppeln (gleiche PIN).' if ch=='esp32' else ''),'']
         if r=='wifi': L+=['Danach mit dem WLAN `HaldenFunk-XXXXXX` verbinden. Das Passwort steht seriell (115200 Baud) und auf dem Display (falls vorhanden). Im Browser http://192.168.4.1 öffnen.','','Parallel kann sich die offizielle MeshCore-App per **Bluetooth** verbinden (falls das Gerät BLE hat). Die Bluetooth-PIN ist pro Gerät zufällig und steht seriell (`[BLE] … PIN`) und auf dem Display.','']
 elif e['chip'] in('nrf52','rp2040'):
     L+=['## Flashen per UF2','','1. Gerät per USB anschließen und **zweimal schnell Reset** drücken (RP2040: BOOTSEL gedrückt halten beim Einstecken). Es erscheint ein USB-Laufwerk.',
