@@ -3,6 +3,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+# Überholte Läufe abbrechen: Ein neuer Push auf denselben PR bzw. Nicht-main-Branch bricht den älteren Lauf ab.
+# main, Tags und manuelle Läufe bekommen je eine eigene Gruppe (run_id) und werden nie abgebrochen oder verdrängt.
+concurrency:
+  group: ${{ github.workflow }}-${{ (github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number)) || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main' && github.ref) || format('run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main') }}
 jobs:
   web-regression:
     runs-on: ubuntu-latest

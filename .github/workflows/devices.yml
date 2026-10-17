@@ -5,6 +5,11 @@ on:
     paths: ['tools/devices.json', 'platformio.devices.ini', 'tools/build_device.sh', 'examples/**', 'src/**', 'variants/**', '.github/workflows/devices.yml']
   pull_request:
   workflow_dispatch:
+# Überholte Läufe abbrechen: Ein neuer Push auf denselben PR bzw. Nicht-main-Branch bricht den älteren Lauf ab.
+# main, Tags und manuelle Läufe bekommen je eine eigene Gruppe (run_id) und werden nie abgebrochen oder verdrängt.
+concurrency:
+  group: ${{ github.workflow }}-${{ (github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number)) || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main' && github.ref) || format('run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && github.ref != 'refs/heads/main') }}
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -12,8 +17,28 @@ jobs:
       devices: ${{ steps.m.outputs.devices }}
     steps:
       - uses: actions/checkout@v4
+      # Volle Geräteliste nur auf main, Tags und bei manuellem Start; in PRs (und auf anderen Branches) nur die Kern-Boards:
+      # LILYGO T3-S3 SX1262, LILYGO T3 V1.6.1 (TTGO LoRa32, SX1276), Heltec V2 (SX1276), Heltec V3 (ESP32-S3) und RAK4631 (nRF52).
+      # Releases bauen weiterhin alle Geräte (release.yml).
       - id: m
-        run: echo "devices=$(python3 -c "import json;print(json.dumps([d['device'] for d in json.load(open('tools/devices.json'))]))")" >> "$GITHUB_OUTPUT"
+        env:
+          VOLL: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))) }}
+          KERN: LilyGo_T3S3_sx1262 LilyGo_TLora_V2_1_1_6 Heltec_v2 Heltec_v3 RAK_4631
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          alle = [d['device'] for d in json.load(open('tools/devices.json'))]
+          if os.environ['VOLL'] == 'true':
+              liste = alle
+          else:
+              kern = os.environ['KERN'].split()
+              fehlt = [k for k in kern if k not in alle]
+              if fehlt:
+                  raise SystemExit(f"Kern-Boards fehlen in tools/devices.json: {fehlt}")
+              liste = kern
+          print(f"devices={json.dumps(liste)}")
+          PY
+          echo "Matrix: $(tail -n1 "$GITHUB_OUTPUT")"
   build:
     needs: setup
     runs-on: ubuntu-latest
