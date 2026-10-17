@@ -2,8 +2,9 @@
 
 ## 0.1.0-alpha · 17.10.2026 · erste Vorabversion HaldenFunk-MeshCore
 
-Vorabversion, auf keinem Board abgenommen. Kein Release.
+[Release v0.1.0-alpha](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.1.0-alpha) – Vorabversion, auf keinem Board abgenommen.
 
+- **Karten verkleinert** (`tools/shrink_maps.py`): Linien vereinfacht (Douglas-Peucker), Koordinaten gerastert, auf den Kartenausschnitt zugeschnitten, kleine Wald-/Wasserflächen und kurze Wegstücke weggelassen; Orte, Halden und Schächte vollständig. Alle Karten 633 KB → 223 KB, Übersicht Mansfelder Land 335 KB → 90 KB. Flash T3 V1.6.1: 98 % → 85 %, T3-S3 62 %, Heltec V2 70 %. Demo und Vorschaubild der Karte aktualisiert.
 - Neues Repository, abgeleitet von [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) 0.9.0-alpha (Git-Historie erhalten): **MeshCore 1.18**, WLAN-Weboberfläche + Bluetooth für die offizielle MeshCore-App, Gerätematrix der MeshCore-Konfigurator-Liste.
 - Regionales Design und Inhalte aus [HaldenFunk](https://github.com/Pietwars/HaldenFunk): Kupfer/Anthrazit-Farben, Hintergrundbild (Halden, Förderturm, Funkwellen), App-Symbol, Name **HaldenFunk**, Untertitel „Glück Auf – Mesh fürs Mansfelder Land“.
 - Ortsliste Mansfelder Land (Sangerhausen, Hohe Linde, Eisleben, Mansfeld, Hettstedt, Allstedt, Wallhausen, Kelbra, Roßla, Kyffhäuser, Stolberg, Wippra) und 5 Offline-Karten (OSM, ODbL) statt Ahrtal.
