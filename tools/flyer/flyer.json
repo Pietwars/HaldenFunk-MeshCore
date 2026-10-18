@@ -1,0 +1,69 @@
+{
+ "name": "HaldenFunk-MeshCore",
+ "hero": "docs/flyer/haldenfunk-header.jpg",
+ "gui": "docs/images/funktion-chat.jpg",
+ "gui_caption": "HaldenFunk",
+ "credit": "© Pietwars · Bild: HaldenFunk (eigene Grafik) · Kartendaten © OpenStreetMap (ODbL)",
+ "title_html": "Halden<span>Funk</span> <small style=\"font-size:13pt\">MeshCore</small>",
+ "subtitle": "Glück Auf – MeshCore 1.18 fürs Mansfelder Land · @VERSION@",
+ "intro": "<b>Das Mansfelder-Land-Funknetz auf MeshCore-Basis</b> – von Sangerhausen bis an den Harzrand. Release @VERSION@ für <b>LILYGO T-Deck / T-Deck Plus</b> und <b>Heltec V2</b> (868 MHz). Bedienung im Browser über offenes WLAN im HaldenFunk-Design oder per Bluetooth mit der MeshCore-App.",
+ "features": [
+  "Boards: T-Deck Plus, Heltec V2",
+  "WLAN-Oberfläche im Browser",
+  "Bluetooth ohne PIN, MeshCore-App",
+  "Chat, Brett, Standort, Karten",
+  "MeshCore 1.18, kompatibel",
+  "Open Source auf GitHub"
+ ],
+ "steps": [
+  "Passendes Paket aus dem Release v@VERSION@ flashen (<b>factory.bin</b> an 0x0).",
+  "Offenes WLAN <b>HaldenFunk-XXXXXX</b> (ohne Passwort) oder Bluetooth mit der MeshCore-App – ohne PIN.",
+  "Im Browser <b>192.168.4.1</b> öffnen und Nachrichten senden."
+ ],
+ "repo": "https://github.com/Pietwars/HaldenFunk-MeshCore",
+ "extra_urls": [
+  [
+   "Release v@VERSION@",
+   "@RELEASE@"
+  ],
+  [
+   "Live-Demo",
+   "https://pietwars.github.io/HaldenFunk-MeshCore/"
+  ]
+ ],
+ "links": [
+  [
+   "Repository",
+   "https://github.com/Pietwars/HaldenFunk-MeshCore"
+  ],
+  [
+   "Release v@VERSION@",
+   "@RELEASE@"
+  ],
+  [
+   "Live-Demo",
+   "https://pietwars.github.io/HaldenFunk-MeshCore/"
+  ],
+  [
+   "HaldenFunk",
+   "https://github.com/Pietwars/HaldenFunk"
+  ]
+ ],
+ "qr_url": "@RELEASE@",
+ "qr_label": "Release v@VERSION@",
+ "demo": "https://pietwars.github.io/HaldenFunk-MeshCore/",
+ "theme": {
+  "#07130f": "#121012",
+  "#1d3a2a": "#322826",
+  "#10261b": "#1e1a1b",
+  "#10261c": "#1e1a1b",
+  "#2a4d36": "#5a4034",
+  "#2f5a3c": "#5a4034",
+  "#b9f48d": "#e8955a",
+  "#e8f0e4": "#f6eee6",
+  "#f3f8ee": "#f6eee6",
+  "#cfe3d2": "#e3d6cc",
+  "#9fb8a5": "#b8a79c"
+ },
+ "extra_css": "h1{color:#e8955a}h1 span{color:#f6eee6}.hero .bg{display:none}.hero img{width:100%;height:100%;object-fit:cover;object-position:center 62%}.hero{height:26mm}.phone img{height:42mm}h1{font-size:20pt}"
+}

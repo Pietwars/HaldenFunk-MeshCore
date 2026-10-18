@@ -2,6 +2,8 @@
 
 ## 0.9.1 · 18.10.2026 · Release
 
+- **Flyer 0.9.1 (nachgereicht):** Druck-PDF (QR-Code zum Release v0.9.1 und zur Demo) und Digital-PDF (klickbare Links) neu erzeugt, mit Vorschau der aktuellen Weboberfläche; Inhalt und Boards entsprechen dem Release. Neu: Flyer-Generator `tools/flyer/flyer.py` auch in diesem Repository.
+
 Versionsangleich der Projektfamilie auf 0.9.1 (von 0.1.1-alpha). Weboberfläche und alle Funktionen von HaldenFunk-MeshCore **unverändert**; Firmwarekennung `v1.18.0-hf0.9.1`. Aus DisAHRsterRadio-MeshCore 0.9.1 ist nur der Chatverlauf-Fix übernommen; Bluetooth-PIN, Web ohne Admin usw. sind hier **nicht** übernommen.
 
 - **Chatverlauf-Fix (aus DisAHRsterRadio-MeshCore übernommen):** Der Web-Chatverlauf wurde nie gespeichert, weil `SPIFFS.open(fehlendeDatei,"r+")` unter arduino-esp32 ein gültiges Verzeichnis-Handle liefert und `/dr-history.bin` so nie angelegt wurde. Neu `SlotFile.h` (Öffnen per `SPIFFS.exists()`, Verzeichnis-Handles verwerfen, Auffüllen mit Nullen bis zum Slot), genutzt von `DisasterPortal` (Verlauf) und `DeliveryOutbox` (gleiches Muster); serielles `[VERLAUF]`-Log bei Schreibfehlern. Hosttest `tests/slot_file.test.cpp` (CI „Open access regression“). Oberfläche unverändert; alte, nie gespeicherte Nachrichten erscheinen nicht nachträglich.
