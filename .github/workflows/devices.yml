@@ -5,6 +5,11 @@ on:
     paths: ['tools/devices.json', 'platformio.devices.ini', 'tools/build_device.sh', 'examples/**', 'src/**', 'variants/**', '.github/workflows/devices.yml']
   pull_request:
   workflow_dispatch:
+    inputs:
+      alle:
+        description: 'Alle Geräte aus tools/devices.json bauen (true/false)'
+        required: false
+        default: 'false'
 # Überholte Läufe abbrechen: Ein neuer Push auf denselben PR bzw. Nicht-main-Branch bricht den älteren Lauf ab.
 # main, Tags und manuelle Läufe bekommen je eine eigene Gruppe (run_id) und werden nie abgebrochen oder verdrängt.
 concurrency:
@@ -17,13 +22,12 @@ jobs:
       devices: ${{ steps.m.outputs.devices }}
     steps:
       - uses: actions/checkout@v4
-      # Volle Geräteliste nur auf main, Tags und bei manuellem Start; in PRs (und auf anderen Branches) nur die Kern-Boards:
-      # LILYGO T3-S3 SX1262, LILYGO T3 V1.6.1 (TTGO LoRa32, SX1276), Heltec V2 (SX1276), Heltec V3 (ESP32-S3) und RAK4631 (nRF52).
-      # Releases bauen weiterhin alle Geräte (release.yml).
+      # 0.9.1: vorerst nur die Release-Boards LILYGO T-Deck (Plus) und Heltec V2; die übrigen Geräte bleiben in
+      # tools/devices.json. Die komplette Liste baut nur ein manueller Start mit alle=true.
       - id: m
         env:
-          VOLL: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))) }}
-          KERN: LilyGo_T3S3_sx1262 LilyGo_TLora_V2_1_1_6 Heltec_v2 Heltec_v3 RAK_4631
+          VOLL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.alle == 'true' }}
+          KERN: LilyGo_TDeck Heltec_v2
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, os
