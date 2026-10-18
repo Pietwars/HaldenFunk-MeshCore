@@ -257,9 +257,9 @@ You can get the latitude and longitude from Google Maps by right-clicking the lo
 
 
 ### 3.4. Q: What is the password to join a room server?
-**A:** The default guest password to a room server is `hello`. Use the following command to change the guest password:
+**A:** In upstream MeshCore the default guest password to a room server is `hello` (`set guest.password {guest-password}`).
 
-`set guest.password {guest-password}`
+**HaldenFunk:** The room server (`_room` builds) has **no guest password**. Anyone can join without a password and read posts (guest, read-only). Any stored guest password from older versions is cleared at boot; `set guest.password` and `set allow.read.only` are rejected. Writing and administration need the admin login (unchanged).
 
 ### 3.5. Q: Can I retrieve a repeater's private key or set a repeater's private key?
 **A:** You can issue these commands to get or set a repeater's private key using a USB serial connection.

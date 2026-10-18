@@ -57,9 +57,9 @@ section h2,section p,.row label{text-shadow:0 1px 3px #000,0 0 8px #000}
 <div class="quick-grid" id="qg"></div>
 <textarea id="qtext" rows="3" maxlength="100"></textarea>
 <form id="qf"><select id="qplace"></select><select id="qtarget"></select><button class="b">Senden</button></form></section>
-<section id="board"><h2>Schwarzes Brett (Room-Server)</h2><p class="muted">Das Brett ist ein MeshCore-Room-Server im Funknetz. Beiträge liegen dort und werden nach der Anmeldung abgerufen.</p>
+<section id="board"><h2>Schwarzes Brett (Room-Server)</h2><p class="muted">Das Brett ist ein MeshCore-Room-Server im Funknetz. Beiträge liegen dort und werden nach dem Beitreten abgerufen. Beitreten geht ohne Passwort; Gäste können nur lesen. Aushängen kann nur ein Gerät, dem der Betreiber Schreibrecht gegeben hat.</p>
 <div class="tgt"><select id="room"></select></div>
-<form id="rf" onsubmit="return false"><input id="rpass" type="password" maxlength="15" placeholder="Raum-Code, nur falls der Room-Server einen verlangt"><button class="b b2" id="rlogin" type="button">Anmelden</button></form>
+<form id="rf" onsubmit="return false"><button class="b b2" id="rlogin" type="button">Beitreten (ohne Passwort, nur lesen)</button></form>
 <p class="muted" id="rstate"></p>
 <div id="posts"></div>
 <textarea id="btext" rows="2" maxlength="100" placeholder="Aushang (max. 100 Byte)"></textarea>
@@ -133,7 +133,7 @@ function renderPosts(){const r=$('#room').value,l=msgs.filter(m=>m.t==r&&(m.room
  $('#posts').innerHTML=l.length?l.map(m=>'<div class="post'+(/wichtig|\[HILFE\]|!/i.test(m.body.slice(0,12))?' pin':'')+'"><div class="h"><span><b>'+esc(m.own?'Du':(contacts().find(c=>c.id.slice(1,9)==m.author)?.name||m.author||'?'))+'</b></span><span>'+new Date(m.stamp*1000).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'</span></div><div class="tx">'+esc(m.body)+'</div></div>').join(''):'<p class="muted">Keine Beiträge geladen. Room-Server wählen und anmelden.</p>';
  const rs=state?.room;$('#rstate').textContent=!r?'':rs&&rs.target==r?(rs.pending?'Anmeldung läuft …':rs.rights>=2?'Angemeldet, Schreibrecht ✓':rs.rights?'Angemeldet (nur lesen)':'Nicht angemeldet'):'Nicht angemeldet'}
 $('#room').onchange=renderPosts;
-$('#rlogin').onclick=async()=>{const r=$('#room').value;if(!r)return;try{$('#rstate').textContent=await (await api('room-login',{target:r,password:$('#rpass').value,time:now()})).text()}catch(x){$('#rstate').textContent=x.message}};
+$('#rlogin').onclick=async()=>{const r=$('#room').value;if(!r)return;try{$('#rstate').textContent=await (await api('room-login',{target:r,time:now()})).text()}catch(x){$('#rstate').textContent=x.message}};
 $('#bsend').onclick=async()=>{const r=$('#room').value,t=$('#btext').value.trim().replace(/\s*\n\s*/g,' ');if(!r||!t)return;try{$('#rstate').textContent=await send(r,t);$('#btext').value='';setTimeout(poll,2000)}catch(x){$('#rstate').textContent='Nicht gesendet: '+x.message}};
 /* ---------- Standort ---------- */
 function setPos(la,lo,label){myPos=(label?label+' ':'')+la.toFixed(5)+','+lo.toFixed(5);localStorage.setItem('dar-pos',myPos);setMe(la,lo);$('#gpsres').textContent='Standort: '+myPos}
