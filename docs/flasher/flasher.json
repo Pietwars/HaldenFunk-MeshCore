@@ -1,0 +1,24 @@
+{
+ "repo": "Pietwars/HaldenFunk-MeshCore",
+ "tag": "v0.9.1",
+ "asset": "HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip",
+ "member": "HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck/HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck-wifi-factory.bin",
+ "sha256": "ac292078282cba703c5c0f09d9a0a3872e1334d9e4106330ea576af04759a853",
+ "out": "firmware-tdeck-plus.bin",
+ "manifest": {
+  "name": "HaldenFunk-MeshCore 0.9.1 · LILYGO T-Deck Plus",
+  "version": "0.9.1",
+  "new_install_prompt_erase": true,
+  "builds": [
+   {
+    "chipFamily": "ESP32-S3",
+    "parts": [
+     {
+      "path": "firmware-tdeck-plus.bin",
+      "offset": 0
+     }
+    ]
+   }
+  ]
+ }
+}

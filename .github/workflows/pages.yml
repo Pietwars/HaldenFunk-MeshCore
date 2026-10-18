@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 tools/build_pages.py _site
+      - name: Web-Flasher (T-Deck Plus) - Firmware aus dem Release holen und SHA-256 pruefen
+        run: python3 tools/flasher_fetch.py _site/flasher
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

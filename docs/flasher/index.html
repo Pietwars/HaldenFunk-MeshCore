@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HaldenFunk-MeshCore · Web-Flasher (T-Deck Plus)</title>
+<script type="module" src="https://unpkg.com/esp-web-tools@10.4.0/dist/web/install-button.js?module"></script>
+<style>
+body{margin:0;background:#121012;color:#f6eee6;font:16px/1.5 system-ui,"Noto Sans",sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:28px;margin:0 0 4px}h1 span{color:#e8955a}h2{font-size:18px;color:#e8955a;margin:28px 0 8px}
+.card{background:#1e1a1b;border:1px solid #5a4034;border-radius:12px;padding:16px;margin:16px 0}
+.warn{border-left:5px solid #e07a3d;background:#2a1a12;border-radius:8px;padding:12px 14px;margin:16px 0}.warn b{color:#ffb38a}
+a{color:#e8955a}code{background:#0006;padding:1px 5px;border-radius:4px;font-size:14px}
+esp-web-install-button button[slot=activate]{background:#e8955a;color:#121012;border:0;border-radius:10px;padding:14px 22px;font:700 17px system-ui,sans-serif;cursor:pointer}
+li{margin:4px 0}
+</style></head><body><main>
+<h1>Halden<span>Funk</span> MeshCore</h1>
+<p><b>Web-Flasher · Version 0.9.1 · nur für LILYGO T-Deck Plus</b> (ESP32-S3)</p>
+<div class="warn"><b>Achtung:</b> Die Erstinstallation schreibt die komplette <code>factory.bin</code> an Adresse <b>0x0</b> und <b>überschreibt Einstellungen, Knotenidentität, Kontakte und Chatverlauf</b>. Nur das T-Deck Plus anschließen – andere Boards nicht mit diesem Flasher flashen.</div>
+<div class="card">
+<p>1. Antenne anschrauben. T-Deck Plus per USB-C-<b>Daten</b>kabel an den Computer, einschalten.<br>
+2. In <b>Chrome oder Edge am Computer</b> (Windows, macOS, Linux; nicht am Handy, nicht Firefox/Safari) auf „Installieren“ klicken.<br>
+3. Port wählen (meist „USB JTAG/serial debug unit“ bzw. <code>usbmodem</code>/<code>ttyACM</code>), Installation bestätigen, warten bis „Installation complete“.<br>
+4. Gerät neu starten (Reset oder aus/ein).</p>
+<esp-web-install-button manifest="manifest.json">
+ <button slot="activate">Firmware auf T-Deck Plus installieren</button>
+ <span slot="unsupported">Dieser Browser kann keine USB-Geräte ansprechen (Web Serial fehlt). Bitte Chrome oder Edge am Computer verwenden – oder manuell flashen (siehe unten).</span>
+ <span slot="not-allowed">Der Flasher braucht eine sichere Verbindung (https).</span>
+</esp-web-install-button>
+<p style="font-size:14px">HaldenFunk-MeshCore 0.9.1 ist auf Hardware noch nicht abgenommen (gebaut vom CI, Datei aus dem Release v0.9.1). Firmware-Datei: <code>HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck-wifi-factory.bin</code> aus dem <a href="https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1">Release v0.9.1</a>, SHA-256 <code style="word-break:break-all">ac292078282cba703c5c0f09d9a0a3872e1334d9e4106330ea576af04759a853</code>.</p>
+</div>
+<h2>Kein Port zu sehen?</h2>
+<ul><li>Anderes USB-Kabel probieren (viele Kabel laden nur).</li>
+<li>Download-Modus: <b>Trackball gedrückt halten</b>, das Gerät einschalten (bzw. Reset drücken), Trackball loslassen, dann erneut „Installieren“.</li>
+<li>Linux: Benutzer in die Gruppe <code>dialout</code> (bzw. <code>uucp</code>) aufnehmen und neu anmelden.</li></ul>
+<h2>Danach</h2>
+<p>Am Handy das offene WLAN <code>HaldenFunk-XXXXXX</code> wählen (ohne Passwort) und <b>http://192.168.4.1</b> öffnen. Bluetooth für die MeshCore-App <b>ohne PIN</b>. Offenes, unverschlüsseltes WLAN: Jede Person in Reichweite kann mitlesen und senden.</p>
+<h2>Update ohne Datenverlust, andere Boards</h2>
+<p>Der Web-Flasher macht immer die Erstinstallation. Für ein Update ohne Datenverlust (<code>teile-wifi/firmware.bin</code> an <b>0x10000</b>) und für <b>Heltec V2</b> bitte vorerst <b>manuell</b> flashen: <a href="https://github.com/Pietwars/HaldenFunk-MeshCore/blob/main/docs/FLASHEN.md">Anleitung „Flashen“</a> · <a href="https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1">Release v0.9.1</a>.</p>
+<div class="warn"><b>Prototyp, kein zertifiziertes Notrufsystem.</b> Im Notfall immer 112.</div>
+<p style="font-size:13px"><a href="../">Live-Demo</a> · <a href="https://github.com/Pietwars/HaldenFunk-MeshCore">Quellcode</a> · Flasher: <a href="https://github.com/esphome/esp-web-tools">ESP Web Tools</a> 10.4.0 (Apache-2.0)</p>
+</main></body></html>
