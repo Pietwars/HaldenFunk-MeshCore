@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 #pragma once
+#include "../simple_room_server/RoomAccess.h"  // DISASTER_ROOM_GUEST_PASSWORD ("hello")
 // BLE (MeshCore-App) darf parallel laufen: MultiSerialInterface verteilt alle Antworten an Portal und BLE.
 #if defined(ENABLE_USB_INTERFACE) || defined(WIFI_SSID)
 #error "The local portal must own the Companion interface in this profile"
@@ -332,7 +333,9 @@ public:
       if(!contact||stamp<1700000000u||stamp>4102444800u){http.send(400,"text/plain","Raum und Uhrzeit pruefen");return;}
       memset(loginFrame,0,sizeof(loginFrame));loginFrame[0]=26;
       for(int i=0;i<32;++i)loginFrame[1+i]=(nibble((*contact)[2+i*2])<<4)|nibble((*contact)[3+i*2]);
-      loginLen=33;  // Gast-Anmeldung ohne Passwort (nur Lesen)
+      // Automatisch mit dem oeffentlichen Gast-Passwort "hello" anmelden (Lesen und Schreiben).
+      static const char guest[]=DISASTER_ROOM_GUEST_PASSWORD;
+      memcpy(loginFrame+33,guest,sizeof(guest)-1);loginLen=33+sizeof(guest)-1;
       delivery.syncClock(stamp);roomTarget=target;roomRights=0;roomPending=true;roomSince=millis();
       // First synchronize the companion clock; the next serialized command logs in.
       uint8_t clock[5]={6};memcpy(clock+1,&stamp,4);accept(clock,5);
@@ -465,7 +468,7 @@ public:
     if(!n||n>MAX_FRAME_SIZE)return 0;
     uint8_t code=p[0];
     if((code==0x85||code==0x86)&&n>=8&&roomTarget.substring(1)==hex(p+2,6)){
-      roomPending=false;roomRights=code==0x85?((n>=13&&(p[12]&3))?(p[12]&3):1):0;  // Gast (0) = angemeldet, nur Lesen
+      roomPending=false;roomRights=code==0x85?((n>=13&&(p[12]&3))?(p[12]&3):1):0;  // Gast ohne Schreibrecht (0) = angemeldet, nur Lesen
       outcome=roomRights>=2?"Raum angemeldet: Lesen und Schreiben":roomRights==1?"Raum angemeldet: nur Lesen":"Raumanmeldung fehlgeschlagen";
     }
     if(code==0x83){nextPoll=0;return n;}

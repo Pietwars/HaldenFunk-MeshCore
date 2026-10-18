@@ -57,9 +57,9 @@ section h2,section p,.row label{text-shadow:0 1px 3px #000,0 0 8px #000}
 <div class="quick-grid" id="qg"></div>
 <textarea id="qtext" rows="3" maxlength="100"></textarea>
 <form id="qf"><select id="qplace"></select><select id="qtarget"></select><button class="b">Senden</button></form></section>
-<section id="board"><h2>Schwarzes Brett (Room-Server)</h2><p class="muted">Das Brett ist ein MeshCore-Room-Server im Funknetz. Beiträge liegen dort und werden nach dem Beitreten abgerufen. Beitreten geht ohne Passwort; Gäste können nur lesen. Aushängen kann nur ein Gerät, dem der Betreiber Schreibrecht gegeben hat.</p>
+<section id="board"><h2>Schwarzes Brett (Room-Server)</h2><p class="muted">Das Brett ist ein MeshCore-Room-Server im Funknetz. Beiträge liegen dort und werden nach dem Beitreten abgerufen. Beitreten geht ohne Eingabe: Das Portal meldet sich automatisch mit dem öffentlichen Gast-Passwort „hello“ an (Lesen und Schreiben).</p>
 <div class="tgt"><select id="room"></select></div>
-<form id="rf" onsubmit="return false"><button class="b b2" id="rlogin" type="button">Beitreten (ohne Passwort, nur lesen)</button></form>
+<form id="rf" onsubmit="return false"><button class="b b2" id="rlogin" type="button">Beitreten</button></form>
 <p class="muted" id="rstate"></p>
 <div id="posts"></div>
 <textarea id="btext" rows="2" maxlength="100" placeholder="Aushang (max. 100 Byte)"></textarea>

@@ -396,7 +396,7 @@ This document provides an overview of CLI commands that can be sent to MeshCore 
 
 **Set by build flag:** `ROOM_PASSWORD` (Room Server only)
 
-**HaldenFunk room server:** no guest password. Guests join without a password and can only read; a stored guest password is cleared at boot, and `set guest.password` / `set allow.read.only` are rejected.
+**HaldenFunk room server:** the guest password is fixed to the public default `hello` (read and post; without a password read-only). It is set to `hello` at every boot; `set guest.password` / `set allow.read.only` are rejected.
 
 **Default:** `<blank>`
 
