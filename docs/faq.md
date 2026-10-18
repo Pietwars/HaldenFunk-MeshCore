@@ -686,7 +686,7 @@ You can get the epoch time on <https://www.epochconverter.com> and use it to set
 **A:** Make sure that you flashed the Bluetooth companion firmware and not the USB-only companion firmware.
 
 ### 6.5. Q: I can't connect via Bluetooth, what is the Bluetooth pairing code?
-**A:** The default Bluetooth pairing code is `123456`
+**A:** There is none. This firmware pairs without a PIN (Just Works). If the phone asks, just confirm the pairing. If an old pairing exists, remove it in the phone's Bluetooth settings first.
 
 ### 6.6. Q: My Heltec V3 keeps disconnecting from my smartphone. It can't hold a solid Bluetooth connection.
 **A:** Heltec V3 has a very small coil antenna on its PCB for Wi-Fi and Bluetooth connectivity. It has a very short range, only a few feet. It is possible to remove the coil antenna and replace it with a 31mm wire. The BT range is much improved with the modification.
@@ -698,7 +698,7 @@ You can get the epoch time on <https://www.epochconverter.com> and use it to set
 3. Now choose `Factory Reset` option
 4. Confirm that you want to reset your device
 5. Go to Bluetooth System settings and remove pairing of the device, so you can connect again
-6. Connect your device in the app and enter the PIN
+6. Connect your device in the app (no PIN, just confirm the pairing if asked)
 7. Navigate to Gear icon(Settings) on the upper right corner
 8. Click on `Import Settings` and choose the file from 2., click on `Select All` and Confirm
 9. Find `Reboot` button on of the Settings list

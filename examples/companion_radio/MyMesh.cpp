@@ -2148,9 +2148,10 @@ bool MyMesh::handleCommand(const char* command, uint32_t sender_timestamp, char*
   }
 
   if (memcmp(command, "set pin ", 8) == 0) {
-    _prefs.ble_pin = atoi(&command[8]);
+    // PIN-free firmware: Bluetooth always pairs without PIN (Just Works).
+    _prefs.ble_pin = 0;
     savePrefs();
-    sprintf(reply, "> pin is now %06d", _prefs.ble_pin);
+    strcpy(reply, "> Bluetooth ohne PIN (fest)");
     return true;
   }
 
