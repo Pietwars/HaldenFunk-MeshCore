@@ -2,22 +2,22 @@
 #pragma once
 #include "OutboxRecord.h"
 #include <SPIFFS.h>
+#include "SlotFile.h"
 class DeliveryOutbox {
  disaster::OutboxRecord jobs[disaster::OUTBOX_SLOTS]{};
  uint32_t due[disaster::OUTBOX_SLOTS]{},lastId=0,wall=0,wallMs=0;
  bool clockReady=false,healthy=true;
  bool persist(size_t i){
   auto &r=jobs[i];++r.revision;r.crc=disaster::outboxChecksum(r);
-  File f=SPIFFS.open("/dr-outbox.bin","r+");
-  if(!f&&!SPIFFS.exists("/dr-outbox.bin"))f=SPIFFS.open("/dr-outbox.bin","w+");
-  bool ok=f&&f.seek(disaster::outboxOffset(i,r.revision))&&f.write((const uint8_t*)&r,sizeof(r))==sizeof(r);f.close();
-  disaster::OutboxRecord check{};f=SPIFFS.open("/dr-outbox.bin","r");
+  File f=disaster::openSlotFile(SPIFFS,"/dr-outbox.bin");
+  bool ok=f&&disaster::seekSlot(f,disaster::outboxOffset(i,r.revision))&&f.write((const uint8_t*)&r,sizeof(r))==sizeof(r);if(f)f.close();
+  disaster::OutboxRecord check{};f=disaster::openSlotFileRead(SPIFFS,"/dr-outbox.bin");
   ok=ok&&f&&f.seek(disaster::outboxOffset(i,r.revision))&&f.read((uint8_t*)&check,sizeof(check))==sizeof(check)&&disaster::outboxValid(check)&&check.id==r.id&&check.revision==r.revision;
   f.close();if(!ok)healthy=false;return ok;
  }
 public:
  void begin(){
-  File f=SPIFFS.open("/dr-outbox.bin","r");
+  File f=disaster::openSlotFileRead(SPIFFS,"/dr-outbox.bin");
   for(size_t i=0;i<disaster::OUTBOX_SLOTS;++i){
    for(unsigned copy=0;copy<2;++copy){disaster::OutboxRecord r{};
     if(f&&f.seek((i*2+copy)*sizeof(r))&&f.read((uint8_t*)&r,sizeof(r))==sizeof(r)&&disaster::outboxValid(r)&&r.revision>jobs[i].revision)jobs[i]=r;

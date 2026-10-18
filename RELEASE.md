@@ -10,7 +10,7 @@ Die Version steht **nur** in `platformio.local.ini`:
 
 ```ini
 [hf]
-version = 0.1.1-alpha
+version = 0.9.1
 ```
 
 Alle Firmwarekennungen (`-D FIRMWARE_VERSION='"v1.18.0-hf${hf.version}…"'`) in `platformio.local.ini` und

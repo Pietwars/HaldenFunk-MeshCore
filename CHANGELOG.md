@@ -1,6 +1,15 @@
 # Änderungen
 
-## Unveröffentlicht – offener Zugang
+## 0.9.1 · 18.10.2026 · Release
+
+Versionsangleich der Projektfamilie auf 0.9.1 (von 0.1.1-alpha). Weboberfläche und alle Funktionen von HaldenFunk-MeshCore **unverändert**; Firmwarekennung `v1.18.0-hf0.9.1`. Aus DisAHRsterRadio-MeshCore 0.9.1 ist nur der Chatverlauf-Fix übernommen; Bluetooth-PIN, Web ohne Admin usw. sind hier **nicht** übernommen.
+
+- **Chatverlauf-Fix (aus DisAHRsterRadio-MeshCore übernommen):** Der Web-Chatverlauf wurde nie gespeichert, weil `SPIFFS.open(fehlendeDatei,"r+")` unter arduino-esp32 ein gültiges Verzeichnis-Handle liefert und `/dr-history.bin` so nie angelegt wurde. Neu `SlotFile.h` (Öffnen per `SPIFFS.exists()`, Verzeichnis-Handles verwerfen, Auffüllen mit Nullen bis zum Slot), genutzt von `DisasterPortal` (Verlauf) und `DeliveryOutbox` (gleiches Muster); serielles `[VERLAUF]`-Log bei Schreibfehlern. Hosttest `tests/slot_file.test.cpp` (CI „Open access regression“). Oberfläche unverändert; alte, nie gespeicherte Nachrichten erscheinen nicht nachträglich.
+- CI und Release vorerst nur **LILYGO T-Deck / T-Deck Plus** (`LilyGo_TDeck`) und **Heltec V2** (`Heltec_v2`); übrige Geräte bleiben im Code (`devices.yml`: alle Geräte nur bei manuellem Start mit `alle=true`).
+- README (Version, Projektfamilie, Geräteliste, Download) und README-Bilder aus der Live-Demo auf 0.9.1.
+- Enthält die bisher unveröffentlichten Punkte unten (offener Zugang). Auf Hardware ist HaldenFunk-MeshCore 0.9.1 nicht abgenommen.
+
+### Offener Zugang (seit 0.1.1-alpha)
 
 - **Offenes WLAN:** `softAP(ssid, nullptr, 1, false, 4)`, gespeichertes `ap-pass` wird beim Start gelöscht; seriell/OLED „offen“.
 - **Bluetooth ohne PIN:** Just Works für Bluedroid **und NimBLE** (klassische ESP32: ohne MITM/Passkey, Kopplung akzeptiert verschlüsselte, nicht PIN-authentifizierte Verbindungen), ebenso nRF52/RP2040; gespeicherte BLE-PIN wird auf 0 gesetzt, keine Zufalls-PIN mehr, App kann keine PIN setzen; nRF52 ohne Bluetooth-DFU.
