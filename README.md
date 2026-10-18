@@ -1,175 +1,82 @@
 # HaldenFunk-MeshCore
 
-> **Aktueller Stand:** offenes WLAN `HaldenFunk-XXXXXX` → `http://192.168.4.1`, MeshCore-App per Bluetooth ohne PIN, Brett (Room-Server) mit dem öffentlichen Gast-Passwort `hello` (sendet die Weboberfläche automatisch) – einfach verbinden, nichts eingeben. Betreiberfunktionen nur mit Admin-Passwort über USB/Admin-Bereich. [Zugang auf einen Blick](#zugang-auf-einen-blick) · [Zugang, Update und Abnahme](docs/OFFENER_ZUGANG.md)
+**Glück Auf – Mesh fürs Mansfelder Land, mit MeshCore: HaldenFunk-Weboberfläche im offenen WLAN und gleichzeitig die offizielle MeshCore-App per Bluetooth – Chat, Brett und Offlinekarten ohne Internet.**
 
+<p>
+<img src="docs/images/vorschau-chat.jpg" width="250" alt="HaldenFunk-MeshCore: Chat">
+<img src="docs/images/vorschau-meldung.jpg" width="250" alt="HaldenFunk-MeshCore: Schnellmeldung">
+<img src="docs/images/vorschau-karte.jpg" width="250" alt="HaldenFunk-MeshCore: Offlinekarte">
+</p>
 
-**Glück Auf – Mesh fürs Mansfelder Land**
+<sub>Aufnahmen der [Live-Demo](https://pietwars.github.io/HaldenFunk-MeshCore/) in Handygröße, Stand 0.9.1; alle Daten simuliert.</sub>
 
-**🔴 Live-Demo (simulierte Daten, kein Gerät nötig): https://pietwars.github.io/HaldenFunk-MeshCore/**
+**Version 0.9.1** · MeshCore 1.18 · 868 MHz · Firmwarekennung `v1.18.0-hf0.9.1`
 
-**Version 0.9.1** · MeshCore **1.18** (Upstream `main` nach v1.18.0, Commit `81dbae59`) · Firmwarekennung `v1.18.0-hf0.9.1` · **Flyer (A5):** [Druck-PDF mit QR-Codes](docs/flyer/HaldenFunk-MeshCore-Flyer.pdf) · [Digital-PDF mit klickbaren Links](docs/flyer/HaldenFunk-MeshCore-Flyer-digital.pdf)
+[![Release](https://img.shields.io/github/v/release/Pietwars/HaldenFunk-MeshCore?label=Release)](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/latest)
+[![Live-Demo](https://img.shields.io/badge/Live--Demo-online-2ea44f)](https://pietwars.github.io/HaldenFunk-MeshCore/)
+[![Web-Flasher](https://img.shields.io/badge/Web--Flasher-T--Deck%20Plus-orange)](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/)
+[![Flyer](https://img.shields.io/badge/Flyer-PDF-blue)](docs/flyer/HaldenFunk-MeshCore-Flyer-digital.pdf)
 
-**HaldenFunk-MeshCore ist für [HaldenFunk](https://github.com/Pietwars/HaldenFunk), was [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) für DisAHRsterRadio ist:** der Code von DisAHRsterRadio-MeshCore (MeshCore 1.18, WLAN-Weboberfläche plus Bluetooth für die offizielle MeshCore-App, Gerätematrix der MeshCore-Konfigurator-Liste) mit dem regionalen Design und den Inhalten von HaldenFunk: Kupfer/Anthrazit, Haldenmotiv als Hintergrund, Orte und Offline-Karten des Mansfelder Landes (Sangerhausen, Lutherstadt Eisleben, Mansfeld/Hettstedt, Kelbra/Roßla/Kyffhäuser).
+Flyer (A5): [Druck-PDF mit QR-Codes](docs/flyer/HaldenFunk-MeshCore-Flyer.pdf) · [Digital-PDF mit Links](docs/flyer/HaldenFunk-MeshCore-Flyer-digital.pdf) · [Vorschau](docs/flyer/HaldenFunk-MeshCore-Flyer-vorschau.jpg)
 
-Das Board ist ein MeshCore-Companion und spannt ein eigenes WLAN **`HaldenFunk-XXXXXX`** (offen – einfach verbinden) auf. Man verbindet sich mit dem Handy und nutzt im Browser Chat, Schnellmeldungen, Brett, Karte und Standort – ohne App und ohne Internet. Parallel kann sich die MeshCore-App per Bluetooth verbinden.
+## Was kann es
 
-> ⚠️ **Kein zertifiziertes Notrufsystem.** In Lebensgefahr immer **112** wählen, wenn irgendwie möglich.
+- **Chat:** öffentlicher Kanal, eigene Kanäle und Direktnachrichten über MeshCore, Verlauf auf dem Board
+- **Schnellmeldungen:** Trinkwasser, Strom, Medikamente, Verletzt, Evakuierung – mit Ortsangabe
+- **Schwarzes Brett:** MeshCore-Room-Server, Beitritt automatisch mit dem öffentlichen Gast-Passwort `hello`
+- **Karte und Standort:** Offlinekarten des Mansfelder Landes direkt aus der Firmware, Knoten und geteilte Positionen; Handy-GPS oder Ortsliste
+- **WLAN + Bluetooth gleichzeitig:** Weboberfläche im Browser und parallel die MeshCore-App (Kopplung ohne PIN)
+- **HaldenFunk-Design:** Kupfer und Anthrazit, Haldenmotiv; Admin (Name, Kanäle) nur für Betreiber
 
-> 📡 **Nicht funkkompatibel mit [HaldenFunk](https://github.com/Pietwars/HaldenFunk) und [DisAHRsterRadio](https://github.com/Pietwars/DisAHRsterRadio):** Diese beiden nutzen kein MeshCore, sondern LoRaLayer2 (disaster-radio). HaldenFunk-MeshCore spricht das normale MeshCore-Funkprotokoll und versteht sich mit anderen MeshCore-Knoten (z. B. DisAHRsterRadio-MeshCore, DisasterMesh) bei gleichem Funkprofil.
+## Unterstützte Geräte
 
-### Projektfamilie
-
-| Repository | Inhalt | Funk | Version | Demo |
-|---|---|---|---|---|
-| [Pietwars/HaldenFunk-MeshCore](https://github.com/Pietwars/HaldenFunk-MeshCore) | **dieses Repo:** MeshCore 1.18, WLAN-Oberfläche im HaldenFunk-Design + Bluetooth für die MeshCore-App, Gerätematrix | MeshCore | 0.9.1 | [Live-Demo](https://pietwars.github.io/HaldenFunk-MeshCore/) |
-| [Pietwars/HaldenFunk](https://github.com/Pietwars/HaldenFunk) | Mansfelder-Land-Variante von DisAHRsterRadio, **ohne MeshCore** (LoRaLayer2) | LoRaLayer2 | 0.9.1 | [Live-Demo](https://pietwars.github.io/HaldenFunk/) |
-| [Pietwars/DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) | Ahrtal-Original dieser Firmware: MeshCore 1.18, WLAN + Bluetooth (0.9.1 auf T-Deck Plus und Heltec V2 getestet) | MeshCore | 0.9.1 | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio-MeshCore/) |
-| [Pietwars/DisAHRsterRadio](https://github.com/Pietwars/DisAHRsterRadio) | Ahrtal, **ohne MeshCore**: modernisiertes disaster-radio | LoRaLayer2 | 0.9.1 | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio/) |
-| [Pietwars/DisasterMesh](https://github.com/Pietwars/DisasterMesh) | Original-Repo: MeshCore 1.18 mit großer Weboberfläche MeshAhrtal | MeshCore | 0.9.2 | [Live-Demo](https://pietwars.github.io/DisasterMesh/demo/) · [Release v0.9.2](https://github.com/Pietwars/DisasterMesh/releases/tag/v0.9.2) |
-
-Gleiche Spalte „Funk“ = können miteinander funken (gleiches Funkprofil vorausgesetzt). Alle Demos sind simuliert. Auf Hardware getestet ist 0.9.1 bisher nur bei DisAHRsterRadio-MeshCore (T-Deck Plus, Heltec V2); HaldenFunk-MeshCore 0.9.1 ist auf Hardware nicht abgenommen.
-
-**Download:** [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) mit den Paketen für **LILYGO T-Deck / T-Deck Plus** (`HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip`) und **Heltec WiFi LoRa 32 V2** (`HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip`), je mit `factory.bin` (an **0x0**; überschreibt Einstellungen, Identität und Kontakte), deutscher `ANLEITUNG.md` und `SHA256SUMS`. Weitere Geräte bleiben im Code, sind aber vorerst nicht im Release.
-
-**Web-Flasher (nur LILYGO T-Deck Plus):** [pietwars.github.io/HaldenFunk-MeshCore/flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) – in Chrome/Edge am Computer, schreibt die `factory.bin` aus dem Release v0.9.1 an 0x0 (löscht Einstellungen). **Heltec V2 vorerst manuell** mit esptool bzw. esptool-js: [Anleitung Flashen](docs/FLASHEN.md) (Port finden unter Windows/macOS/Linux, Befehle, Update ohne Datenverlust).
-
-## Zugang auf einen Blick
-
-| Zugang | Aktueller Stand |
-|---|---|
-| WLAN `HaldenFunk-XXXXXX` | **offen, ohne Passwort** – verbinden, `http://192.168.4.1` öffnen, nichts eingeben (höchstens 4 Handys je Board) |
-| Bluetooth (MeshCore-App) | **ohne PIN** („Just Works“) – das Handy fragt höchstens „Koppeln?“; alte Kopplung bei Bedarf am Handy entfernen |
-| Schwarzes Brett (Room-Server) | öffentliches MeshCore-Standard-Gast-Passwort **`hello`**: damit lesen und schreiben. Die Weboberfläche sendet `hello` beim „Beitreten“ automatisch, niemand muss etwas eintippen. In der MeshCore-App `hello` eingeben; ohne Passwort nur lesen |
-| Admin (nur Betreiber) | Für Betreiberfunktionen (Funkprofil, Name, Kanäle, Verwaltung von Repeater/Room-Server) gibt es ein Admin-Passwort. Es ist für jedes Gerät eigen, steht weder im Code noch in der Doku und wird nur beim ersten Start über USB (115200 Baud) angezeigt. Der Betreiber muss es dort ablesen und sicher aufbewahren oder ein eigenes setzen (bei Repeater und Room-Server per USB-Befehl `password <neu>` ändern). |
-
-Außer dem öffentlichen Standard `hello` stehen keine Passwörter in Code, Doku, Flyern oder der Live-Demo; die Live-Demo öffnet den Adminbereich ohne Anmeldung. Details: [Offener Zugang](docs/OFFENER_ZUGANG.md).
-
-> Hinweis: Ältere Releases (v0.1.0-alpha) enthalten noch die alten Zugangsregeln (WLAN-Schlüssel, Bluetooth-PIN, eigenes Raum-Passwort).
-
-## Funktionen im Überblick
-
-| Chat | Schnellmeldung | Brett |
+| Board | Paket im [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) | Stand |
 |---|---|---|
-| <img src="docs/images/funktion-chat.jpg" width="230" alt="Chat"> | <img src="docs/images/funktion-quick.jpg" width="230" alt="Schnellmeldung"> | <img src="docs/images/funktion-board.jpg" width="230" alt="Brett"> |
-| **Karte** | **Standort** | **Gerät** |
-| <img src="docs/images/funktion-map.jpg" width="230" alt="Karte"> | <img src="docs/images/funktion-loc.jpg" width="230" alt="Standort"> | <img src="docs/images/funktion-info.jpg" width="230" alt="Gerät"> |
+| LILYGO T-Deck Plus (ESP32-S3, SX1262, 868 MHz) | `HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip` | baut und ist automatisch geprüft; auf Hardware ungeprüft (gleiche Basis wie DisAHRsterRadio-MeshCore, dort getestet) |
+| Heltec WiFi LoRa 32 V2 (ESP32, SX1276, 868 MHz) | `HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip` | baut und ist automatisch geprüft; auf Hardware ungeprüft |
 
-(Aufnahmen der [Live-Demo](https://pietwars.github.io/HaldenFunk-MeshCore/) in Handygröße, Stand 0.9.1; alle Daten simuliert.)
+Weitere Geräte der MeshCore-Konfigurator-Liste bleiben im Code, sind aber nicht im Release – siehe [Details](docs/DETAILS.md#alle-geräte-meshcore-konfigurator-liste).
 
-- **Chat:** öffentlicher Kanal, eigene Kanäle und Direktnachrichten, Verlauf auf dem Board
-- **Schnellmeldung:** Vorlagen wie Trinkwasser, Strom, Medikamente, Verletzt, Evakuierung mit Ortsangabe
-- **Brett:** Schwarzes Brett über einen MeshCore-Room-Server; Beitritt automatisch mit dem öffentlichen Gast-Passwort `hello` (lesen und schreiben)
-- **Karte:** Offline-Karten des Mansfelder Landes direkt aus der Firmware, Knoten und geteilte Positionen
-- **Standort:** Handy-GPS oder Ortsliste, als Chat-Position oder Knoten-Standort (Advert)
-- **Gerät:** Status, Funkzähler, Kontakte, Bekanntgabe, Admin (Name, Kanäle; Admin-Passwort nur für Betreiber)
-- **WLAN + Bluetooth gleichzeitig:** Auf ESP32-Geräten läuft das WLAN-Portal und parallel die Bluetooth-Verbindung für die offizielle MeshCore-App (siehe unten)
+## Schnellstart
 
-## Ehrlicher Stand (Oktober 2026)
+1. **Flashen**
+   - **T-Deck Plus:** [Web-Flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) in Chrome oder Edge am Computer öffnen, Gerät per USB verbinden, installieren.
+   - **Heltec V2:** ZIP aus dem [Release](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) entpacken und `HaldenFunk-MeshCore-0.9.1-Heltec_v2-wifi-factory.bin` mit esptool bzw. esptool-js an Adresse **0x0** schreiben – [Anleitung Flashen](docs/FLASHEN.md).
+   - Die `factory.bin` löscht Einstellungen, Identität und Kontakte; Update ohne Datenverlust: nur `teile-wifi/firmware.bin` an 0x10000.
+2. **Verbinden:** Handy mit dem offenen WLAN `HaldenFunk-XXXXXX` verbinden, **http://192.168.4.1** öffnen – kein Passwort, höchstens 4 Handys.
+3. **MeshCore-App (optional):** per Bluetooth koppeln, ohne PIN („Just Works“).
+4. **Nur Betreiber:** Beim ersten Start zeigt der USB-Seriellmonitor (115200 Baud) das gerätespezifische Admin-Passwort. Details: [Offener Zugang](docs/OFFENER_ZUGANG.md)
 
-| Punkt | Stand |
-|---|---|
-| Basis | MeshCore `main` nach **v1.18.0** (meshcore-dev/MeshCore), Git-Historie erhalten |
-| Firmware baut | ✅ 105 Geräte (202 Builds, 36 Geräte mit WLAN-Portal) per GitHub Actions, Gerätematrix im CI (Status: [Actions](https://github.com/Pietwars/HaldenFunk-MeshCore/actions)) |
-| Auf echter Hardware getestet | ❌ **diese Firmware noch nicht.** LILYGO T3 V1.6.1 lief beim Nutzer mit der Schwester-Firmware DisAHRsterRadio (gleiche Basis wie HaldenFunk) vollständig; Heltec V2 zeigte dort ein Strom-/Brownout-Problem (WLAN-AP fehlte), Gegenmaßnahme hier enthalten, ungeprüft |
-| Kompatibel mit anderen MeshCore-Geräten/Apps | ✅ normales MeshCore-Funkprotokoll (gleiches Funkprofil vorausgesetzt) |
+## Funk
 
-## Kartenbedienung und Speicheroptimierung
+MeshCore-Preset **EU/UK (Narrow): 869,618 MHz**, 62,5 kHz, SF8, CR 4/8 (SRD-Teilband 869,4–869,65 MHz, 10 % Sendezeit). Alle Knoten eines Netzes brauchen dasselbe Profil. Funkt mit anderen MeshCore-Geräten (z. B. DisAHRsterRadio-MeshCore), **nicht** mit HaldenFunk/DisAHRsterRadio (LoRaLayer2) oder Meshtastic.
 
-Die Navigation bleibt unten in zwei Reihen erreichbar (einschließlich iPhone-Safe-Area).
-Die Kartenzeichenfläche ist auf ihren Container begrenzt; Zoomtasten sind 44 × 44 Pixel groß.
-Im Browser werden maximal zwei Karten zwischengespeichert. Beim schnellen Wechsel gewinnt
-immer die zuletzt gewählte Karte. Gleichzeitige Statusabfragen werden vermieden.
+<!-- projektfamilie:start (in allen fünf Repositorys identisch; erzeugt mit DisasterMesh/tools/projektfamilie.py) -->
+## Projektfamilie DisAHRsterRadio / HaldenFunk
 
-Die Weboberfläche wird beim Bauen gzip-komprimiert und direkt aus PROGMEM ausgeliefert.
-Die genauen Roh- und gzip-Größen zeigt `python tools/embed_web.py` an (derzeit rund 19,6 kB
-Ersparnis gegenüber derselben unkomprimierten Seite). `/api/state` überträgt Kontakte und
-Kanäle stückweise, statt dafür einen großen Gesamt-String im Geräte-RAM anzulegen.
-Unter „Gerät“ erscheinen freier RAM, bisheriges RAM-Minimum und größter freier Block.
-Karten, Bluetooth, Kontaktlimit und Nachrichtenwarteschlange bleiben erhalten.
-
-Regressionstest: `node tests/web_regression.cjs` (Node 22); prüft JavaScript-Syntax,
-gzip-Roundtrip, CSS-Selektoren, Kartencache und überholte Ladeantworten. Dies ersetzt
-keinen Safari-/Hardwaretest. Vor Freigabe auf iPhone Hoch-/Querformat, Tastatur,
-Karte → Chat/Brett und auf dem Board mehrere WLAN-Clients sowie BLE parallel prüfen.
-
-## Boards
-
-| PlatformIO-Env | Board | App-Partition belegt (3 MB, `huge_app.csv`) |
-|---|---|---|
-| `disaster_t3s3_sx1262_wifi` | LILYGO T3-S3 SX1262 | ca. 62 % |
-| `disaster_tlora_v2_1_sx1276_wifi` | LILYGO T3 V1.6.1 SX1276 | ca. 52 % (0.1.0-alpha: 85 %; NimBLE, -Os statt -O0, ohne Sensorbibliotheken; ca. 1,4 MB frei) |
-| `disaster_heltec_v2_sx1276_wifi` | Heltec WiFi LoRa 32 V2 SX1276 | ca. 52 % (0.1.0-alpha: 70 %) |
-| `disaster_t3s3_sx1262_repeater` / `_room` | T3-S3 SX1262 als Repeater / Room-Server (Brett) | ca. 29 % |
-| `disaster_ttgo_repeater` / `_room` | T3 V1.6.1 / TTGO LoRa32 als Repeater / Room-Server | ca. 30 % (0.1.0-alpha: 44 %; Partition `min_spiffs.csv`, 1,9 MB) |
-
-Weitere Profile (T3-S3 SX1276, SD-Archiv, Heltec-Diagnose) sind in `platformio.local.ini` enthalten, aber nicht im CI.
-
-Heltec V2 mit WLAN-Fix: Brownout-Detektor früh aus, Startmarken `[DIAG …]` seriell, WLAN startet zuletzt und erst 2 s nach dem Funkmodul, WLAN-Sendeleistung 8,5 dBm.
-
-Alle WLAN-Portal-Boards: offenes WLAN **`HaldenFunk-XXXXXX`** (höchstens 4 Handys, nichts eingeben). Auf dem OLED stehen WLAN-Name und Zugangshinweis. Bei einem fehlgeschlagenen AP-Start erfolgt alle 5 s ein neuer Versuch.
-
-## WLAN-Portal und MeshCore-App gleichzeitig (Bluetooth)
-
-Auf ESP32-Geräten mit Bluetooth sind Web-Portal und BLE-Companion beide am selben Companion angemeldet (MeshCore `MultiSerialInterface`): Jede Antwort und jede eingehende Nachricht geht an beide. Die offizielle MeshCore-App verbindet sich per Bluetooth, während Handys im WLAN die Weboberfläche nutzen.
-
-- **Bluetooth ohne PIN:** Just-Works-Kopplung ohne Zahlencode (Handy fragt höchstens „Koppeln?“), auch mit NimBLE auf klassischen ESP32. Alte Kopplung bei Bedarf am Handy entfernen. Nachrichten, Kontakte, Uhrzeit, Status gehen über Bluetooth; Betreiberbefehle (Funk, Name, Kanäle, Schlüssel, Reset) nur über USB/Admin-Bereich; Details unter [Offener Zugang](docs/OFFENER_ZUGANG.md).
-- **Grenzen:** Ruft die App Nachrichten aus der Warteschlange ab, sieht das Portal sie im Verlauf mit, die App aber nicht umgekehrt die Abrufe des Portals. Gleichzeitige Befehle aus App und Portal können sich in seltenen Fällen kreuzen. WLAN + Bluetooth + Webserver brauchen viel RAM. Klassische ESP32 ohne PSRAM (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) nutzen deshalb ab 0.1.1-alpha **NimBLE** statt Bluedroid; das WLAN-Portal startet zuerst, Bluetooth nur bei genug freiem Heap, und ein Start-Wächter verhindert die Bootschleife (`[BOOT]`/`[HEAP]`-Zeilen seriell). Auf Hardware **noch nicht geprüft**.
-- **Speicher:** Portal-Profile nutzen die Partition `huge_app.csv` (3 MB App, kein OTA, 896 KB SPIFFS). Belegung 0.1.1-alpha: T3 V1.6.1 ca. 52 %, Heltec V2 ca. 52 %, T-Beam ca. 54 %, T3-S3 ca. 62 %.
-- **Upgrade 0.1.0-alpha → 0.1.1-alpha:** Partitionstabelle unverändert – es reicht `teile-wifi/firmware.bin` an **`0x10000`** zu flashen; Einstellungen, Identität und Kontakte bleiben erhalten. Klassische ESP32 (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) wechseln auf NimBLE: die alte Kopplung in den Bluetooth-Einstellungen des Handys **entfernen und die MeshCore-App einmal neu koppeln**. Wer von einer Version **vor** 0.1.0-alpha kommt, flasht einmal komplett die `factory.bin` an `0x0` (neue Partitionstabelle, Identität wird neu erzeugt).
-
-## So wird die Oberfläche auf MeshCore abgebildet
-
-| Reiter | MeshCore |
-|---|---|
-| **Chat** | Öffentlicher Kanal, weitere Kanäle (Slots 0–7) und Direktnachrichten an bekannte Chat-Kontakte |
-| **Schnellmeldung** | Vorlagen (Trinkwasser, Strom, Medikamente …) mit Ort, gesendet an Kanal oder Kontakt |
-| **Brett** | MeshCore-**Room-Server**: Portal tritt automatisch mit dem öffentlichen Gast-Passwort `hello` bei, Beiträge lesen und schreiben (ohne Passwort nur lesen) |
-| **Karte** | Offline-OSM-Karten (Mansfelder Land, Sangerhausen, Lutherstadt Eisleben, Mansfeld/Hettstedt, Kelbra/Roßla/Kyffhäuser) aus der Firmware. Angezeigt werden Knoten mit Standort in ihrer Bekanntgabe (Advert), Positionen aus Nachrichten und die eigene Position |
-| **Standort** | GPS des Handys oder Ortsliste. „Position in Chat senden“ (Format `!DP1\|lat,lon\|zeit`, kompatibel zu DisasterMesh) oder als Knoten-Standort setzen und per Advert bekanntgeben |
-| **Gerät** | Status, Funkzähler, Kontakte neu lesen, Advert senden; Admin: Knotenname, Kanal mit Schlüssel |
-
-Nachrichten sind bei MeshCore auf **100 Byte** begrenzt.
-
-## Bauen und Flashen
-
-```bash
-pip install platformio
-python tools/embed_web.py                       # nach Änderungen an web/
-pio run -e disaster_t3s3_sx1262_wifi -t upload
-pio run -e disaster_t3s3_sx1262_wifi -t uploadfs  # nur einmal! (Dateisystem, löscht Identität)
-tools/package.sh                                 # Flashpakete HaldenFunk-MeshCore-<Version>-<board>.zip
-python3 tools/version.py                         # Version (einzige Quelle: [hf] version in platformio.local.ini)
-```
-
-Die Weboberfläche liegt in `web/index.html`. `tools/embed_web.py` bettet die gzip-komprimierte Seite, Hintergrundbild (WebP, 20 KB) und Karten (gzip, 223 KB) in `examples/companion_radio/PortalPage.h` und `PortalAssets.h` ein. Demo ohne Gerät: `web/index.html?demo=1` lokal öffnen.
-
-## Alle Geräte (MeshCore-Konfigurator-Liste)
-
-**Funkprofil (alle Geräte, alle Rollen):** MeshCore-Standard-Preset **EU/UK (Narrow)** – **869,618 MHz, Bandbreite 62,5 kHz, SF8, CR 4/8**, MeshCore-Standard-Syncword (privat, 0x12). Gesetzt über die Build-Flags `LORA_FREQ=869.618`, `LORA_BW=62.5`, `LORA_SF=8`, `LORA_CR=8` in `platformio.ini` (gilt für alle 105 Geräte der Matrix und die eigenen Profile). Teilband 869,4–869,65 MHz (SRD, ETSI EN 300 220 / BNetzA): max. 500 mW ERP (27 dBm), 10 % Sendezeit; die Firmware bleibt bei der bisherigen boardsicheren Sendeleistung (nicht erhöht). Alle Knoten eines Netzes müssen dasselbe Profil nutzen – Geräte mit älterem Stand (CR 4/5) einmal in der Weboberfläche auf „EU/UK Narrow“ stellen oder per CLI `set radio 869.618,62.5,8,8`.
-
-Der Code für alle 105 Geräte der [MeshCore-Konfigurator](https://meshcore.co.uk/configurator/)-Liste bleibt erhalten (`tools/devices.upstream.json`, `tools/devices.json`, Envs aus `tools/gen_devices.py` → `platformio.devices.ini`; einzeln bauen mit `tools/build_device.sh <Gerät>`). Ab 0.9.1 baut das CI vorerst nur noch die beiden Release-Boards, und nur diese sind im Release:
-
-| Gerät | Chip | Web-Oberfläche | Inhalt | Datei |
+| Repository | Inhalt | Funk | Version | Demo · Download · Flyer |
 |---|---|---|---|---|
-| LilyGo_TDeck (T-Deck / T-Deck Plus) | esp32s3 | ja | WLAN-Portal | `HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip` |
-| Heltec_v2 | esp32 | ja | WLAN-Portal | `HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip` |
+| [Pietwars/DisasterMesh](https://github.com/Pietwars/DisasterMesh) | Original-Repo: MeshCore 1.18 mit der großen Weboberfläche MeshAhrtal, Karten, Werkzeuge, Doku (Ahrtal) | MeshCore | 0.9.2 | [Live-Demo](https://pietwars.github.io/DisasterMesh/demo/) · [Release v0.9.2](https://github.com/Pietwars/DisasterMesh/releases/tag/v0.9.2) · Flyer [Druck](https://pietwars.github.io/DisasterMesh/flyer/DisasterMesh-Flyer.pdf) / [digital](https://pietwars.github.io/DisasterMesh/flyer/DisasterMesh-Flyer-digital.pdf) |
+| [Pietwars/DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) | MeshCore 1.18 mit kompakter MeshAhrtal-Oberfläche per WLAN plus Bluetooth für die MeshCore-App; Firmware für LILYGO T-Deck Plus und Heltec V2 (Ahrtal) | MeshCore | 0.9.1 | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio-MeshCore/) · [Release v0.9.1](https://github.com/Pietwars/DisAHRsterRadio-MeshCore/releases/tag/v0.9.1) · Flyer [Druck](https://pietwars.github.io/DisAHRsterRadio-MeshCore/flyer/DisAHRsterRadio-MeshCore-Flyer.pdf) / [digital](https://pietwars.github.io/DisAHRsterRadio-MeshCore/flyer/DisAHRsterRadio-MeshCore-Flyer-digital.pdf) |
+| [Pietwars/DisAHRsterRadio](https://github.com/Pietwars/DisAHRsterRadio) | Ohne MeshCore: modernisiertes disaster-radio (LoRaLayer2, RadioLib) mit kompakter MeshAhrtal-Oberfläche (Ahrtal) | LoRaLayer2 | 0.9.1 | [Live-Demo](https://pietwars.github.io/DisAHRsterRadio/) · [Release v0.9.1](https://github.com/Pietwars/DisAHRsterRadio/releases/tag/v0.9.1) · Flyer [Druck](https://pietwars.github.io/DisAHRsterRadio/flyer/DisAHRsterRadio-Flyer.pdf) / [digital](https://pietwars.github.io/DisAHRsterRadio/flyer/DisAHRsterRadio-Flyer-digital.pdf) |
+| [Pietwars/HaldenFunk](https://github.com/Pietwars/HaldenFunk) | Regionalvariante von DisAHRsterRadio für Sangerhausen / Mansfelder Land, ohne MeshCore | LoRaLayer2 | 0.9.1 | [Live-Demo](https://pietwars.github.io/HaldenFunk/) · [Release v0.9.1](https://github.com/Pietwars/HaldenFunk/releases/tag/v0.9.1) · Flyer [Druck](https://pietwars.github.io/HaldenFunk/flyer/HaldenFunk-Flyer.pdf) / [digital](https://pietwars.github.io/HaldenFunk/flyer/HaldenFunk-Flyer-digital.pdf) |
+| [Pietwars/HaldenFunk-MeshCore](https://github.com/Pietwars/HaldenFunk-MeshCore) | Regionalvariante von DisAHRsterRadio-MeshCore für das Mansfelder Land: MeshCore 1.18, WLAN + Bluetooth, Gerätematrix | MeshCore | 0.9.1 | [Live-Demo](https://pietwars.github.io/HaldenFunk-MeshCore/) · [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) · Flyer [Druck](https://pietwars.github.io/HaldenFunk-MeshCore/flyer/HaldenFunk-MeshCore-Flyer.pdf) / [digital](https://pietwars.github.io/HaldenFunk-MeshCore/flyer/HaldenFunk-MeshCore-Flyer-digital.pdf) |
 
-Alle Geräte bauen: Workflow „Alle Geräte (MeshCore-Konfigurator-Liste)“ manuell mit `alle = true` starten.
+Gleiche Spalte **Funk** = Geräte können miteinander funken (gleiches Funkprofil vorausgesetzt). MeshCore- und LoRaLayer2-Varianten verstehen sich **nicht**.
 
-## Grenzen / offen
+**Namen:** **DisAHRsterRadio** = Projekt und Marke (WLAN `DisAHRsterRadio-XXXXXX`) · **MeshAhrtal** = die Weboberfläche im Handy-Browser · **DisasterMesh** = das Original-Repository · **HaldenFunk – Glück Auf** = Regionalvariante fürs Mansfelder Land (WLAN `HaldenFunk-XXXXXX`).
 
-- Nicht auf Hardware getestet, auch nicht das Zusammenspiel mit MeshCore 1.18
-- Karten für den Flash verkleinert (`tools/shrink_maps.py`: Linien vereinfacht, Raster ca. 7 m in der Übersicht / 2 m in den Detailkarten, kleine Wald-/Wasserflächen und kurze Wegstücke weggelassen; Orte, Halden und Schächte vollständig): 633 KB → 223 KB, Übersichtskarte 335 KB → 90 KB. Zusammen mit den schlanken Profilen (0.1.1-alpha) liegt T3 V1.6.1 jetzt bei ca. 52 % der App-Partition (siehe Boards)
-- Die Brett-Funktion braucht einen erreichbaren Room-Server (`disaster_t3s3_sx1262_room` bzw. `disaster_ttgo_room`, im CI gebaut, nicht auf Hardware geprüft)
-- Positionsfreigabe: Wer einen Standort als Knoten-Standort setzt, schaltet das Teilen der Position in Adverts ein (bei 0,0 wieder aus)
-- Funkprofil-Auswahl (Deutschland-Presets) aus DisasterMesh ist in der neuen Oberfläche nicht enthalten. Die API `/api/radio` existiert weiter
-- Karten haben keine Navigation; Datenstand 17.10.2026 (aus HaldenFunk übernommen)
+Alle Demos sind simuliert.
+<!-- projektfamilie:end -->
 
-## Lizenz und Danksagung
+## Sicherheit
 
-- **MeshCore** © Scott Powell / rippleradios.com und Mitwirkende, **MIT-Lizenz** (`license.txt`). Original-README: [README.meshcore.md](README.meshcore.md).
-- WLAN-Portal, Zustell-Warteschlange, Room-/Repeater-Anpassungen: aus [DisasterMesh](https://github.com/Pietwars/DisasterMesh) (MIT).
-- Code-Basis: [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) (MIT).
-- Regionales Design, Hintergrundbild, Orte und Karten: aus [HaldenFunk](https://github.com/Pietwars/HaldenFunk), vom selben Autor, hier unter MIT.
-- Kartendaten © OpenStreetMap-Mitwirkende, ODbL 1.0 (`web/map/ODbL-1.0.txt`).
+> ⚠️ Prototyp, **kein zertifiziertes Notrufsystem**. Im Notfall immer **112** wählen. Im offenen WLAN kann jede Person in Reichweite mitlesen und senden; Bluetooth koppelt ohne PIN.
 
+## Mehr Doku
+
+[Details (ausführlich)](docs/DETAILS.md) · [Anleitung Flashen](docs/FLASHEN.md) · [Offener Zugang](docs/OFFENER_ZUGANG.md) · [Änderungen](CHANGELOG.md) · [Original-README MeshCore](README.meshcore.md)
+
+## Lizenz
+
+[MeshCore](https://github.com/meshcore-dev/MeshCore) © Scott Powell / rippleradios.com und Mitwirkende, MIT (`license.txt`). Code aus [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) (MIT), Design und Inhalte aus [HaldenFunk](https://github.com/Pietwars/HaldenFunk). Kartendaten © OpenStreetMap-Mitwirkende, ODbL 1.0.
