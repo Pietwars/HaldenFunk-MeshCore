@@ -31,6 +31,8 @@ Gleiche Spalte „Funk“ = können miteinander funken (gleiches Funkprofil vora
 
 **Download:** [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) mit den Paketen für **LILYGO T-Deck / T-Deck Plus** (`HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip`) und **Heltec WiFi LoRa 32 V2** (`HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip`), je mit `factory.bin` (an **0x0**; überschreibt Einstellungen, Identität und Kontakte), deutscher `ANLEITUNG.md` und `SHA256SUMS`. Weitere Geräte bleiben im Code, sind aber vorerst nicht im Release.
 
+**Web-Flasher (nur LILYGO T-Deck Plus):** [pietwars.github.io/HaldenFunk-MeshCore/flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) – in Chrome/Edge am Computer, schreibt die `factory.bin` aus dem Release v0.9.1 an 0x0 (löscht Einstellungen). **Heltec V2 vorerst manuell** mit esptool bzw. esptool-js: [Anleitung Flashen](docs/FLASHEN.md) (Port finden unter Windows/macOS/Linux, Befehle, Update ohne Datenverlust).
+
 ## Zugang auf einen Blick
 
 | Zugang | Aktueller Stand |

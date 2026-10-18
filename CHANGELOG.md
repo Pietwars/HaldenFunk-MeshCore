@@ -1,5 +1,9 @@
 # Änderungen
 
+## Unveröffentlicht (nach 0.9.1)
+
+- **Web-Flasher für LILYGO T-Deck Plus** auf GitHub Pages (`/flasher/`, ESP Web Tools 10.4.0): schreibt die unveränderte `factory.bin` aus dem Release v0.9.1 an 0x0; der Pages-Workflow lädt sie aus dem Release und prüft die SHA-256 (`tools/flasher_fetch.py`, Konfiguration `docs/flasher/flasher.json`). Heltec V2 vorerst nur manuell. Neue Anleitung `docs/FLASHEN.md` (Port finden, esptool-Befehle, Update an 0x10000). Firmware unverändert.
+
 ## 0.9.1 · 18.10.2026 · Release
 
 - **Flyer 0.9.1 (nachgereicht):** Druck-PDF (QR-Code zum Release v0.9.1 und zur Demo) und Digital-PDF (klickbare Links) neu erzeugt, mit Vorschau der aktuellen Weboberfläche; Inhalt und Boards entsprechen dem Release. Neu: Flyer-Generator `tools/flyer/flyer.py` auch in diesem Repository.

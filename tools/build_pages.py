@@ -16,11 +16,13 @@ force='<script>if(!/demo/.test(location.search))location.replace("?demo=1"+locat
 banner=('<div style="background:#f0d5a0;color:#3b2a1f;text-align:center;'
         'font:600 13px/16px system-ui,sans-serif;padding:6px 8px;height:28px;box-sizing:border-box;white-space:nowrap;overflow:hidden">Demo '+VER+' – simulierte Daten · '
         '<a style="color:#3b2a1f" href="https://github.com/Pietwars/HaldenFunk-MeshCore">Quellcode &amp; Firmware</a> · '
+        '<a style="color:#3b2a1f" href="flasher/">Flasher</a> · '
         '<a style="color:#3b2a1f" href="flyer/HaldenFunk-MeshCore-Flyer-digital.pdf">Flyer</a></div>')
 html=html.replace('<head>','<head>'+force,1)
 i=html.index('<body'); j=html.index('>',i)+1
 html=html[:j]+banner+html[j:]
 (OUT/'index.html').write_text(html,encoding='utf-8')
 if (ROOT/'docs/flyer').is_dir(): shutil.copytree(ROOT/'docs/flyer',OUT/'flyer')
+if (ROOT/'docs/flasher').is_dir(): shutil.copytree(ROOT/'docs/flasher',OUT/'flasher')  # Firmware holt tools/flasher_fetch.py im Pages-Workflow
 (OUT/'.nojekyll').write_text('')
 print('Demo gebaut:',OUT)
