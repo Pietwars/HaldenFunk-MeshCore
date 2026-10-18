@@ -108,7 +108,7 @@ Auf ESP32-Geräten mit Bluetooth sind Web-Portal und BLE-Companion beide am selb
 |---|---|
 | **Chat** | Öffentlicher Kanal, weitere Kanäle (Slots 0–7) und Direktnachrichten an bekannte Chat-Kontakte |
 | **Schnellmeldung** | Vorlagen (Trinkwasser, Strom, Medikamente …) mit Ort, gesendet an Kanal oder Kontakt |
-| **Brett** | MeshCore-**Room-Server**: beim Room-Server anmelden (dessen eigene Zugangsregel), Beiträge lesen und schreiben |
+| **Brett** | MeshCore-**Room-Server**: ohne Passwort beitreten und Beiträge lesen (Gäste nur lesen); schreiben nur mit Schreibrecht vom Betreiber |
 | **Karte** | Offline-OSM-Karten (Mansfelder Land, Sangerhausen, Lutherstadt Eisleben, Mansfeld/Hettstedt, Kelbra/Roßla/Kyffhäuser) aus der Firmware. Angezeigt werden Knoten mit Standort in ihrer Bekanntgabe (Advert), Positionen aus Nachrichten und die eigene Position |
 | **Standort** | GPS des Handys oder Ortsliste. „Position in Chat senden“ (Format `!DP1\|lat,lon\|zeit`, kompatibel zu DisasterMesh) oder als Knoten-Standort setzen und per Advert bekanntgeben |
 | **Gerät** | Status, Funkzähler, Kontakte neu lesen, Advert senden; Admin: Knotenname, Kanal mit Schlüssel |

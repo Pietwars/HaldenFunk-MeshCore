@@ -28,6 +28,14 @@ und CLI. Diese laufen über USB oder den Admin-Bereich der Weboberfläche (nur B
 Private-Key-Antworten an USB werden nie an Funk-/Bluetooth-Clients weitergereicht.
 Auf nRF52 wird das Bluetooth-DFU nicht angeboten; Firmware-Updates per USB.
 
+## Schwarzes Brett (Room-Server) – ohne Passwort
+
+Dem Room-Server (`_room`-Firmware) tritt man **ohne Passwort** bei: in der MeshCore-App den Raum
+auswählen und anmelden, ohne etwas einzugeben; im Portal unter „Brett“ auf „Beitreten“ tippen.
+Gäste können alle Aushänge lesen, aber nicht schreiben. Ein Gast- bzw. Raum-Passwort gibt es nicht mehr;
+ein von älteren Versionen gespeichertes wird beim Start gelöscht. Schreiben und Verwaltung bleiben dem
+Betreiber über die Admin-Anmeldung vorbehalten (unverändert).
+
 ## Abnahme vor Freigabe (Hardware)
 
 - Frisches Handy ohne gespeichertes WLAN/Kopplung: WLAN verbinden ohne Eingabe; MeshCore-App
@@ -35,6 +43,8 @@ Auf nRF52 wird das Bluetooth-DFU nicht angeboten; Firmware-Updates per USB.
 - Update eines Geräts mit älterer Firmware (früher mit WLAN-Schlüssel/Bluetooth-Code):
   danach ebenfalls offen, Identität und Nachrichten bleiben erhalten; alte Kopplung entfernen.
 - Zwei Geräte: Kanal- und Direktnachrichten in beide Richtungen, Neustart und Wiederverbindung.
+- Room-Server nach Update: in der MeshCore-App ohne Passwort beitreten, Aushänge lesen; Schreiben als Gast
+  wird nicht angenommen. Admin-Anmeldung mit dem bisherigen Admin-Passwort funktioniert weiter.
 - Vier WLAN-Clients plus BLE: wiederholte Nachrichten, RAM-Minimum, keine Resets.
 - Über die App Funkparameter, Name, Schlüssel-Export und Reset versuchen: „deaktiviert“, keine Änderung.
   Danach dieselbe Konfiguration über USB bzw. Admin-Bereich prüfen.

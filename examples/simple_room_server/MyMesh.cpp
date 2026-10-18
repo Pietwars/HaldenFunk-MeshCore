@@ -1,5 +1,6 @@
 #ifdef DISASTER_ROOM
 #include "RoomRecord.h"
+#include "RoomAccess.h"
 #endif
 #include "MyMesh.h"
 
@@ -348,6 +349,10 @@ void MyMesh::onAnonDataRecv(mesh::Packet *packet, const uint8_t *secret, const m
     }
     if (client == NULL) {
       uint8_t perm;
+#ifdef DISASTER_ROOM
+      // Gaeste ohne Passwort (nur Lesen); nur das Admin-Passwort ergibt Admin-Rechte.
+      perm = disaster::roomLoginPermission((const char *)&data[8], _prefs.password);
+#else
       if (strcmp((char *)&data[8], _prefs.password) == 0) { // check for valid admin password
         perm = PERM_ACL_ADMIN;
       } else {
@@ -360,6 +365,7 @@ void MyMesh::onAnonDataRecv(mesh::Packet *packet, const uint8_t *secret, const m
           return; // no response. Client will timeout
         }
       }
+#endif
 
       client = acl.putClient(sender, 0);  // add to known clients (if not already known)
       if (sender_timestamp <= client->last_timestamp) {
@@ -948,6 +954,13 @@ void MyMesh::handleCommand(uint32_t sender_timestamp, char *command, char *reply
     reply += 3;
     command += 3;
   }
+
+#ifdef DISASTER_ROOM
+  if (const char *blocked = disaster::roomCliBlocked(command)) {
+    strcpy(reply, blocked);
+    return;
+  }
+#endif
 
   // handle ACL related commands
   if (memcmp(command, "setperm ", 8) == 0) {   // format:  setperm {pubkey-hex} {permissions-int8}

@@ -4,6 +4,7 @@
 #include "MyMesh.h"
 #ifdef DISASTER_ROOM
 #include "../simple_repeater/DisasterRepeater.h"
+#include "RoomAccess.h"
 #endif
 
 #ifdef ETHERNET_ENABLED
@@ -96,14 +97,9 @@ void setup() {
 #ifdef DISASTER_ROOM
   disasterRepeaterCredentials(the_mesh);
   auto *prefs=the_mesh.getNodePrefs();
-  if(!prefs->guest_password[0]||strcmp(prefs->guest_password,"hello")==0){
-    uint8_t random[7];esp_fill_random(random,sizeof(random));
-    static const char digits[]="0123456789abcdef";
-    for(size_t i=0;i<7;++i){prefs->guest_password[2*i]=digits[random[i]>>4];prefs->guest_password[2*i+1]=digits[random[i]&15];}
-    prefs->guest_password[14]=0;the_mesh.savePrefs();
-  }
-  if(prefs->allow_read_only){prefs->allow_read_only=0;the_mesh.savePrefs();}
-  Serial.printf("Raum-Passwort (Lesen/Schreiben): %s\n",prefs->guest_password);
+  // Kein Gast-Passwort: gespeichertes (auch von alten Versionen) loeschen, Gaeste lesen ohne Passwort.
+  if(disaster::openRoomPrefs(prefs->guest_password,sizeof(prefs->guest_password),prefs->allow_read_only))the_mesh.savePrefs();
+  Serial.println("Raum: Gaeste ohne Passwort (nur Lesen); Schreiben/Verwaltung nur mit Admin-Anmeldung");
 #endif
 
 #ifdef DISPLAY_CLASS

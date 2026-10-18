@@ -326,13 +326,13 @@ public:
     });
     http.on("/api/room-login",HTTP_POST,[this](){
       if(!room())return;
-      String target=http.arg("target"),password=http.arg("password");
+      String target=http.arg("target");
       const String *contact=roomContact(target);
       uint32_t stamp=strtoul(http.arg("time").c_str(),nullptr,10);
-      if(!contact||password.length()>15||hasNull(password)||stamp<1700000000u||stamp>4102444800u){http.send(400,"text/plain","Raum, Raum-Code (0-15 Bytes) und Uhrzeit pruefen");return;}
+      if(!contact||stamp<1700000000u||stamp>4102444800u){http.send(400,"text/plain","Raum und Uhrzeit pruefen");return;}
       memset(loginFrame,0,sizeof(loginFrame));loginFrame[0]=26;
       for(int i=0;i<32;++i)loginFrame[1+i]=(nibble((*contact)[2+i*2])<<4)|nibble((*contact)[3+i*2]);
-      memcpy(loginFrame+33,password.c_str(),password.length());loginLen=33+password.length();
+      loginLen=33;  // Gast-Anmeldung ohne Passwort (nur Lesen)
       delivery.syncClock(stamp);roomTarget=target;roomRights=0;roomPending=true;roomSince=millis();
       // First synchronize the companion clock; the next serialized command logs in.
       uint8_t clock[5]={6};memcpy(clock+1,&stamp,4);accept(clock,5);
@@ -420,7 +420,7 @@ public:
       if(!adminButtonDone&&uint32_t(millis()-adminButtonSince)>=10000){adminButtonDone=true;resetAdminPassword();}
     } else {adminButtonHeld=false;adminButtonDone=false;}
 #endif
-    if(roomPending&&millis()-roomSince>45000){roomPending=false;roomRights=0;outcome="Raumanmeldung ohne Antwort; Raum-Code, Funk und Uhrzeit pruefen";}
+    if(roomPending&&millis()-roomSince>45000){roomPending=false;roomRights=0;outcome="Raumanmeldung ohne Antwort; Funk und Uhrzeit pruefen";}
   }
   size_t checkRecvFrame(uint8_t *dest) override {
     if(!enabled)return 0;
@@ -465,8 +465,8 @@ public:
     if(!n||n>MAX_FRAME_SIZE)return 0;
     uint8_t code=p[0];
     if((code==0x85||code==0x86)&&n>=8&&roomTarget.substring(1)==hex(p+2,6)){
-      roomPending=false;roomRights=code==0x85&&n>=13?(p[12]&3):0;
-      outcome=roomRights>=2?"Raum angemeldet: Lesen und Schreiben":roomRights==1?"Raum angemeldet: nur Lesen":"Raumanmeldung fehlgeschlagen oder ohne Schreibrecht";
+      roomPending=false;roomRights=code==0x85?((n>=13&&(p[12]&3))?(p[12]&3):1):0;  // Gast (0) = angemeldet, nur Lesen
+      outcome=roomRights>=2?"Raum angemeldet: Lesen und Schreiben":roomRights==1?"Raum angemeldet: nur Lesen":"Raumanmeldung fehlgeschlagen";
     }
     if(code==0x83){nextPoll=0;return n;}
     if(code==5)info=hex(p,n);
