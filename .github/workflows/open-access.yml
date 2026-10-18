@@ -1,5 +1,11 @@
 name: Open access regression
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    # Nur main und Versions-Tags; PR-Branches laufen über pull_request (keine Doppelläufe push + pull_request)
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:

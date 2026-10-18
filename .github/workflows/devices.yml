@@ -44,7 +44,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 20
+      # Volle Matrix (main) mit höchstens 10 parallelen Jobs, damit das Konto-Limit (~20) nicht blockiert; PRs bauen ohnehin nur 5 Kern-Boards
+      max-parallel: 10
       matrix:
         device: ${{ fromJson(needs.setup.outputs.devices) }}
     steps:
