@@ -33,6 +33,6 @@ Von Hand nachziehen: README (Kopfzeile, Projektfamilie, Gerätetabelle über `py
 
 1. Artefakte des Devices-Laufs auf `main` laden: `gh run download <run-id> -R Pietwars/HaldenFunk-MeshCore`.
 2. `python3 tools/verify_package.py <Ordner mit allen Zips>` – muss „0 fehlerhaft/fehlend“ melden.
-3. Flyer neu erzeugen (Druck-PDF mit QR-Codes, Digital-PDF mit Links) und in `docs/flyer/` committen.
+3. Flyer neu erzeugen mit `python3 tools/flyer/flyer.py` (Konfiguration `tools/flyer/flyer.json`; Druck-PDF mit QR-Codes, Digital-PDF mit Links, Vorschau) und in `docs/flyer/` committen.
 4. Tag `v<Version>` auf den geprüften Commit, Vorabversion anlegen:
    `gh release create v<Version> --prerelease -R Pietwars/HaldenFunk-MeshCore --notes-file … <Zips> docs/flyer/*.pdf`.
