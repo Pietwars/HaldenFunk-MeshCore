@@ -17,7 +17,7 @@ jobs:
         run: |
           g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -I tests/open_access_fakes tests/open_access.test.cpp -o /tmp/open-access-test
           /tmp/open-access-test
-      - name: Room-Server ohne Gast-Passwort (Gäste nur lesen, Admin unverändert)
+      - name: Room-Server mit Gast-Passwort hello (Admin unverändert)
         run: |
           g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/room_access.test.cpp -o /tmp/room-access-test
           /tmp/room-access-test

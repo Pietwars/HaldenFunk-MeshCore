@@ -97,9 +97,9 @@ void setup() {
 #ifdef DISASTER_ROOM
   disasterRepeaterCredentials(the_mesh);
   auto *prefs=the_mesh.getNodePrefs();
-  // Kein Gast-Passwort: gespeichertes (auch von alten Versionen) loeschen, Gaeste lesen ohne Passwort.
-  if(disaster::openRoomPrefs(prefs->guest_password,sizeof(prefs->guest_password),prefs->allow_read_only))the_mesh.savePrefs();
-  Serial.println("Raum: Gaeste ohne Passwort (nur Lesen); Schreiben/Verwaltung nur mit Admin-Anmeldung");
+  // Oeffentliches Gast-Passwort "hello" (ersetzt leere/zufaellige Werte aelterer Versionen), Lesezugriff an.
+  if(disaster::roomGuestPrefs(prefs->guest_password,sizeof(prefs->guest_password),prefs->allow_read_only))the_mesh.savePrefs();
+  Serial.println("Raum: Gast-Passwort " DISASTER_ROOM_GUEST_PASSWORD " (Lesen/Schreiben), ohne Passwort nur Lesen");
 #endif
 
 #ifdef DISPLAY_CLASS

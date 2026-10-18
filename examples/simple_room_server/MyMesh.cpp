@@ -350,8 +350,8 @@ void MyMesh::onAnonDataRecv(mesh::Packet *packet, const uint8_t *secret, const m
     if (client == NULL) {
       uint8_t perm;
 #ifdef DISASTER_ROOM
-      // Gaeste ohne Passwort (nur Lesen); nur das Admin-Passwort ergibt Admin-Rechte.
-      perm = disaster::roomLoginPermission((const char *)&data[8], _prefs.password);
+      // Gast-Passwort "hello" -> Lesen/Schreiben, ohne Passwort nur Lesen, Admin-Passwort -> Admin.
+      perm = disaster::roomLoginPermission((const char *)&data[8], _prefs.password, _prefs.guest_password);
 #else
       if (strcmp((char *)&data[8], _prefs.password) == 0) { // check for valid admin password
         perm = PERM_ACL_ADMIN;
