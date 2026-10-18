@@ -30,6 +30,7 @@
 #define DAR_SHA256 mbedtls_sha256_ret
 #endif
 #include "HistoryRecord.h"
+#include "SlotFile.h"
 #include "DeliveryOutbox.h"
 #include "ArchiveSd.h"
 
@@ -88,10 +89,11 @@ class DisasterPortal : public BaseSerialInterface {
   void append(const uint8_t *p, size_t n) {
     if (!n || n>MAX_FRAME_SIZE) return;
     Record r{}; r.seq=++seq; r.len=n; memcpy(r.data,p,n); r.crc=disaster::checksum(r);
-    File f=SPIFFS.open("/dr-history.bin", "r+");
-    if (!f) f=SPIFFS.open("/dr-history.bin", "w+");
-    if (!f || !f.seek(disaster::offset(r.seq)) || f.write((uint8_t*)&r,sizeof(r))!=sizeof(r)) storageOK=false;
-    f.close();archive.append(r);
+    File f=disaster::openSlotFile(SPIFFS,"/dr-history.bin");
+    bool ok=f && disaster::seekSlot(f,disaster::offset(r.seq)) && f.write((uint8_t*)&r,sizeof(r))==sizeof(r);
+    if(f)f.close();
+    if(!ok)storageOK=false;
+    if(!ok)Serial.printf("[VERLAUF] Schreiben fehlgeschlagen (seq %u)\n",(unsigned)r.seq);archive.append(r);
   }
   bool permitted() {
     // Custom header prevents cross-origin form submissions; no CORS is enabled.
@@ -160,7 +162,7 @@ class DisasterPortal : public BaseSerialInterface {
     if(!permitted()) return;
     http.setContentLength(CONTENT_LENGTH_UNKNOWN); http.send(200,"text/plain","");
     // Physical slot order; client sorts by monotonically increasing sequence.
-    File f=SPIFFS.open("/dr-history.bin","r"); Record r;
+    File f=disaster::openSlotFileRead(SPIFFS,"/dr-history.bin"); Record r;
     while(f && f.read((uint8_t*)&r,sizeof(r))==sizeof(r)) {
       if(disaster::valid(r))
         http.sendContent(String(r.seq)+":"+hex(r.data,r.len)+"\n");
@@ -189,10 +191,10 @@ public:
   }
   void begin() {
     delivery.begin();lastStamp=delivery.latestStamp();archive.begin();
-    File f=SPIFFS.open("/dr-history.bin","r"); Record r;
+    File f=disaster::openSlotFileRead(SPIFFS,"/dr-history.bin"); Record r;
     while(f && f.read((uint8_t*)&r,sizeof(r))==sizeof(r))
       if(disaster::valid(r) && r.seq>seq) seq=r.seq;
-    f.close();
+    if(f)f.close();
 #ifdef PIN_USER_BTN
     pinMode(PIN_USER_BTN, INPUT_PULLUP);
 #endif

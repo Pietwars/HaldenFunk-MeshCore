@@ -21,3 +21,7 @@ jobs:
         run: |
           g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/room_access.test.cpp -o /tmp/room-access-test
           /tmp/room-access-test
+      - name: Verlauf/Outbox-Dateien mit SPIFFS-Verhalten (fehlende Datei = Verzeichnis-Handle)
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/slot_file.test.cpp -o /tmp/slot-file-test
+          /tmp/slot-file-test
