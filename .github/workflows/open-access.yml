@@ -25,3 +25,11 @@ jobs:
         run: |
           g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined tests/slot_file.test.cpp -o /tmp/slot-file-test
           /tmp/slot-file-test
+      - name: Nachrichten zwischen Weboberflaeche und MeshCore-App teilen (gemeinsame Warteschlange)
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined -I tests/open_access_fakes tests/shared_queue.test.cpp -o /tmp/shared-queue-test
+          /tmp/shared-queue-test
+      - name: Akku-Anzeige (Ladestand aus Spannung, Verbrauchstrend, Texte)
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined tests/batt_trend.test.cpp -o /tmp/batt-trend-test
+          /tmp/batt-trend-test

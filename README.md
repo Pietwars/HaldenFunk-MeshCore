@@ -10,7 +10,7 @@
 
 <sub>Aufnahmen der [Live-Demo](https://pietwars.github.io/HaldenFunk-MeshCore/) in Handygröße, Stand 0.9.1; alle Daten simuliert.</sub>
 
-**Version 0.9.1** · MeshCore 1.18 · 868 MHz · Firmwarekennung `v1.18.0-hf0.9.1`
+**Version 0.9.2** (vorbereitet, Release folgt) · MeshCore 1.18 · 868 MHz · Firmwarekennung `v1.18.0-hf0.9.2`
 
 [![Release](https://img.shields.io/github/v/release/Pietwars/HaldenFunk-MeshCore?label=Release)](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/latest)
 [![Live-Demo](https://img.shields.io/badge/Live--Demo-online-2ea44f)](https://pietwars.github.io/HaldenFunk-MeshCore/)
@@ -30,21 +30,24 @@ Flyer (A5): [Druck-PDF mit QR-Codes](docs/flyer/HaldenFunk-MeshCore-Flyer.pdf) �
 
 ## Unterstützte Geräte
 
-| Board | Paket im [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) | Stand |
+| Board | Paket ab Release v0.9.2 (vorbereitet; bis dahin [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1)) | Stand |
 |---|---|---|
-| LILYGO T-Deck Plus (ESP32-S3, SX1262, 868 MHz) | `HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip` | baut und ist automatisch geprüft; auf Hardware ungeprüft (gleiche Basis wie DisAHRsterRadio-MeshCore, dort getestet) |
-| Heltec WiFi LoRa 32 V2 (ESP32, SX1276, 868 MHz) | `HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip` | baut und ist automatisch geprüft; auf Hardware ungeprüft |
+| LILYGO T-Deck Plus (ESP32-S3, SX1262, 868 MHz) | `HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck.zip` | baut, automatisch geprüft (Flash/RAM); auf Hardware ungeprüft (gleiche Basis wie DisAHRsterRadio-MeshCore 0.9.4, dort getestet) |
+| LILYGO T-Watch S3 (ESP32-S3, SX1262, 868 MHz) – **neu in 0.9.2** | `HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3.zip` | baut, automatisch geprüft (Flash/RAM); auf Hardware ungeprüft (DisAHRsterRadio-MeshCore 0.9.4 dort getestet) |
+| Heltec WiFi LoRa 32 V2 (ESP32, SX1276, 868 MHz) | `HaldenFunk-MeshCore-0.9.2-Heltec_v2.zip` | baut und ist automatisch geprüft; auf Hardware ungeprüft |
+
+**Anzeige (T-Deck Plus, T-Watch S3):** nur das HaldenFunk-Bild, eine Akku-Zeile (Ladestand, Spannung, geschätzter Verbrauch) und der Knopf „Advert senden“. T-Deck: Trackball kurz = Display an/aus, 2,5 s halten = Advert. T-Watch: Seitentaste kurz = Display, 2 s = Advert, 6 s = aus. Vorschau: [T-Deck Plus](docs/images/anzeige-tdeck-0.9.2.png) · [T-Watch S3](docs/images/anzeige-twatch-0.9.2.png).
 
 Weitere Geräte der MeshCore-Konfigurator-Liste bleiben im Code, sind aber nicht im Release – siehe [Details](docs/DETAILS.md#alle-geräte-meshcore-konfigurator-liste).
 
 ## Schnellstart
 
 1. **Flashen**
-   - **T-Deck Plus:** [Web-Flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) in Chrome oder Edge am Computer öffnen, Gerät per USB verbinden, installieren.
-   - **Heltec V2:** ZIP aus dem [Release](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) entpacken und `HaldenFunk-MeshCore-0.9.1-Heltec_v2-wifi-factory.bin` mit esptool bzw. esptool-js an Adresse **0x0** schreiben – [Anleitung Flashen](docs/FLASHEN.md).
-   - Die `factory.bin` löscht Einstellungen, Identität und Kontakte; Update ohne Datenverlust: nur `teile-wifi/firmware.bin` an 0x10000.
+   - **T-Deck Plus:** [Web-Flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) in Chrome oder Edge am Computer öffnen, Gerät per USB verbinden, installieren. Ab der Umstellung auf 0.9.2 auch für die T-Watch S3, je mit „Update (Einstellungen bleiben)“ und „Neuinstallation (alles löschen)“.
+   - **Heltec V2:** ZIP aus dem Release entpacken und `HaldenFunk-MeshCore-<Version>-Heltec_v2-factory.bin` (0.9.1: `…-Heltec_v2-wifi-factory.bin`) mit esptool bzw. esptool-js an Adresse **0x0** schreiben – [Anleitung Flashen](docs/FLASHEN.md).
+   - Die `factory.bin` löscht Einstellungen, Identität und Kontakte; Update ohne Datenverlust: nur `…-firmware.bin` (0.9.1: `teile-wifi/firmware.bin`) an 0x10000.
 2. **Verbinden:** Handy mit dem offenen WLAN `HaldenFunk-XXXXXX` verbinden, **http://192.168.4.1** öffnen – kein Passwort, höchstens 4 Handys.
-3. **MeshCore-App (optional):** per Bluetooth koppeln, ohne PIN („Just Works“).
+3. **MeshCore-App (optional):** per Bluetooth koppeln, ohne PIN („Just Works“). Weboberfläche und App teilen die Nachrichten (ab 0.9.2).
 4. **Nur Betreiber:** Beim ersten Start zeigt der USB-Seriellmonitor (115200 Baud) das gerätespezifische Admin-Passwort. Details: [Offener Zugang](docs/OFFENER_ZUGANG.md)
 
 ## Funk

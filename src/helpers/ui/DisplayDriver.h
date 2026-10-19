@@ -37,6 +37,18 @@ public:
   virtual void drawRect(int x, int y, int w, int h) = 0;
   virtual void drawXbm(int x, int y, const uint8_t* bits, int w, int h) = 0;
   virtual uint16_t getTextWidth(const char* str) = 0;
+  virtual bool getTouch(int* x, int* y) { return false; }   // touch panels override this
+
+  // Zeichnen in echten Display-Pixeln (Marken-Anzeige ui-brand). Farben RGB565.
+  // Standard: Rueckfall auf die logischen Koordinaten.
+  virtual int  nativeWidth()  { return width(); }
+  virtual int  nativeHeight() { return height(); }
+  virtual void nativeFill(int x, int y, int w, int h, uint16_t c) { setColor(c); fillRect(x, y, w, h); }
+  virtual void nativeRect(int x, int y, int w, int h, uint16_t c) { setColor(c); drawRect(x, y, w, h); }
+  virtual void nativeText(int x, int y, int size, uint16_t c, const char* s) { setColor(c); setTextSize(size); setCursor(x, y); print(s); }
+  virtual int  nativeTextWidth(const char* s, int size) { return 6 * size * (int)strlen(s); }
+  virtual int  nativeTextHeight(int size) { return 8 * size; }   // Hoehe einer Textzeile in Pixeln
+  virtual void nativeImage(int x, int y, int w, int h, const uint16_t* rgb565) { }
   virtual void drawTextCentered(int mid_x, int y, const char* str) {   // helper method (override to optimise)
     int w = getTextWidth(str);
     setCursor(mid_x - w/2, y);

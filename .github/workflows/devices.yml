@@ -22,12 +22,13 @@ jobs:
       devices: ${{ steps.m.outputs.devices }}
     steps:
       - uses: actions/checkout@v4
-      # 0.9.1: vorerst nur die Release-Boards LILYGO T-Deck (Plus) und Heltec V2; die übrigen Geräte bleiben in
-      # tools/devices.json. Die komplette Liste baut nur ein manueller Start mit alle=true.
+      # 0.9.2: Release-Boards LILYGO T-Deck Plus und LILYGO T-Watch S3, dazu weiter Heltec V2 (Heltec-Aufräumen
+      # zurückgestellt); die übrigen Geräte bleiben in tools/devices.json. Die komplette Liste baut nur ein
+      # manueller Start mit alle=true.
       - id: m
         env:
           VOLL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.alle == 'true' }}
-          KERN: LilyGo_TDeck Heltec_v2
+          KERN: LilyGo_TDeck LilyGo_TWatchS3 Heltec_v2
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, os
@@ -63,10 +64,10 @@ jobs:
         with:
           path: ~/.platformio
           key: pio-dev-${{ steps.chip.outputs.chip }}-${{ hashFiles('platformio.ini', 'variants/**/platformio.ini') }}
-      - run: pip install -U platformio esptool
+      - run: pip install -U platformio esptool pillow
       - name: Bauen und packen
         run: tools/build_device.sh "${{ matrix.device }}" dist/devices
-      - name: Paket pruefen (factory.bin, Teile, spiffs.bin, SHA256SUMS, ANLEITUNG)
+      - name: Paket pruefen (factory.bin, firmware.bin, Teile, spiffs.bin, SHA256SUMS, ANLEITUNG)
         run: python3 tools/verify_package.py dist/devices/*.zip
       - uses: actions/upload-artifact@v4
         if: always()

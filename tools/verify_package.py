@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Prueft Release-Pakete HaldenFunk-MeshCore-<Version>-<Geraet>.zip auf Vollstaendigkeit.
 Aufruf: tools/verify_package.py <zip>... | <Ordner>   (Exit 1 bei Fehlern)
-ESP32: je Rolle <Paket>-<Rolle>-factory.bin + teile-<Rolle>/{bootloader,partitions,boot_app0,firmware}.bin,
-       WLAN-Portal zusaetzlich teile-wifi/spiffs.bin; nRF52/RP2040: .uf2 je Rolle; STM32: .bin oder .hex.
+ESP32 (ab 0.9.2, wie DisAHRsterRadio-MeshCore): eine Rolle -> <Paket>-factory.bin, <Paket>-firmware.bin (Update an 0x10000)
+       + teile/{bootloader,partitions,boot_app0}.bin; mehrere Rollen -> <Paket>-<Rolle>-factory.bin, <Paket>-<Rolle>-firmware.bin
+       + teile-<Rolle>/...; WLAN-Portal zusaetzlich spiffs.bin in den Teilen; nRF52/RP2040: .uf2 je Rolle; STM32: .bin oder .hex.
 Immer: ANLEITUNG.md (deutsch) und SHA256SUMS, deren Pruefsummen stimmen muessen."""
 import hashlib, json, os, sys, zipfile
 from pathlib import Path
@@ -32,12 +33,14 @@ def check(zp):
         if 'ANLEITUNG.md' in files:
             t = z.read(f'{name}/ANLEITUNG.md').decode('utf-8')
             if VER not in t or 'Antenne' not in t or '112' not in t: err.append('ANLEITUNG.md unvollstaendig (Version/Antenne/112)')
+        single = len(e['envs']) == 1
         for role in e['envs']:
             if e['chip'].startswith('esp32'):
-                need(f'{name}-{role}-factory.bin', 100_000)
-                for p in ('bootloader.bin', 'partitions.bin', 'boot_app0.bin'): need(f'teile-{role}/{p}')
-                need(f'teile-{role}/firmware.bin', 100_000)
-                if role == 'wifi': need('teile-wifi/spiffs.bin', 100_000)
+                suf, teile = ('', 'teile') if single else (f'-{role}', f'teile-{role}')
+                need(f'{name}{suf}-factory.bin', 100_000)
+                need(f'{name}{suf}-firmware.bin', 100_000)
+                for p in ('bootloader.bin', 'partitions.bin', 'boot_app0.bin'): need(f'{teile}/{p}')
+                if role == 'wifi': need(f'{teile}/spiffs.bin', 100_000)
             elif e['chip'] in ('nrf52', 'rp2040'):
                 need(f'{name}-{role}.uf2', 10_000)
             else:

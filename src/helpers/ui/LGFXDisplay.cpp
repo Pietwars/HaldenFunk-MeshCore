@@ -16,10 +16,15 @@ bool LGFXDisplay::begin() {
   display->init();
   display->setRotation(1);
   display->setBrightness(64);
-  display->setColorDepth(8);
+  display->setColorDepth(LGFX_SPRITE_DEPTH == 16 ? 16 : 8);
   display->setTextColor(TFT_WHITE);
+#ifdef LGFX_CP437_TEXT
+  // Texte kommen als Code-Page-437-Bytes (Umlaute), nicht als UTF-8
+  buffer.setAttribute(lgfx::v1::cp437_switch, true);
+  buffer.setAttribute(lgfx::v1::utf8_switch, false);
+#endif
 
-  buffer.setColorDepth(8);
+  buffer.setColorDepth(LGFX_SPRITE_DEPTH);
   buffer.setPsram(true);
   buffer.createSprite(width(), height());
 
@@ -89,8 +94,8 @@ uint16_t LGFXDisplay::getTextWidth(const char* str) {
 
 void LGFXDisplay::endFrame() {
   display->startWrite();
-  if (UI_ZOOM != 1) {
-    buffer.pushRotateZoom(display, display->width()/2, display->height()/2 , 0, UI_ZOOM, UI_ZOOM);
+  if (UI_ZOOM_X != 1 || UI_ZOOM_Y != 1) {
+    buffer.pushRotateZoom(display, display->width()/2, display->height()/2 , 0, UI_ZOOM_X, UI_ZOOM_Y);
   } else {
     buffer.pushSprite(display, 0, 0);
   }
@@ -100,9 +105,9 @@ void LGFXDisplay::endFrame() {
 bool LGFXDisplay::getTouch(int *x, int *y) {
   lgfx::v1::touch_point_t point;
   display->getTouch(&point);
-  if (UI_ZOOM != 1) {
-    *x = point.x / UI_ZOOM;
-    *y = point.y / UI_ZOOM;
+  if (UI_ZOOM_X != 1 || UI_ZOOM_Y != 1) {
+    *x = point.x / UI_ZOOM_X;
+    *y = point.y / UI_ZOOM_Y;
   } else {
     *x = point.x;
     *y = point.y;

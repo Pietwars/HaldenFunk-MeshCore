@@ -8,15 +8,20 @@ read -r CHIP WEBUI ENVS < <(python3 -c "
 import json,sys;d={e['device']:e for e in json.load(open('tools/devices.json'))}['$DEV']
 print(d['chip'],int(d['webui']),' '.join(k+'='+v for k,v in d['envs'].items()))")
 NAME=HaldenFunk-MeshCore-$VERSION-$DEV; D=$OUT/$NAME; rm -rf "$D"; mkdir -p "$D"; FAIL=0
+rm -f "$OUT/$NAME.zip"
+RELEASE_BOARD=$(python3 -c 'import json,sys; print(int(sys.argv[1] in json.load(open("tools/release_boards.json"))))' "$DEV")
+# Dateinamen: bei nur einer Rolle ohne Rollen-Suffix (NAME-factory.bin, NAME-firmware.bin, teile/), sonst NAME-<Rolle>-…, teile-<Rolle>/
+NROLES=$(echo $ENVS | wc -w)
 for kv in $ENVS; do role=${kv%%=*}; env=${kv#*=}
+  if [ "$NROLES" = 1 ]; then SUF=""; TEILE=teile; else SUF="-$role"; TEILE="teile-$role"; fi
   if ! pio run -e "$env" > "$OUT/$DEV-$role.log" 2>&1; then echo "FEHLER $DEV $role ($env)"; FAIL=1; continue; fi
   B=.pio/build/$env
   case $CHIP in
    esp32*)
     BOOT=0x0; [ "$CHIP" = esp32 ] && BOOT=0x1000
-    BOOTAPP0=$(find ~/.platformio/packages/ -path '*framework-arduinoespressif32*' -name boot_app0.bin | head -1)
+    BOOTAPP0=$(find "${PLATFORMIO_CORE_DIR:-$HOME/.platformio}/packages/" -path '*framework-arduinoespressif32*' -name boot_app0.bin | head -1)
     ARGS="$BOOT $B/bootloader.bin 0x8000 $B/partitions.bin 0xe000 $BOOTAPP0 0x10000 $B/firmware.bin"
-    mkdir -p "$D/teile-$role"; cp $B/bootloader.bin $B/partitions.bin $B/firmware.bin "$BOOTAPP0" "$D/teile-$role/"
+    mkdir -p "$D/$TEILE"; cp $B/bootloader.bin $B/partitions.bin "$BOOTAPP0" "$D/$TEILE/"; cp $B/firmware.bin "$D/$NAME$SUF-firmware.bin"
     FSOFF=-
     if [ "$role" = wifi ]; then
       pio run -e "$env" -t buildfs >> "$OUT/$DEV-$role.log" 2>&1 || { echo "FEHLER buildfs $DEV"; FAIL=1; continue; }
@@ -24,10 +29,19 @@ for kv in $ENVS; do role=${kv%%=*}; env=${kv#*=}
 for i in range(0,len(d),32):
   m,t,st,o,sz=struct.unpack('<HBBII',d[i:i+12])
   if m==0x50aa and t==1 and st in(0x82,0x83):print(hex(o));break" $B/partitions.bin)
-      cp $B/spiffs.bin "$D/teile-$role/"; ARGS="$ARGS $FSOFF $B/spiffs.bin"
+      cp $B/spiffs.bin "$D/$TEILE/"; ARGS="$ARGS $FSOFF $B/spiffs.bin"
     fi
-    $ESPTOOL --chip $CHIP merge-bin -o "$D/$NAME-$role-factory.bin" --flash-mode keep --flash-freq keep --flash-size keep $ARGS >/dev/null || { echo "FEHLER merge $DEV $role"; FAIL=1; continue; }
-    echo "$role|$CHIP|$BOOT|$FSOFF" >> "$D/.offsets";;
+    $ESPTOOL --chip $CHIP merge-bin -o "$D/$NAME$SUF-factory.bin" --flash-mode keep --flash-freq keep --flash-size keep $ARGS >/dev/null || { echo "FEHLER merge $DEV $role"; FAIL=1; continue; }
+    if [ "$RELEASE_BOARD" = 1 ]; then
+      python3 tools/validate_memory.py --env "$env" --build-dir "$B" \
+        --build-log "$OUT/$DEV-$role.log" --factory "$D/$NAME$SUF-factory.bin" \
+        --boot-app0 "$BOOTAPP0" --output "$D/memory-report" || { FAIL=1; continue; }
+    fi
+    echo "$role|$CHIP|$BOOT|$FSOFF|$SUF|$TEILE" >> "$D/.offsets"
+    # Vorschau der Marken-Anzeige (nur Geraete mit ui-brand; braucht Pillow, sonst uebersprungen)
+    if [ "$role" = wifi ] && python3 tools/brand_preview.py --has "$DEV"; then
+      ${PREVIEW_PYTHON:-python3} tools/brand_preview.py "$DEV" "$D/vorschau" "$env" >> "$OUT/$DEV-$role.log" 2>&1 || echo "Hinweis: keine Vorschau fuer $DEV"
+    fi;;
    nrf52|rp2040)
     [ $CHIP = nrf52 ] && [ ! -f $B/firmware.uf2 ] && python3 bin/uf2conv/uf2conv.py $B/firmware.hex -c -o $B/firmware.uf2 -f 0xADA52840 >/dev/null
     for f in $B/firmware.uf2 $B/firmware.zip; do [ -f $f ] && cp $f "$D/$NAME-$role.${f##*.}"; done
@@ -36,6 +50,10 @@ for i in range(0,len(d),32):
     for f in $B/firmware.bin $B/firmware.hex; do [ -f $f ] && cp $f "$D/$NAME-$role.${f##*.}"; done;;
   esac
 done
+if [ "$FAIL" != 0 ]; then
+  echo "FEHLER: kein Release-Paket fuer $DEV (Build/Validierung fehlgeschlagen)"
+  exit "$FAIL"
+fi
 python3 tools/write_liesmich.py "$DEV" "$D" "$VERSION"
 (cd "$D" && rm -f .offsets && sha256sum $(find . -type f ! -name SHA256SUMS | sort) > SHA256SUMS)
 rm -f "$OUT/$NAME.zip"; (cd "$OUT" && python3 -m zipfile -c "$NAME.zip" "$NAME")

@@ -11,6 +11,8 @@ VER=version()  # nur fuer die Ausgabe; die ini nutzt ${hf.version}
 devs=json.loads((ROOT/'tools/devices.upstream.json').read_text())
 # Bereits handgepflegte Portal-Profile
 MANUAL={'LilyGo_T3S3_sx1262':'disaster_t3s3_sx1262_wifi','LilyGo_TLora_V2_1_1_6':'disaster_tlora_v2_1_sx1276_wifi','Heltec_v2':'disaster_heltec_v2_sx1276_wifi'}
+# LILYGO T-Watch S3: nicht in der Upstream-Liste, eigenes Profil dar_LilyGo_TWatchS3_wifi in platformio.local.ini (0.9.2)
+out.append({'device':'LilyGo_TWatchS3','chip':'esp32s3','envs':{'wifi':'dar_LilyGo_TWatchS3_wifi'},'webui':True,'note':'eigenes Profil (platformio.local.ini), nicht in der MeshCore-Konfigurator-Liste'})
 (ROOT/'platformio.devices.ini').write_text('')
 c=ProjectConfig(str(ROOT/'platformio.ini'))
 def chip(e):

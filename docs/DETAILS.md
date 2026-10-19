@@ -134,12 +134,13 @@ Die Weboberfläche liegt in `web/index.html`. `tools/embed_web.py` bettet die gz
 
 **Funkprofil (alle Geräte, alle Rollen):** MeshCore-Standard-Preset **EU/UK (Narrow)** – **869,618 MHz, Bandbreite 62,5 kHz, SF8, CR 4/8**, MeshCore-Standard-Syncword (privat, 0x12). Gesetzt über die Build-Flags `LORA_FREQ=869.618`, `LORA_BW=62.5`, `LORA_SF=8`, `LORA_CR=8` in `platformio.ini` (gilt für alle 105 Geräte der Matrix und die eigenen Profile). Teilband 869,4–869,65 MHz (SRD, ETSI EN 300 220 / BNetzA): max. 500 mW ERP (27 dBm), 10 % Sendezeit; die Firmware bleibt bei der bisherigen boardsicheren Sendeleistung (nicht erhöht). Alle Knoten eines Netzes müssen dasselbe Profil nutzen – Geräte mit älterem Stand (CR 4/5) einmal in der Weboberfläche auf „EU/UK Narrow“ stellen oder per CLI `set radio 869.618,62.5,8,8`.
 
-Der Code für alle 105 Geräte der [MeshCore-Konfigurator](https://meshcore.co.uk/configurator/)-Liste bleibt erhalten (`tools/devices.upstream.json`, `tools/devices.json`, Envs aus `tools/gen_devices.py` → `platformio.devices.ini`; einzeln bauen mit `tools/build_device.sh <Gerät>`). Ab 0.9.1 baut das CI vorerst nur noch die beiden Release-Boards, und nur diese sind im Release:
+Der Code für alle Geräte (105 aus der Liste, dazu ab 0.9.2 LILYGO T-Watch S3) der [MeshCore-Konfigurator](https://meshcore.co.uk/configurator/)-Liste bleibt erhalten (`tools/devices.upstream.json`, `tools/devices.json`, Envs aus `tools/gen_devices.py` → `platformio.devices.ini`; einzeln bauen mit `tools/build_device.sh <Gerät>`). Das CI baut vorerst nur die Release-Geräte, und nur diese sind im Release (ab 0.9.2 mit T-Watch S3):
 
 | Gerät | Chip | Web-Oberfläche | Inhalt | Datei |
 |---|---|---|---|---|
-| LilyGo_TDeck (T-Deck / T-Deck Plus) | esp32s3 | ja | WLAN-Portal | `HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip` |
-| Heltec_v2 | esp32 | ja | WLAN-Portal | `HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip` |
+| LilyGo_TDeck (T-Deck / T-Deck Plus) | esp32s3 | ja | WLAN-Portal, Marken-Anzeige, Akku-Verlauf | `HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck.zip` |
+| LilyGo_TWatchS3 (T-Watch S3, neu) | esp32s3 | ja | WLAN-Portal, Marken-Anzeige, Akku-Verlauf | `HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3.zip` |
+| Heltec_v2 | esp32 | ja | WLAN-Portal | `HaldenFunk-MeshCore-0.9.2-Heltec_v2.zip` |
 
 Alle Geräte bauen: Workflow „Alle Geräte (MeshCore-Konfigurator-Liste)“ manuell mit `alle = true` starten.
 

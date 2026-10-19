@@ -44,7 +44,10 @@ bool ST7789LCDDisplay::begin() {
     }
 
     // Im not sure if this is just a t-deck problem or not, if your display is slow try this.
-    #if defined(LILYGO_TDECK) || defined(HELTEC_LORA_V4_TFT) || defined(HELTEC_V4_R8_TFT)
+    #if defined(LILYGO_TDECK)
+      // shared bus with the LoRa radio: begin once (idempotent), same SPIClass as RadioLib
+      tdeck_shared_spi_begin();
+    #elif defined(HELTEC_LORA_V4_TFT) || defined(HELTEC_V4_R8_TFT)
       displaySPI.begin(PIN_TFT_SCL, PIN_TFT_MISO, PIN_TFT_SDA, PIN_TFT_CS);
     #endif
 

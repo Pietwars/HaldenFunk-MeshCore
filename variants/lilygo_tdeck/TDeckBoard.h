@@ -6,7 +6,6 @@
 
 #define PIN_VBAT_READ 4
 #define BATTERY_SAMPLES 8
-#define ADC_MULTIPLIER (2.0f * 3.3f * 1000)
 
 class TDeckBoard : public ESP32Board {
 public:
@@ -22,17 +21,17 @@ public:
     }
   #endif
 
-  uint16_t getBattMilliVolts() {
-    #if defined(PIN_VBAT_READ) && defined(ADC_MULTIPLIER)
+  // Akkuspannung: Spannungsteiler 1:2 an GPIO 4 (einzige Akku-Messung des T-Deck Plus, kein Strom,
+  // kein Ladestatus). analogReadMilliVolts nutzt die eFuse-Kalibrierung des ESP32-S3 (genauer als
+  // Rohwert * 3,3 V / 4096 bei 11 dB Daempfung).
+  uint16_t getBattMilliVolts() override {
+    #if defined(PIN_VBAT_READ)
       analogReadResolution(12);
-
-      uint32_t raw = 0;
+      uint32_t mv = 0;
       for (int i = 0; i < BATTERY_SAMPLES; i++) {
-        raw += analogRead(PIN_VBAT_READ);
+        mv += analogReadMilliVolts(PIN_VBAT_READ);
       }
-
-      raw = raw / BATTERY_SAMPLES;
-      return (ADC_MULTIPLIER * raw) / 4096;
+      return (uint16_t)(2 * mv / BATTERY_SAMPLES);
     #else
       return 0;
     #endif
