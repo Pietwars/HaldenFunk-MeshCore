@@ -16,7 +16,7 @@ Das Board ist ein MeshCore-Companion und spannt ein eigenes WLAN **`HaldenFunk-X
 
 > 📡 **Nicht funkkompatibel mit [HaldenFunk](https://github.com/Pietwars/HaldenFunk) und [DisAHRsterRadio](https://github.com/Pietwars/DisAHRsterRadio):** Diese beiden nutzen kein MeshCore, sondern LoRaLayer2 (disaster-radio). HaldenFunk-MeshCore spricht das normale MeshCore-Funkprotokoll und versteht sich mit anderen MeshCore-Knoten (z. B. DisAHRsterRadio-MeshCore, DisasterMesh) bei gleichem Funkprofil.
 
-**Download:** [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) mit den Paketen für **LILYGO T-Deck / T-Deck Plus** (`HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip`) und **Heltec WiFi LoRa 32 V2** (`HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip`), je mit `factory.bin` (an **0x0**; überschreibt Einstellungen, Identität und Kontakte), deutscher `ANLEITUNG.md` und `SHA256SUMS`. Weitere Geräte bleiben im Code, sind aber vorerst nicht im Release.
+**Download:** [Release v0.9.2](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.2) mit den Paketen für **LILYGO T-Deck Plus** (`HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck.zip`) und **LILYGO T-Watch S3** (`HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3.zip`), je mit `…-factory.bin` (an **0x0**; überschreibt Einstellungen, Identität und Kontakte), `…-firmware.bin` (Update an 0x10000), deutscher `ANLEITUNG.md` und `SHA256SUMS`. Weitere Geräte bleiben im Code, sind aber nicht im Release; ältere Releases bleiben unverändert.
 
 **Web-Flasher (nur LILYGO T-Deck Plus):** [pietwars.github.io/HaldenFunk-MeshCore/flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) – in Chrome/Edge am Computer, schreibt die `factory.bin` aus dem Release v0.9.1 an 0x0 (löscht Einstellungen). **Heltec V2 vorerst manuell** mit esptool bzw. esptool-js: [Anleitung Flashen](FLASHEN.md) (Port finden unter Windows/macOS/Linux, Befehle, Update ohne Datenverlust).
 
@@ -156,7 +156,7 @@ Alle Geräte bauen: Workflow „Alle Geräte (MeshCore-Konfigurator-Liste)“ ma
 ## Lizenz und Danksagung
 
 - **MeshCore** © Scott Powell / rippleradios.com und Mitwirkende, **MIT-Lizenz** (`license.txt`). Original-README: [README.meshcore.md](../README.meshcore.md).
-- WLAN-Portal, Zustell-Warteschlange, Room-/Repeater-Anpassungen: aus [DisasterMesh](https://github.com/Pietwars/DisasterMesh) (MIT).
+- WLAN-Portal, Zustell-Warteschlange, Room-/Repeater-Anpassungen: aus [DisasterMesh](https://github.com/Pietwars/DisasterMesh) (MIT; Repository inzwischen archiviert).
 - Code-Basis: [DisAHRsterRadio-MeshCore](https://github.com/Pietwars/DisAHRsterRadio-MeshCore) (MIT).
 - Regionales Design, Hintergrundbild, Orte und Karten: aus [HaldenFunk](https://github.com/Pietwars/HaldenFunk), vom selben Autor, hier unter MIT.
 - Kartendaten © OpenStreetMap-Mitwirkende, ODbL 1.0 (`web/map/ODbL-1.0.txt`).
