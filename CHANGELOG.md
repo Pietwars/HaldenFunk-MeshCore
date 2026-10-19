@@ -1,6 +1,9 @@
 # Änderungen
 
-## 0.9.2 · vorbereitet (noch nicht veröffentlicht)
+## 0.9.2 · 19.10.2026 · Vorabversion
+
+- **README und Doku:** Projektfamilie mit den vier aktiven Repositorys (DisAHRsterRadio-MeshCore, DisAHRsterRadio, HaldenFunk, HaldenFunk-MeshCore); Pietwars/DisasterMesh ist archiviert und gehört nicht mehr dazu. Flyer 0.9.2 neu erzeugt (T-Deck Plus, T-Watch S3).
+
 
 Übernahme der Funktionen aus **DisAHRsterRadio-MeshCore 0.9.4** (Tag `v0.9.4`), angepasst an HaldenFunk: eigenes Bild, eigene Texte und Farben (Kupfer/Anthrazit), offener Zugang wie bisher (Bluetooth **ohne PIN**, Web-Admin mit Passwort für Name/Kanäle). Firmwarekennung `v1.18.0-hf0.9.2` (Portal-Profile `…-wifi` usw.). Auf Hardware ist 0.9.2 **nicht abgenommen**.
 
