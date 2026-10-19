@@ -6,9 +6,9 @@
  "credit": "© Pietwars · Bild: HaldenFunk (eigene Grafik) · Kartendaten © OpenStreetMap (ODbL)",
  "title_html": "Halden<span>Funk</span> <small style=\"font-size:13pt\">MeshCore</small>",
  "subtitle": "Glück Auf – MeshCore 1.18 fürs Mansfelder Land · @VERSION@",
- "intro": "<b>Das Mansfelder-Land-Funknetz auf MeshCore-Basis</b> – von Sangerhausen bis an den Harzrand. Release @VERSION@ für <b>LILYGO T-Deck / T-Deck Plus</b> und <b>Heltec V2</b> (868 MHz). Bedienung im Browser über offenes WLAN im HaldenFunk-Design oder per Bluetooth mit der MeshCore-App.",
+ "intro": "<b>Das Mansfelder-Land-Funknetz auf MeshCore-Basis</b> – von Sangerhausen bis an den Harzrand. Release @VERSION@ für <b>LILYGO T-Deck / T-Deck Plus</b> und <b>LILYGO T-Watch S3</b> (868 MHz). Bedienung im Browser über offenes WLAN im HaldenFunk-Design oder per Bluetooth mit der MeshCore-App.",
  "features": [
-  "Boards: T-Deck Plus, Heltec V2",
+  "Boards: T-Deck Plus, T-Watch S3",
   "WLAN-Oberfläche im Browser",
   "Bluetooth ohne PIN, MeshCore-App",
   "Chat, Brett, Standort, Karten",

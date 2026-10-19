@@ -1,6 +1,22 @@
 # Änderungen
 
-## Unveröffentlicht (nach 0.9.1)
+## 0.9.2 · vorbereitet (noch nicht veröffentlicht)
+
+Übernahme der Funktionen aus **DisAHRsterRadio-MeshCore 0.9.4** (Tag `v0.9.4`), angepasst an HaldenFunk: eigenes Bild, eigene Texte und Farben (Kupfer/Anthrazit), offener Zugang wie bisher (Bluetooth **ohne PIN**, Web-Admin mit Passwort für Name/Kanäle). Firmwarekennung `v1.18.0-hf0.9.2` (Portal-Profile `…-wifi` usw.). Auf Hardware ist 0.9.2 **nicht abgenommen**.
+
+- **Neues Board LILYGO T-Watch S3** (`LilyGo_TWatchS3`, Profil `dar_LilyGo_TWatchS3_wifi`): Variante aus dem offenen Upstream-PR meshcore-dev/MeshCore#2799, unverändert aus DisAHRsterRadio-MeshCore übernommen (`variants/lilygo_twatch_s3/UPSTREAM.md`), WLAN-Portal + MeshCore-App, 240 MHz.
+- **Minimal-Anzeige mit HaldenFunk-Bild** (T-Deck Plus und T-Watch S3, `examples/companion_radio/ui-brand`): nur das HaldenFunk-Bild (Halden, Förderturm, Funkwellen; aus `docs/flyer/haldenfunk-header.jpg` abgeleitet, Schriftzug „⚒ HaldenFunk – Glück Auf · MeshCore“ ergänzt, `tools/gen_brand_logo.py`), Akku-Zeile und kupferfarbener Knopf **„Advert senden“** (Flood-Advert, höchstens einer je 10 s). T-Deck: Trackball kurz = Display an/aus, 2,5 s = Advert. T-Watch: Seitentaste kurz = Display, 2 s = Advert, 6 s = aus; Knopf antippen = Advert. Keine PIN-Anzeige (Bluetooth ohne PIN).
+- **Akku-Zeile:** Ladestand, Spannung, geschätzter Verbrauch/Restlaufzeit (`ui-brand/BattTrend.h`). T-Watch über AXP2101 (`readPower()`: Spannung, %, USB, Laden); T-Deck nur Spannung mit eFuse-kalibriertem ADC (`analogReadMilliVolts`), Prozent geschätzt. Hosttest `tests/batt_trend.test.cpp`.
+- **Nachrichten zwischen Weboberfläche und MeshCore-App teilen** (`SharedQueue.h`): Jede empfangene Nachricht bleibt in der Warteschlange, bis Weboberfläche **und** App sie abgeholt haben; Antworten auf Abruf und Senden gehen nur an den anfragenden Client; in der App gesendete Nachrichten stehen im Web-Verlauf, im Web gesendete erscheinen in der App markiert („<Name> (Web)“ bzw. „[von mir über Web]“). Weboberfläche zeigt auch ältere Empfangsformate (Code 7/8). Hosttest `tests/shared_queue.test.cpp`.
+- **T-Deck-Display-Fix:** Display und LoRa teilen eine SPIClass (Display blieb sonst nach dem Funkstart stehen).
+- **Weboberfläche:** Schnellmeldung-„Senden“ bleibt auf schmalen Displays im Bild; Speicheranzeige in KB mit Warnung unter 40 KB (`heapWarn`), Zeile „Verlauf-Speicher“, Versionsfußzeile im Gerät-Reiter; serielles `[HEAP]`- und `[VERLAUF]`-Log.
+- **Pakete wie DisAHRsterRadio-MeshCore:** `…-factory.bin` (0x0), `…-firmware.bin` (Update an 0x10000), `teile/`, `vorschau/` (Anzeige-Vorschau), bei T-Deck Plus/T-Watch S3 `memory-report.md/json` (Flash-Header, Partitionen, factory.bin, RAM; `tools/validate_memory.py`, Hosttests `tests/test_memory_validation.py`). Prüfung `tools/verify_package.py` / `tools/verify_devices.py`.
+- **Web-Flasher 0.9.2 vorbereitet** (`tools/flasher-next/`, nicht aktiv): T-Deck Plus und T-Watch S3, je „Update (Einstellungen bleiben)“ (`firmware.bin` an 0x10000) und „Neuinstallation (alles löschen)“ (`factory.bin` an 0x0). Live bleibt bis zur Umstellung der 0.9.1-Flasher (`docs/flasher/`).
+- CI: T-Deck Plus und T-Watch S3 mit Speicherprüfung (`build.yml`), Geräte-CI nur T-Deck Plus und T-Watch S3.
+- **Entfernt: Heltec WiFi LoRa 32 V2** – Profile `disaster_heltec_v2_sx1276_wifi` und `_diag`, CI-Builds, Paket, Geräteliste-Eintrag, Flasher-Hinweis und Doku. Das letzte Heltec-Paket bleibt im Release v0.9.1. Release-Geräte ab 0.9.2: nur LILYGO T-Deck Plus und LILYGO T-Watch S3.
+- **Nicht übernommen** (bewusst): Bluetooth-PIN/volle App-Rechte über PIN-Bluetooth, privater Schlüssel-Export/-Import, Web ohne Admin-Anmeldung, „Kontakte automatisch nur Repeater/Room-Server“, Ahrtal-Karten/-Texte und DisAHRsterRadio-Bild. HaldenFunk bleibt beim offenen Zugang mit Web-Admin.
+
+## Nach 0.9.1 (bereits auf main)
 
 - **Web-Flasher für LILYGO T-Deck Plus** auf GitHub Pages (`/flasher/`, ESP Web Tools 10.4.0): schreibt die unveränderte `factory.bin` aus dem Release v0.9.1 an 0x0; der Pages-Workflow lädt sie aus dem Release und prüft die SHA-256 (`tools/flasher_fetch.py`, Konfiguration `docs/flasher/flasher.json`). Heltec V2 vorerst nur manuell. Neue Anleitung `docs/FLASHEN.md` (Port finden, esptool-Befehle, Update an 0x10000). Firmware unverändert.
 

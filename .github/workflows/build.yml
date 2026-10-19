@@ -24,12 +24,16 @@ jobs:
         run: python3 tools/flasher_fetch.py --check
       - name: Versionsangaben pruefen (einzige Quelle platformio.local.ini, [hf] version)
         run: python3 tools/check_version.py
+      - name: Vorbereiteter Web-Flasher 0.9.2 (tools/flasher-next, Update + Neuinstallation)
+        run: python3 tools/flasher_fetch.py --cfg tools/flasher-next --check
+      - name: Flash- und Speicherpruefungen (Hosttests)
+        run: python3 -m unittest discover -s tests -p 'test_memory_validation.py' -v
   build:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        env: [disaster_t3s3_sx1262_wifi, disaster_tlora_v2_1_sx1276_wifi, disaster_heltec_v2_sx1276_wifi, disaster_t3s3_sx1262_repeater, disaster_t3s3_sx1262_room, disaster_ttgo_repeater, disaster_ttgo_room]
+        env: [disaster_t3s3_sx1262_wifi, disaster_tlora_v2_1_sx1276_wifi, disaster_t3s3_sx1262_repeater, disaster_t3s3_sx1262_room, disaster_ttgo_repeater, disaster_ttgo_room]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -54,4 +58,47 @@ jobs:
             .pio/build/${{ matrix.env }}/bootloader.bin
             .pio/build/${{ matrix.env }}/partitions.bin
             .pio/build/${{ matrix.env }}/spiffs.bin
+          if-no-files-found: error
+  # 0.9.2: Release-Boards LILYGO T-Deck Plus und LILYGO T-Watch S3 (Marken-Anzeige, Akku-Zeile) mit Flash-/RAM-Pruefung
+  release-boards:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [dar_LilyGo_TDeck_wifi, dar_LilyGo_TWatchS3_wifi]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-mc-${{ matrix.env }}-${{ hashFiles('platformio.ini', 'platformio.local.ini', 'variants/**/platformio.ini') }}
+      - run: pip install -U platformio
+      - name: Weboberfläche einbetten (Prüfung)
+        run: python tools/embed_web.py && git diff --exit-code -- examples/companion_radio/PortalPage.h examples/companion_radio/PortalAssets.h
+      - name: Firmware bauen
+        shell: bash
+        run: set -o pipefail; pio run -e ${{ matrix.env }} | tee .pio-${{ matrix.env }}.log
+      - name: Dateisystem bauen
+        run: pio run -e ${{ matrix.env }} -t buildfs
+      - name: Flash/Header/Partitionen/Firmware und RAM pruefen
+        run: >-
+          python3 tools/validate_memory.py --env ${{ matrix.env }}
+          --build-dir .pio/build/${{ matrix.env }} --build-log .pio-${{ matrix.env }}.log
+          --output .pio/build/${{ matrix.env }}/memory-report
+      - name: Speicherbericht
+        run: cat .pio/build/${{ matrix.env }}/memory-report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.env }}
+          path: |
+            .pio/build/${{ matrix.env }}/firmware.bin
+            .pio/build/${{ matrix.env }}/bootloader.bin
+            .pio/build/${{ matrix.env }}/partitions.bin
+            .pio/build/${{ matrix.env }}/spiffs.bin
+            .pio/build/${{ matrix.env }}/memory-report.json
+            .pio/build/${{ matrix.env }}/memory-report.md
+            .pio-${{ matrix.env }}.log
           if-no-files-found: error

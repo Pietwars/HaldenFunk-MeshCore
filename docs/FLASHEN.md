@@ -1,57 +1,58 @@
-# Flashen (HaldenFunk-MeshCore 0.9.1)
+# Flashen (HaldenFunk-MeshCore 0.9.2)
 
 > ⚠️ Kein zertifiziertes Notrufsystem. Im Notfall immer **112**.
 
-**Antenne anschrauben, bevor das Gerät Strom bekommt.** Die Erstinstallation (`factory.bin` an **0x0**) **überschreibt Einstellungen, Knotenidentität, Kontakte und Chatverlauf**. Ein Update ohne Datenverlust schreibt nur die Anwendung (`teile-wifi/firmware.bin` an **0x10000**).
+**Antenne anschrauben, bevor das Gerät Strom bekommt.** Zwei Wege:
 
-## LILYGO T-Deck Plus: Web-Flasher (empfohlen)
+- **Neuinstallation:** `…-factory.bin` an **0x0** – **überschreibt Einstellungen, Knotenidentität, Kontakte und Chatverlauf**.
+- **Update ohne Datenverlust:** nur `…-firmware.bin` an **0x10000** (T-Deck Plus: gleiche Partitionstabelle wie 0.9.1 und 0.1.x-alpha).
 
-**https://pietwars.github.io/HaldenFunk-MeshCore/flasher/** in Chrome oder Edge am Computer öffnen, T-Deck Plus per USB-C-Datenkabel anschließen, „Firmware auf T-Deck Plus installieren“ klicken, Port wählen, bestätigen, danach neu starten. Der Flasher schreibt genau die `factory.bin` aus dem [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) an 0x0 (SHA-256 `ac292078282cba703c5c0f09d9a0a3872e1334d9e4106330ea576af04759a853`). HaldenFunk-MeshCore 0.9.1 ist auf Hardware noch nicht abgenommen (gebaut vom CI, Datei aus dem Release v0.9.1).
+Paketaufbau ab 0.9.2 (wie DisAHRsterRadio-MeshCore): `HaldenFunk-MeshCore-0.9.2-<Gerät>-factory.bin`, `HaldenFunk-MeshCore-0.9.2-<Gerät>-firmware.bin`, Einzelteile in `teile/`, Vorschau der Anzeige in `vorschau/`, bei T-Deck Plus und T-Watch S3 zusätzlich `memory-report.md` (Flash-/RAM-Prüfung). Bis 0.9.1 hießen die Dateien `…-wifi-factory.bin` und `teile-wifi/firmware.bin`.
 
-Nur für das T-Deck Plus. Heltec V2 und andere Boards: vorerst manuell (unten).
+## Web-Flasher (T-Deck Plus; ab der Umstellung auf 0.9.2 auch T-Watch S3)
 
-## Manuell mit esptool (alle Boards im Release)
+**https://pietwars.github.io/HaldenFunk-MeshCore/flasher/** in Chrome oder Edge am Computer öffnen, Gerät per USB-C-Datenkabel anschließen, Knopf wählen, Port wählen, bestätigen, danach neu starten. Bis zur Umstellung schreibt der Flasher die `factory.bin` aus dem [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) an 0x0 (nur T-Deck Plus). Die 0.9.2-Fassung (vorbereitet in `tools/flasher-next/`) hat je Gerät **„Update auf 0.9.2 (Einstellungen bleiben)“** (`firmware.bin` an 0x10000) und **„Neuinstallation (alles löschen)“** (`factory.bin` an 0x0).
 
-Paket aus dem [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) laden und entpacken, Prüfsummen kontrollieren (`sha256sum -c SHA256SUMS`, Windows: `certutil -hashfile Datei SHA256`). esptool installieren: `python -m pip install esptool` (Version 4.x oder 5.x).
+Heltec WiFi LoRa 32 V2 ist ab 0.9.2 nicht mehr unterstützt; das letzte Paket liegt im [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1).
+
+## Manuell mit esptool
+
+Paket aus dem Release laden und entpacken, Prüfsummen kontrollieren (`sha256sum -c SHA256SUMS`, Windows: `certutil -hashfile Datei SHA256`). esptool installieren: `python -m pip install esptool` (Version 4.x oder 5.x).
 
 ### Port finden
 
 | System | So findest du den Port |
 |---|---|
-| Windows | Geräte-Manager → „Anschlüsse (COM & LPT)“, z. B. `COM5` (Heltec V2: „Silicon Labs CP210x“; T-Deck Plus: „USB Serial Device“/„USB JTAG/serial debug unit“). Fehlt der Port: Treiber CP210x von Silicon Labs installieren (Heltec V2). |
-| macOS | `ls /dev/cu.*` – T-Deck Plus `/dev/cu.usbmodem…`, Heltec V2 `/dev/cu.SLAB_USBtoUART` oder `/dev/cu.usbserial-…` |
-| Linux | `ls /dev/ttyACM* /dev/ttyUSB*` – T-Deck Plus meist `/dev/ttyACM0`, Heltec V2 `/dev/ttyUSB0`; Benutzer in Gruppe `dialout` (`sudo usermod -aG dialout $USER`, neu anmelden) |
+| Windows | Geräte-Manager → „Anschlüsse (COM & LPT)“, z. B. `COM5` („USB Serial Device“/„USB JTAG/serial debug unit“). |
+| macOS | `ls /dev/cu.*` – T-Deck Plus / T-Watch S3 `/dev/cu.usbmodem…` |
+| Linux | `ls /dev/ttyACM*` – T-Deck Plus / T-Watch S3 meist `/dev/ttyACM0`; Benutzer in Gruppe `dialout` (`sudo usermod -aG dialout $USER`, neu anmelden) |
 
-Kein Port bzw. „Failed to connect“: anderes (Daten-)Kabel; Download-Modus erzwingen – T-Deck Plus: **Trackball gedrückt halten** und einschalten bzw. Reset; Heltec V2: **PRG** gedrückt halten und **RST** kurz drücken.
+Kein Port bzw. „Failed to connect“: anderes (Daten-)Kabel; Download-Modus erzwingen – T-Deck Plus: **Trackball gedrückt halten** und einschalten bzw. Reset; T-Watch S3: USB-C neu einstecken (ggf. Seitentaste kurz drücken, falls die Uhr aus ist).
 
-### Erstinstallation (löscht Einstellungen)
+### Neuinstallation (löscht Einstellungen)
 
 `PORT` ersetzen (z. B. `COM5`, `/dev/ttyACM0`):
 
 ```
-# LILYGO T-Deck Plus (ESP32-S3), Bootloader liegt bei 0x0:
-python -m esptool --chip esp32s3 --port PORT --baud 921600 write_flash 0x0 HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck-wifi-factory.bin
-```
-
-Heltec WiFi LoRa 32 V2 (klassischer ESP32): ebenfalls die `…-factory.bin` aus dem Heltec-Paket an **0x0** (sie enthält den Bootloader bereits an der richtigen Stelle 0x1000):
-
-```
-python -m esptool --chip esp32 --port PORT --baud 460800 write_flash 0x0 <Heltec-Paket>-factory.bin
+# LILYGO T-Deck Plus (ESP32-S3):
+python -m esptool --chip esp32s3 --port PORT --baud 921600 write_flash 0x0 HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck-factory.bin
+# LILYGO T-Watch S3 (ESP32-S3):
+python -m esptool --chip esp32s3 --port PORT --baud 921600 write_flash 0x0 HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3-factory.bin
 ```
 
 ### Update ohne Datenverlust
 
 ```
-python -m esptool --chip esp32s3 --port PORT --baud 921600 write_flash 0x10000 teile-wifi/firmware.bin   # T-Deck Plus
-python -m esptool --chip esp32 --port PORT --baud 460800 write_flash 0x10000 teile-wifi/firmware.bin   # Heltec V2
+python -m esptool --chip esp32s3 --port PORT --baud 921600 write_flash 0x10000 HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck-firmware.bin
+python -m esptool --chip esp32s3 --port PORT --baud 921600 write_flash 0x10000 HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3-firmware.bin
 ```
 
-Nur innerhalb derselben Version/Partitionierung verwenden; bei Problemen die Erstinstallation machen.
+Die T-Watch S3 ist neu in 0.9.2 – beim ersten Mal (andere Firmware vorher) die Neuinstallation verwenden. Bei Problemen nach einem Update die Neuinstallation machen.
 
 ### Ohne Installation: esptool-js im Browser
 
-https://espressif.github.io/esptool-js/ in Chrome/Edge öffnen → **Connect** → Port wählen → Flash Address `0x0`, Datei `…-factory.bin` → **Program** → danach Reset. (Update: `firmware.bin` an `0x10000`.)
+https://espressif.github.io/esptool-js/ in Chrome/Edge öffnen → **Connect** → Port wählen → Flash Address `0x0`, Datei `…-factory.bin` → **Program** → danach Reset. (Update: `…-firmware.bin` an `0x10000`.)
 
 ## Danach
 
-Offenes WLAN `HaldenFunk-XXXXXX` wählen (ohne Passwort) und **http://192.168.4.1** öffnen. Details zu Bluetooth und Zugängen: [README](../README.md) und die `ANLEITUNG.md` im Paket.
+Offenes WLAN `HaldenFunk-XXXXXX` wählen (ohne Passwort) und **http://192.168.4.1** öffnen. MeshCore-App per Bluetooth ohne PIN. Details zu Bluetooth, Anzeige und Zugängen: [README](../README.md) und die `ANLEITUNG.md` im Paket.

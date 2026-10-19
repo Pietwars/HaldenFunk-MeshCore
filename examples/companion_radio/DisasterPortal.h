@@ -20,6 +20,9 @@
 #include <esp_system.h>
 #include <esp_timer.h>
 #include "PortalPage.h"
+#ifndef HEAP_WARN_BYTES
+#define HEAP_WARN_BYTES 40960  // Warnschwelle freier Heap (Weboberfläche rot, serielles [HEAP]-Log mit WARNUNG)
+#endif
 #include "PortalAssets.h"
 #include "AdminSession.h"
 #include <mbedtls/sha256.h>
@@ -54,6 +57,7 @@ class DisasterPortal : public BaseSerialInterface {
   int activeJob=-1;
   uint32_t routeJob=0;uint8_t routeAttempt=255;
   WebServer http{80};
+  unsigned long heapLog=0;
   bool modemSleep=false, apOk=false; unsigned long apRetry=0, apPrint=0;
   DNSServer dns;
   bool enabled = false, storageOK = true;
@@ -93,7 +97,8 @@ class DisasterPortal : public BaseSerialInterface {
     bool ok=f && disaster::seekSlot(f,disaster::offset(r.seq)) && f.write((uint8_t*)&r,sizeof(r))==sizeof(r);
     if(f)f.close();
     if(!ok)storageOK=false;
-    if(!ok)Serial.printf("[VERLAUF] Schreiben fehlgeschlagen (seq %u)\n",(unsigned)r.seq);archive.append(r);
+    if(!ok)Serial.printf("[VERLAUF] Schreiben fehlgeschlagen (seq %u)\n",(unsigned)r.seq);
+    archive.append(r);
   }
   bool permitted() {
     // Custom header prevents cross-origin form submissions; no CORS is enabled.
@@ -192,9 +197,11 @@ public:
   void begin() {
     delivery.begin();lastStamp=delivery.latestStamp();archive.begin();
     File f=disaster::openSlotFileRead(SPIFFS,"/dr-history.bin"); Record r;
+    uint32_t records=0;
     while(f && f.read((uint8_t*)&r,sizeof(r))==sizeof(r))
-      if(disaster::valid(r) && r.seq>seq) seq=r.seq;
+      if(disaster::valid(r)){records++;if(r.seq>seq) seq=r.seq;}
     if(f)f.close();
+    Serial.printf("[VERLAUF] %u Eintraege, letzte Nummer %u\n",(unsigned)records,(unsigned)seq);
 #ifdef PIN_USER_BTN
     pinMode(PIN_USER_BTN, INPUT_PULLUP);
 #endif
@@ -276,7 +283,7 @@ public:
       // Fixed keys and numeric values only; no passwords, contacts or chat texts.
       s.remove(s.length()-1);
       s+=",\"diagnostics\":{\"firmware\":\""+String(FIRMWARE_VERSION)+"\",\"uptimeSeconds\":"+String((uint32_t)(esp_timer_get_time()/1000000ULL));
-      s+=",\"resetReason\":"+String((int)esp_reset_reason())+",\"minHeapBytes\":"+String(ESP.getMinFreeHeap())+",\"largestHeapBlockBytes\":"+String(ESP.getMaxAllocHeap());
+      s+=",\"resetReason\":"+String((int)esp_reset_reason())+",\"minHeapBytes\":"+String(ESP.getMinFreeHeap())+",\"largestHeapBlockBytes\":"+String(ESP.getMaxAllocHeap())+",\"heapWarn\":"+String((unsigned)HEAP_WARN_BYTES);
       s+=",\"wifiClients\":"+String(WiFi.softAPgetStationNum())+",\"txFlood\":"+String(txFlood)+",\"txDirect\":"+String(txDirect)+",\"rxFlood\":"+String(rxFlood)+",\"rxDirect\":"+String(rxDirect);
       s+=",\"txAirMs\":"+String(txAirMs)+",\"rxAirMs\":"+String(rxAirMs)+",\"txBudgetMs\":"+String(txBudgetMs)+",\"txBudgetWaiting\":"+String(txBudgetWaiting?"true":"false")+",\"txBudgetWaitEvents\":"+String(txBudgetWaitEvents)+",\"txBudgetWaitSeconds\":"+String(txBudgetWaitSeconds)+",\"txQueuePackets\":"+String(txQueuePackets)+"}";
       // Optional board GPS: position only when the module reports a valid fix.
@@ -411,6 +418,18 @@ public:
       Serial.printf("[WLAN] %s | SSID: %s | offen, ohne Passwort | http://192.168.4.1 | Clients: %d\n",apOk?"AP aktiv":"AP FEHLER",apName.c_str(),WiFi.softAPgetStationNum());
       }
   }
+  // 0.9.2: Von der MeshCore-App (Bluetooth) gesendete Text-/Kanalnachricht in den Web-Verlauf schreiben
+  // (gleiches Format wie eigene Nachrichten: f3 Kanal, f4 Direkt mit ACK-Kennung, f2 ohne Kennung).
+  void recordAppSend(const uint8_t *c,size_t n,const uint8_t *tag) {
+    if(n<7||n>MAX_FRAME_SIZE)return;
+    uint8_t r[MAX_FRAME_SIZE];memcpy(r,c,n);size_t rl=n;
+    if(c[0]==3)r[0]=0xf3;
+    else if(c[0]==2&&n>=13){
+      if(tag&&n+4<=MAX_FRAME_SIZE){memmove(r+17,r+13,n-13);memcpy(r+13,tag,4);r[0]=0xf4;rl+=4;}
+      else r[0]=0xf2;
+    } else return;
+    append(r,rl);
+  }
   void enable() override {enabled=true;}
   void disable() override {enabled=false;}
   bool isEnabled() const override {return enabled;}
@@ -418,6 +437,8 @@ public:
   bool isWriteBusy() const override {return false;}
   void loop() override {
     dns.processNextRequest();http.handleClient();
+    if(millis()-heapLog>=30000){heapLog=millis();uint32_t f=ESP.getFreeHeap();
+      Serial.printf("[HEAP] frei %u | Minimum %u | groesster Block %u%s\n",(unsigned)f,(unsigned)ESP.getMinFreeHeap(),(unsigned)ESP.getMaxAllocHeap(),f<HEAP_WARN_BYTES?" | WARNUNG: wenig freier Speicher":"");}
 #ifdef PIN_USER_BTN
     // Hold the BOOT/user button for ten seconds while firmware is running.
     if(digitalRead(PIN_USER_BTN)==LOW) {

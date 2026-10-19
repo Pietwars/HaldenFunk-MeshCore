@@ -1,0 +1,22 @@
+{
+  "LilyGo_TDeck": {
+    "env": "dar_LilyGo_TDeck_wifi",
+    "chip": "esp32s3",
+    "chip_id": 9,
+    "flash_bytes": 16777216,
+    "ram_bytes": 327680,
+    "app_offset": 65536,
+    "partition_offset": 32768,
+    "boot_offset": 0
+  },
+  "LilyGo_TWatchS3": {
+    "env": "dar_LilyGo_TWatchS3_wifi",
+    "chip": "esp32s3",
+    "chip_id": 9,
+    "flash_bytes": 16777216,
+    "ram_bytes": 327680,
+    "app_offset": 65536,
+    "partition_offset": 32768,
+    "boot_offset": 0
+  }
+}

@@ -122,6 +122,7 @@ public:
   void loop();
   void handleCmdFrame(size_t len);
   bool advert();
+  bool floodAdvert();   // Advert als Flood ins ganze Mesh (wie "Advert (Flood)" in der App)
   void enterCLIRescue();
 
   int  getRecentlyHeard(AdvertPath dest[], int max_num);
@@ -223,6 +224,15 @@ private:
   void updateContactFromFrame(ContactInfo &contact, uint32_t& last_mod, const uint8_t *frame, int len);
   void addToOfflineQueue(const uint8_t frame[], int len);
   int getFromOfflineQueue(uint8_t frame[]);
+#ifdef DISASTER_PORTAL
+  // 0.9.3: Nachrichten zwischen Weboberflaeche und MeshCore-App teilen.
+  void queueWebEchoForApp(const uint8_t *cmd, size_t len);     // vom Portal gesendet -> App sieht sie
+  void (*_app_sent_observer)(const uint8_t *cmd, size_t len, const uint8_t *ack_tag) = nullptr;
+public:
+  // Wird aufgerufen, wenn die App (Bluetooth) eine Text-/Kanalnachricht erfolgreich abgeschickt hat.
+  void setAppSentObserver(void (*fn)(const uint8_t *cmd, size_t len, const uint8_t *ack_tag)) { _app_sent_observer = fn; }
+private:
+#endif
   int getBlobByKey(const uint8_t key[], int key_len, uint8_t dest_buf[]) override { 
     return _store->getBlobByKey(key, key_len, dest_buf);
   }
@@ -271,6 +281,7 @@ private:
   struct Frame {
     uint8_t len;
     uint8_t buf[MAX_FRAME_SIZE];
+    uint8_t seen = 0;   // disaster::READER_* (SharedQueue.h): who already fetched this entry
 
     bool isChannelMsg() const;
   };

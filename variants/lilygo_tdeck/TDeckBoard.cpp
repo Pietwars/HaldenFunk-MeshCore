@@ -11,6 +11,15 @@ void TDeckBoard::begin() {
   pinMode(PIN_PERF_POWERON, OUTPUT);
   digitalWrite(PIN_PERF_POWERON, HIGH);
 
+  // Shared SPI bus (display + LoRa): keep both chip selects inactive from the start
+  pinMode(P_LORA_NSS, OUTPUT);
+  digitalWrite(P_LORA_NSS, HIGH);
+#ifdef PIN_TFT_CS
+  pinMode(PIN_TFT_CS, OUTPUT);
+  digitalWrite(PIN_TFT_CS, HIGH);
+#endif
+  delay(10); // let peripheral rail settle
+
   // Configure user button
   pinMode(PIN_USER_BTN, INPUT);
 

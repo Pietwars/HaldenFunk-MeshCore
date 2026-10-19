@@ -1,5 +1,6 @@
 #include "MyMesh.h"
 #include "OpenAccess.h"
+#include "SharedQueue.h"
 
 #include <Arduino.h> // needed for PlatformIO
 #ifdef ENABLE_WIFI_INTERFACE
@@ -222,6 +223,60 @@ bool MyMesh::Frame::isChannelMsg() const {
          buf[0] == RESP_CODE_CHANNEL_DATA_RECV;
 }
 
+#ifdef DISASTER_PORTAL
+// 0.9.3: gemeinsame Warteschlange fuer Weboberflaeche und App (SharedQueue.h).
+void MyMesh::addToOfflineQueue(const uint8_t frame[], int len) {
+  if (!disaster::sqAdd(offline_queue, offline_queue_len, OFFLINE_QUEUE_SIZE, frame, len, 0, true)) {
+    MESH_DEBUG_PRINTLN("WARN: offline_queue is full, message dropped");
+  }
+}
+
+int MyMesh::getFromOfflineQueue(uint8_t frame[]) {
+  uint8_t who = _serial->isPortalTransport() ? disaster::READER_PORTAL : disaster::READER_APP;
+  return disaster::sqTake(offline_queue, offline_queue_len, who, frame);
+}
+
+// Vom Portal gesendete Nachricht (Kommando 2 bzw. 3) als Eintrag nur fuer die App einreihen, damit die
+// MeshCore-App sie anzeigt. Das Companion-Protokoll kennt keinen Rahmen "von einem anderen Client gesendet";
+// deshalb erscheint sie in der App als empfangene Nachricht und ist im Text markiert.
+void MyMesh::queueWebEchoForApp(const uint8_t *cmd, size_t len) {
+  uint8_t f[MAX_FRAME_SIZE];
+  int i = 0;
+  const char *text;
+  size_t tlen;
+  char mark[48];
+  if (cmd[0] == CMD_SEND_CHANNEL_TXT_MSG && len >= 7) {
+    text = (const char *)&cmd[7]; tlen = len - 7;
+    if (app_target_ver >= 3) { f[i++] = RESP_CODE_CHANNEL_MSG_RECV_V3; f[i++] = 0; f[i++] = 0; f[i++] = 0; }
+    else f[i++] = RESP_CODE_CHANNEL_MSG_RECV;
+    f[i++] = cmd[2];                 // Kanal
+    f[i++] = 0xFF;                   // kein Funkweg (lokal gesendet)
+    f[i++] = TXT_TYPE_PLAIN;
+    memcpy(&f[i], &cmd[3], 4); i += 4;
+    snprintf(mark, sizeof(mark), "%s (Web): ", _prefs.node_name);   // App zeigt "Name (Web)" als Absender
+  } else if (cmd[0] == CMD_SEND_TXT_MSG && len >= 13) {
+    text = (const char *)&cmd[13]; tlen = len - 13;
+    if (app_target_ver >= 3) { f[i++] = RESP_CODE_CONTACT_MSG_RECV_V3; f[i++] = 0; f[i++] = 0; f[i++] = 0; }
+    else f[i++] = RESP_CODE_CONTACT_MSG_RECV;
+    memcpy(&f[i], &cmd[7], 6); i += 6; // Empfaenger: erscheint im Chat mit diesem Kontakt
+    f[i++] = 0xFF;
+    f[i++] = TXT_TYPE_PLAIN;
+    memcpy(&f[i], &cmd[3], 4); i += 4;
+    snprintf(mark, sizeof(mark), "[von mir über Web] ");
+  } else {
+    return;
+  }
+  size_t mlen = strlen(mark);
+  if (i + mlen + tlen > MAX_FRAME_SIZE) tlen = MAX_FRAME_SIZE - i - mlen;
+  memcpy(&f[i], mark, mlen); i += mlen;
+  memcpy(&f[i], text, tlen); i += tlen;
+  // READER_PORTAL schon gesetzt: die Weboberflaeche hat die Nachricht bereits als eigene (f3/f4).
+  if (disaster::sqAdd(offline_queue, offline_queue_len, OFFLINE_QUEUE_SIZE, f, i, disaster::READER_PORTAL, true)) {
+    uint8_t push[1] = {PUSH_CODE_MSG_WAITING};
+    _serial->writeFrame(push, 1);
+  }
+}
+#else
 void MyMesh::addToOfflineQueue(const uint8_t frame[], int len) {
   if (offline_queue_len >= OFFLINE_QUEUE_SIZE) {
     MESH_DEBUG_PRINTLN("WARN: offline_queue is full!");
@@ -259,6 +314,7 @@ int MyMesh::getFromOfflineQueue(uint8_t frame[]) {
   }
   return 0; // queue is empty
 }
+#endif
 
 float MyMesh::getAirtimeBudgetFactor() const {
 #ifdef DISASTER_PORTAL
@@ -1069,6 +1125,12 @@ void MyMesh::handleCmdFrame(size_t len) {
   }
   // Clear stale bytes and terminate variable text fields within the allocated buffer.
   memset(cmd_frame+len,0,sizeof(cmd_frame)-len);
+  // 0.9.3: Antworten auf Nachrichtenabruf und Senden nur an den anfragenden Client (Portal oder App).
+  struct ReplyOnlyScope {
+    BaseSerialInterface *s; bool on;
+    ReplyOnlyScope(BaseSerialInterface *s_, bool on_) : s(s_), on(on_) { if (on) s->setReplyOnly(true); }
+    ~ReplyOnlyScope() { if (on) s->setReplyOnly(false); }
+  } reply_only(_serial, cmd_frame[0] == CMD_SYNC_NEXT_MESSAGE || cmd_frame[0] == CMD_SEND_TXT_MSG || cmd_frame[0] == CMD_SEND_CHANNEL_TXT_MSG);
   if (cmd_frame[0] == CMD_ADD_UPDATE_CONTACT && len < 1+32+2+1+MAX_PATH_SIZE+32+4) {
     writeErrFrame(ERR_CODE_ILLEGAL_ARG); return;
   }
@@ -1188,6 +1250,13 @@ void MyMesh::handleCmdFrame(size_t len) {
         memcpy(&out_frame[2], &expected_ack, 4);
         memcpy(&out_frame[6], &est_timeout, 4);
         _serial->writeFrame(out_frame, 10);
+#ifdef DISASTER_PORTAL
+        // 0.9.3: nur der erste Versuch einer normalen Textnachricht (Wiederholungen nicht doppelt zeigen)
+        if (txt_type == TXT_TYPE_PLAIN && attempt == 0) {
+          if (_serial->isPortalTransport()) queueWebEchoForApp(cmd_frame, len);
+          else if (_app_sent_observer) _app_sent_observer(cmd_frame, len, (const uint8_t *)&expected_ack);
+        }
+#endif
       }
     } else {
       writeErrFrame(recipient == NULL
@@ -1210,6 +1279,10 @@ void MyMesh::handleCmdFrame(size_t len) {
       bool success = getChannel(channel_idx, channel);
       if (success && sendGroupMessage(msg_timestamp, channel.channel, _prefs.node_name, text, len - i)) {
         writeOKFrame();
+#ifdef DISASTER_PORTAL
+        if (_serial->isPortalTransport()) queueWebEchoForApp(cmd_frame, len);
+        else if (_app_sent_observer) _app_sent_observer(cmd_frame, len, nullptr);
+#endif
       } else {
         writeErrFrame(ERR_CODE_NOT_FOUND); // bad channel_idx
       }
@@ -2472,6 +2545,20 @@ bool MyMesh::advert() {
   } else {
     return false;
   }
+}
+
+bool MyMesh::floodAdvert() {
+  mesh::Packet* pkt;
+  if (_prefs.advert_loc_policy == ADVERT_LOC_NONE) {
+    pkt = createSelfAdvert(_prefs.node_name);
+  } else {
+    pkt = createSelfAdvert(_prefs.node_name, sensors.node_lat, sensors.node_lon);
+  }
+  if (!pkt) return false;
+  TransportKey default_scope;   // gleicher Weg wie CMD_SEND_SELF_ADVERT mit Flood-Parameter
+  memcpy(&default_scope.key, _prefs.default_scope_key, sizeof(default_scope.key));
+  sendFloodScoped(default_scope, pkt, 0);
+  return true;
 }
 
 // To check if there is pending work

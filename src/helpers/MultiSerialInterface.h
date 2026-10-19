@@ -26,6 +26,7 @@ private:
   };
 
   bool _enabled = false;
+  bool _replyOnly = false;
   InterfaceType _receivedFrom = InterfaceType::NONE;
   RegisteredInterface _interfaces[MAX_INTERFACES] = {};
 
@@ -169,8 +170,12 @@ public:
     bool allSuccessful = true;
     for(auto iface : _interfaces){
       if(iface.instance && iface.instance->isEnabled()){
-        // Never broadcast a USB private-key export to open wireless clients.
-        if(src[0] == 14 && (iface.type == InterfaceType::Bluetooth || iface.type == InterfaceType::WiFi || iface.type == InterfaceType::Ethernet)) continue;
+        // Never broadcast a USB private-key export to open wireless clients or the portal
+        // (HaldenFunk-MeshCore: Bluetooth pairs without PIN, so it never gets the export reply).
+        if(src[0] == 14 && (iface.type == InterfaceType::Bluetooth || iface.type == InterfaceType::WiFi || iface.type == InterfaceType::Ethernet || iface.type == InterfaceType::Portal)) continue;
+        // Reply-only (message sync, send replies): only the requesting client gets the reply, so one
+        // client's sync does not consume or duplicate messages for the other.
+        if(_replyOnly && src[0] < 0x80 && _receivedFrom != InterfaceType::NONE && iface.type != _receivedFrom) continue;
         if(iface.instance->writeFrame(src, len) != len){
           allSuccessful = false;
         }
@@ -184,6 +189,10 @@ public:
   bool isPublicTransport() const override {
     return _receivedFrom == InterfaceType::Bluetooth || _receivedFrom == InterfaceType::WiFi || _receivedFrom == InterfaceType::Ethernet;
   }
+
+  bool isBluetoothTransport() const override { return _receivedFrom == InterfaceType::Bluetooth; }
+  bool isPortalTransport() const override { return _receivedFrom == InterfaceType::Portal; }
+  void setReplyOnly(bool on) override { _replyOnly = on; }
 
   size_t checkRecvFrame(uint8_t dest[]) override {
     _receivedFrom = InterfaceType::NONE;

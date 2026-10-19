@@ -85,13 +85,14 @@ Karte → Chat/Brett und auf dem Board mehrere WLAN-Clients sowie BLE parallel p
 |---|---|---|
 | `disaster_t3s3_sx1262_wifi` | LILYGO T3-S3 SX1262 | ca. 62 % |
 | `disaster_tlora_v2_1_sx1276_wifi` | LILYGO T3 V1.6.1 SX1276 | ca. 52 % (0.1.0-alpha: 85 %; NimBLE, -Os statt -O0, ohne Sensorbibliotheken; ca. 1,4 MB frei) |
-| `disaster_heltec_v2_sx1276_wifi` | Heltec WiFi LoRa 32 V2 SX1276 | ca. 52 % (0.1.0-alpha: 70 %) |
+| `dar_LilyGo_TDeck_wifi` | LILYGO T-Deck Plus (Release) | 0.9.2: firmware.bin 2,1 MB, ca. 1,04 MB frei (`memory-report.md` im Paket) |
+| `dar_LilyGo_TWatchS3_wifi` | LILYGO T-Watch S3 (Release, neu in 0.9.2) | 0.9.2: firmware.bin 2,1 MB, ca. 1,0 MB frei (`memory-report.md` im Paket) |
 | `disaster_t3s3_sx1262_repeater` / `_room` | T3-S3 SX1262 als Repeater / Room-Server (Brett) | ca. 29 % |
 | `disaster_ttgo_repeater` / `_room` | T3 V1.6.1 / TTGO LoRa32 als Repeater / Room-Server | ca. 30 % (0.1.0-alpha: 44 %; Partition `min_spiffs.csv`, 1,9 MB) |
 
-Weitere Profile (T3-S3 SX1276, SD-Archiv, Heltec-Diagnose) sind in `platformio.local.ini` enthalten, aber nicht im CI.
+Weitere Profile (T3-S3 SX1276, SD-Archiv) sind in `platformio.local.ini` enthalten, aber nicht im CI.
 
-Heltec V2 mit WLAN-Fix: Brownout-Detektor früh aus, Startmarken `[DIAG …]` seriell, WLAN startet zuletzt und erst 2 s nach dem Funkmodul, WLAN-Sendeleistung 8,5 dBm.
+Heltec WiFi LoRa 32 V2 (bis 0.9.1 mit eigenem WLAN-Fix-Profil) ist ab 0.9.2 entfernt: kein Profil, kein CI-Build, kein Paket.
 
 Alle WLAN-Portal-Boards: offenes WLAN **`HaldenFunk-XXXXXX`** (höchstens 4 Handys, nichts eingeben). Auf dem OLED stehen WLAN-Name und Zugangshinweis. Bei einem fehlgeschlagenen AP-Start erfolgt alle 5 s ein neuer Versuch.
 
@@ -100,7 +101,7 @@ Alle WLAN-Portal-Boards: offenes WLAN **`HaldenFunk-XXXXXX`** (höchstens 4 Hand
 Auf ESP32-Geräten mit Bluetooth sind Web-Portal und BLE-Companion beide am selben Companion angemeldet (MeshCore `MultiSerialInterface`): Jede Antwort und jede eingehende Nachricht geht an beide. Die offizielle MeshCore-App verbindet sich per Bluetooth, während Handys im WLAN die Weboberfläche nutzen.
 
 - **Bluetooth ohne PIN:** Just-Works-Kopplung ohne Zahlencode (Handy fragt höchstens „Koppeln?“), auch mit NimBLE auf klassischen ESP32. Alte Kopplung bei Bedarf am Handy entfernen. Nachrichten, Kontakte, Uhrzeit, Status gehen über Bluetooth; Betreiberbefehle (Funk, Name, Kanäle, Schlüssel, Reset) nur über USB/Admin-Bereich; Details unter [Offener Zugang](OFFENER_ZUGANG.md).
-- **Grenzen:** Ruft die App Nachrichten aus der Warteschlange ab, sieht das Portal sie im Verlauf mit, die App aber nicht umgekehrt die Abrufe des Portals. Gleichzeitige Befehle aus App und Portal können sich in seltenen Fällen kreuzen. WLAN + Bluetooth + Webserver brauchen viel RAM. Klassische ESP32 ohne PSRAM (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) nutzen deshalb ab 0.1.1-alpha **NimBLE** statt Bluedroid; das WLAN-Portal startet zuerst, Bluetooth nur bei genug freiem Heap, und ein Start-Wächter verhindert die Bootschleife (`[BOOT]`/`[HEAP]`-Zeilen seriell). Auf Hardware **noch nicht geprüft**.
+- **Ab 0.9.2 gemeinsame Warteschlange:** Empfangene Nachrichten bekommen Portal und App je einmal (auch wenn die App erst später verbunden wird), Antworten gehen nur an den Anfragenden, in der App gesendete Nachrichten stehen im Web-Verlauf, im Web gesendete erscheinen in der App markiert („(Web)“ bzw. „[von mir über Web]“). Bis 0.9.1 sah die App die Abrufe des Portals nicht. WLAN + Bluetooth + Webserver brauchen viel RAM. Klassische ESP32 ohne PSRAM (T3 V1.6.1, T-Beam, Meshadventurer; bis 0.9.1 auch Heltec V2) nutzen deshalb ab 0.1.1-alpha **NimBLE** statt Bluedroid; das WLAN-Portal startet zuerst, Bluetooth nur bei genug freiem Heap, und ein Start-Wächter verhindert die Bootschleife (`[BOOT]`/`[HEAP]`-Zeilen seriell). Auf Hardware **noch nicht geprüft**.
 - **Speicher:** Portal-Profile nutzen die Partition `huge_app.csv` (3 MB App, kein OTA, 896 KB SPIFFS). Belegung 0.1.1-alpha: T3 V1.6.1 ca. 52 %, Heltec V2 ca. 52 %, T-Beam ca. 54 %, T3-S3 ca. 62 %.
 - **Upgrade 0.1.0-alpha → 0.1.1-alpha:** Partitionstabelle unverändert – es reicht `teile-wifi/firmware.bin` an **`0x10000`** zu flashen; Einstellungen, Identität und Kontakte bleiben erhalten. Klassische ESP32 (T3 V1.6.1, Heltec V2, T-Beam, Meshadventurer) wechseln auf NimBLE: die alte Kopplung in den Bluetooth-Einstellungen des Handys **entfernen und die MeshCore-App einmal neu koppeln**. Wer von einer Version **vor** 0.1.0-alpha kommt, flasht einmal komplett die `factory.bin` an `0x0` (neue Partitionstabelle, Identität wird neu erzeugt).
 
@@ -134,12 +135,12 @@ Die Weboberfläche liegt in `web/index.html`. `tools/embed_web.py` bettet die gz
 
 **Funkprofil (alle Geräte, alle Rollen):** MeshCore-Standard-Preset **EU/UK (Narrow)** – **869,618 MHz, Bandbreite 62,5 kHz, SF8, CR 4/8**, MeshCore-Standard-Syncword (privat, 0x12). Gesetzt über die Build-Flags `LORA_FREQ=869.618`, `LORA_BW=62.5`, `LORA_SF=8`, `LORA_CR=8` in `platformio.ini` (gilt für alle 105 Geräte der Matrix und die eigenen Profile). Teilband 869,4–869,65 MHz (SRD, ETSI EN 300 220 / BNetzA): max. 500 mW ERP (27 dBm), 10 % Sendezeit; die Firmware bleibt bei der bisherigen boardsicheren Sendeleistung (nicht erhöht). Alle Knoten eines Netzes müssen dasselbe Profil nutzen – Geräte mit älterem Stand (CR 4/5) einmal in der Weboberfläche auf „EU/UK Narrow“ stellen oder per CLI `set radio 869.618,62.5,8,8`.
 
-Der Code für alle 105 Geräte der [MeshCore-Konfigurator](https://meshcore.co.uk/configurator/)-Liste bleibt erhalten (`tools/devices.upstream.json`, `tools/devices.json`, Envs aus `tools/gen_devices.py` → `platformio.devices.ini`; einzeln bauen mit `tools/build_device.sh <Gerät>`). Ab 0.9.1 baut das CI vorerst nur noch die beiden Release-Boards, und nur diese sind im Release:
+Der Code für alle Geräte (104 aus der Liste ohne Heltec V2, dazu ab 0.9.2 LILYGO T-Watch S3) der [MeshCore-Konfigurator](https://meshcore.co.uk/configurator/)-Liste bleibt erhalten (`tools/devices.upstream.json`, `tools/devices.json`, Envs aus `tools/gen_devices.py` → `platformio.devices.ini`; einzeln bauen mit `tools/build_device.sh <Gerät>`). Das CI baut vorerst nur die Release-Geräte, und nur diese sind im Release (ab 0.9.2: T-Deck Plus und T-Watch S3; Heltec V2 entfernt, letztes Paket in v0.9.1):
 
 | Gerät | Chip | Web-Oberfläche | Inhalt | Datei |
 |---|---|---|---|---|
-| LilyGo_TDeck (T-Deck / T-Deck Plus) | esp32s3 | ja | WLAN-Portal | `HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip` |
-| Heltec_v2 | esp32 | ja | WLAN-Portal | `HaldenFunk-MeshCore-0.9.1-Heltec_v2.zip` |
+| LilyGo_TDeck (T-Deck / T-Deck Plus) | esp32s3 | ja | WLAN-Portal, Marken-Anzeige, Akku-Verlauf | `HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck.zip` |
+| LilyGo_TWatchS3 (T-Watch S3, neu) | esp32s3 | ja | WLAN-Portal, Marken-Anzeige, Akku-Verlauf | `HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3.zip` |
 
 Alle Geräte bauen: Workflow „Alle Geräte (MeshCore-Konfigurator-Liste)“ manuell mit `alle = true` starten.
 

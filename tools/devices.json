@@ -169,14 +169,6 @@
   "webui": true
  },
  {
-  "device": "Heltec_v2",
-  "chip": "esp32",
-  "envs": {
-   "wifi": "disaster_heltec_v2_sx1276_wifi"
-  },
-  "webui": true
- },
- {
   "device": "Heltec_v3",
   "chip": "esp32s3",
   "envs": {
@@ -938,5 +930,14 @@
    "wifi": "dar_Xiao_S3_WIO_wifi"
   },
   "webui": true
+ },
+ {
+  "device": "LilyGo_TWatchS3",
+  "chip": "esp32s3",
+  "envs": {
+   "wifi": "dar_LilyGo_TWatchS3_wifi"
+  },
+  "webui": true,
+  "note": "eigenes Profil (platformio.local.ini), nicht in der MeshCore-Konfigurator-Liste"
  }
 ]

@@ -18,6 +18,7 @@ need('README.md', f'**Version {V}**')
 need('README.md', f'v1.18.0-hf{V}')
 need('CHANGELOG.md', f'## {V}')
 need('web/index.html', f"firmware:'v1.18.0-hf{V}'")
+need('web/index.html', f'Weboberfläche HaldenFunk-MeshCore {V} · MeshCore v1.18.0')
 if re.search(r'Neu in \d+\.\d+', (ROOT / 'tools/ANLEITUNG.template.md').read_text(encoding='utf-8')):
     err.append('tools/ANLEITUNG.template.md: feste Version statt @VERSION@')
 for e in err:
