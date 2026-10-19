@@ -169,14 +169,6 @@
   "webui": true
  },
  {
-  "device": "Heltec_v2",
-  "chip": "esp32",
-  "envs": {
-   "wifi": "disaster_heltec_v2_sx1276_wifi"
-  },
-  "webui": true
- },
- {
   "device": "Heltec_v3",
   "chip": "esp32s3",
   "envs": {

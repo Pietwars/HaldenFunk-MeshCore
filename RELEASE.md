@@ -24,7 +24,7 @@ Von Hand nachziehen: README (Kopfzeile, Projektfamilie, Gerätetabelle über `py
 
 ## 2. Bauen
 
-- CI „Alle Geräte (MeshCore-Konfigurator-Liste)“ (`.github/workflows/devices.yml`) baut auf `main` die Release-Geräte (`KERN`: T-Deck Plus, T-Watch S3, Heltec V2; alle Geräte mit `alle = true`)
+- CI „Alle Geräte (MeshCore-Konfigurator-Liste)“ (`.github/workflows/devices.yml`) baut auf `main` die Release-Geräte (`KERN`: T-Deck Plus, T-Watch S3; alle Geräte mit `alle = true`; Heltec V2 ist ab 0.9.2 entfernt)
   mit `tools/build_device.sh` und prüft jedes Paket mit `tools/verify_package.py`
   (factory.bin, firmware.bin, Teile, `spiffs.bin` bei WLAN-Portal, `SHA256SUMS`, deutsche `ANLEITUNG.md`).
 - Paketaufbau ab 0.9.2: bei einer Rolle `NAME-factory.bin`, `NAME-firmware.bin`, `teile/`; bei mehreren Rollen

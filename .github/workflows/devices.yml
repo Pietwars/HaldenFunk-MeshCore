@@ -22,13 +22,12 @@ jobs:
       devices: ${{ steps.m.outputs.devices }}
     steps:
       - uses: actions/checkout@v4
-      # 0.9.2: Release-Boards LILYGO T-Deck Plus und LILYGO T-Watch S3, dazu weiter Heltec V2 (Heltec-Aufräumen
-      # zurückgestellt); die übrigen Geräte bleiben in tools/devices.json. Die komplette Liste baut nur ein
-      # manueller Start mit alle=true.
+      # 0.9.2: nur die Release-Boards LILYGO T-Deck Plus und LILYGO T-Watch S3 (Heltec V2 entfernt); die übrigen
+      # Geräte bleiben in tools/devices.json. Die komplette Liste baut nur ein manueller Start mit alle=true.
       - id: m
         env:
           VOLL: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.alle == 'true' }}
-          KERN: LilyGo_TDeck LilyGo_TWatchS3 Heltec_v2
+          KERN: LilyGo_TDeck LilyGo_TWatchS3
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, os

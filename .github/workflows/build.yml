@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [disaster_t3s3_sx1262_wifi, disaster_tlora_v2_1_sx1276_wifi, disaster_heltec_v2_sx1276_wifi, disaster_t3s3_sx1262_repeater, disaster_t3s3_sx1262_room, disaster_ttgo_repeater, disaster_ttgo_room]
+        env: [disaster_t3s3_sx1262_wifi, disaster_tlora_v2_1_sx1276_wifi, disaster_t3s3_sx1262_repeater, disaster_t3s3_sx1262_room, disaster_ttgo_repeater, disaster_ttgo_room]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

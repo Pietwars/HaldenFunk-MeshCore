@@ -12,7 +12,8 @@
 - **Weboberfläche:** Schnellmeldung-„Senden“ bleibt auf schmalen Displays im Bild; Speicheranzeige in KB mit Warnung unter 40 KB (`heapWarn`), Zeile „Verlauf-Speicher“, Versionsfußzeile im Gerät-Reiter; serielles `[HEAP]`- und `[VERLAUF]`-Log.
 - **Pakete wie DisAHRsterRadio-MeshCore:** `…-factory.bin` (0x0), `…-firmware.bin` (Update an 0x10000), `teile/`, `vorschau/` (Anzeige-Vorschau), bei T-Deck Plus/T-Watch S3 `memory-report.md/json` (Flash-Header, Partitionen, factory.bin, RAM; `tools/validate_memory.py`, Hosttests `tests/test_memory_validation.py`). Prüfung `tools/verify_package.py` / `tools/verify_devices.py`.
 - **Web-Flasher 0.9.2 vorbereitet** (`tools/flasher-next/`, nicht aktiv): T-Deck Plus und T-Watch S3, je „Update (Einstellungen bleiben)“ (`firmware.bin` an 0x10000) und „Neuinstallation (alles löschen)“ (`factory.bin` an 0x0). Live bleibt bis zur Umstellung der 0.9.1-Flasher (`docs/flasher/`).
-- CI: T-Deck Plus und T-Watch S3 mit Speicherprüfung (`build.yml`), Geräte-CI T-Deck Plus, T-Watch S3 und weiter Heltec V2 (Heltec-Aufräumen zurückgestellt).
+- CI: T-Deck Plus und T-Watch S3 mit Speicherprüfung (`build.yml`), Geräte-CI nur T-Deck Plus und T-Watch S3.
+- **Entfernt: Heltec WiFi LoRa 32 V2** – Profile `disaster_heltec_v2_sx1276_wifi` und `_diag`, CI-Builds, Paket, Geräteliste-Eintrag, Flasher-Hinweis und Doku. Das letzte Heltec-Paket bleibt im Release v0.9.1. Release-Geräte ab 0.9.2: nur LILYGO T-Deck Plus und LILYGO T-Watch S3.
 - **Nicht übernommen** (bewusst): Bluetooth-PIN/volle App-Rechte über PIN-Bluetooth, privater Schlüssel-Export/-Import, Web ohne Admin-Anmeldung, „Kontakte automatisch nur Repeater/Room-Server“, Ahrtal-Karten/-Texte und DisAHRsterRadio-Bild. HaldenFunk bleibt beim offenen Zugang mit Web-Admin.
 
 ## Nach 0.9.1 (bereits auf main)
