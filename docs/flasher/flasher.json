@@ -1,24 +1,112 @@
 {
  "repo": "Pietwars/HaldenFunk-MeshCore",
- "tag": "v0.9.1",
- "asset": "HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck.zip",
- "member": "HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck/HaldenFunk-MeshCore-0.9.1-LilyGo_TDeck-wifi-factory.bin",
- "sha256": "ac292078282cba703c5c0f09d9a0a3872e1334d9e4106330ea576af04759a853",
- "out": "firmware-tdeck-plus.bin",
- "manifest": {
-  "name": "HaldenFunk-MeshCore 0.9.1 · LILYGO T-Deck Plus",
-  "version": "0.9.1",
-  "new_install_prompt_erase": true,
-  "builds": [
-   {
-    "chipFamily": "ESP32-S3",
-    "parts": [
-     {
-      "path": "firmware-tdeck-plus.bin",
-      "offset": 0
-     }
-    ]
+ "tag": "v0.9.2",
+ "devices": [
+  {
+   "id": "tdeck",
+   "label": "LILYGO T-Deck Plus",
+   "asset": "HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck.zip",
+   "files": {
+    "neu": {
+     "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck/HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck-factory.bin",
+     "sha256": "20a59425ffa822d3312be47c0c5f948500910befdbdd96df2ba123835159be68",
+     "out": "tdeck-neu-factory.bin"
+    },
+    "update": {
+     "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck/HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck-firmware.bin",
+     "sha256": "fa295290439640282310ffdf384b5a5c1ead7de057341de99a5f2f69351fa1fd",
+     "out": "tdeck-update-firmware.bin"
+    }
+   },
+   "modes": {
+    "update": {
+     "name": "HaldenFunk-MeshCore 0.9.2 · LILYGO T-Deck Plus · Update",
+     "version": "0.9.2",
+     "new_install_prompt_erase": true,
+     "new_install_improv_wait_time": 0,
+     "builds": [
+      {
+       "chipFamily": "ESP32-S3",
+       "parts": [
+        {
+         "path": "tdeck-update-firmware.bin",
+         "offset": 65536
+        }
+       ]
+      }
+     ]
+    },
+    "neu": {
+     "name": "HaldenFunk-MeshCore 0.9.2 · LILYGO T-Deck Plus · Neuinstallation",
+     "version": "0.9.2",
+     "new_install_prompt_erase": false,
+     "new_install_improv_wait_time": 0,
+     "builds": [
+      {
+       "chipFamily": "ESP32-S3",
+       "parts": [
+        {
+         "path": "tdeck-neu-factory.bin",
+         "offset": 0
+        }
+       ]
+      }
+     ]
+    }
    }
-  ]
- }
+  },
+  {
+   "id": "twatch",
+   "label": "LILYGO T-Watch S3",
+   "asset": "HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3.zip",
+   "files": {
+    "neu": {
+     "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3/HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3-factory.bin",
+     "sha256": "1c7a4952b97245fd0fe391e13b366554c783e9f52d1ec321e838cd8592e2cc3b",
+     "out": "twatch-neu-factory.bin"
+    },
+    "update": {
+     "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3/HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3-firmware.bin",
+     "sha256": "860b66910b3356fd24902124202faa2e3631719e26b94b5d7cd6b76838eb82aa",
+     "out": "twatch-update-firmware.bin"
+    }
+   },
+   "modes": {
+    "update": {
+     "name": "HaldenFunk-MeshCore 0.9.2 · LILYGO T-Watch S3 · Update",
+     "version": "0.9.2",
+     "new_install_prompt_erase": true,
+     "new_install_improv_wait_time": 0,
+     "builds": [
+      {
+       "chipFamily": "ESP32-S3",
+       "parts": [
+        {
+         "path": "twatch-update-firmware.bin",
+         "offset": 65536
+        }
+       ]
+      }
+     ]
+    },
+    "neu": {
+     "name": "HaldenFunk-MeshCore 0.9.2 · LILYGO T-Watch S3 · Neuinstallation",
+     "version": "0.9.2",
+     "new_install_prompt_erase": false,
+     "new_install_improv_wait_time": 0,
+     "builds": [
+      {
+       "chipFamily": "ESP32-S3",
+       "parts": [
+        {
+         "path": "twatch-neu-factory.bin",
+         "offset": 0
+        }
+       ]
+      }
+     ]
+    }
+   }
+  }
+ ]
 }

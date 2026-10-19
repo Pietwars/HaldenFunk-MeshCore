@@ -14,7 +14,7 @@
 
 [![Release](https://img.shields.io/github/v/release/Pietwars/HaldenFunk-MeshCore?label=Release)](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/latest)
 [![Live-Demo](https://img.shields.io/badge/Live--Demo-online-2ea44f)](https://pietwars.github.io/HaldenFunk-MeshCore/)
-[![Web-Flasher](https://img.shields.io/badge/Web--Flasher-T--Deck%20Plus-orange)](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/)
+[![Web-Flasher](https://img.shields.io/badge/Web--Flasher-T--Deck%20Plus%20%C2%B7%20T--Watch%20S3-orange)](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/)
 [![Flyer](https://img.shields.io/badge/Flyer-PDF-blue)](docs/flyer/HaldenFunk-MeshCore-Flyer-digital.pdf)
 
 Flyer (A5): [Druck-PDF mit QR-Codes](docs/flyer/HaldenFunk-MeshCore-Flyer.pdf) · [Digital-PDF mit Links](docs/flyer/HaldenFunk-MeshCore-Flyer-digital.pdf) · [Vorschau](docs/flyer/HaldenFunk-MeshCore-Flyer-vorschau.jpg)
@@ -42,7 +42,7 @@ Heltec WiFi LoRa 32 V2 ist ab 0.9.2 nicht mehr dabei (letztes Paket: [Release v0
 ## Schnellstart
 
 1. **Flashen**
-   - **T-Deck Plus:** [Web-Flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) in Chrome oder Edge am Computer öffnen, Gerät per USB verbinden, installieren. Ab der Umstellung auf 0.9.2 auch für die T-Watch S3, je mit „Update (Einstellungen bleiben)“ und „Neuinstallation (alles löschen)“.
+   - **T-Deck Plus und T-Watch S3:** [Web-Flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) in Chrome oder Edge am Computer öffnen, Gerät per USB verbinden, je Gerät „Update auf 0.9.2 (Einstellungen bleiben)“ oder „Neuinstallation (alles löschen)“ wählen.
    - **Ohne Web-Flasher:** ZIP aus dem Release entpacken und `…-factory.bin` mit esptool bzw. esptool-js an Adresse **0x0** schreiben – [Anleitung Flashen](docs/FLASHEN.md).
    - Die `factory.bin` löscht Einstellungen, Identität und Kontakte; Update ohne Datenverlust: nur `…-firmware.bin` (0.9.1: `teile-wifi/firmware.bin`) an 0x10000.
 2. **Verbinden:** Handy mit dem offenen WLAN `HaldenFunk-XXXXXX` verbinden, **http://192.168.4.1** öffnen – kein Passwort, höchstens 4 Handys.

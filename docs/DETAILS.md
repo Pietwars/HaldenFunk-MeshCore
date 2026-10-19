@@ -18,7 +18,7 @@ Das Board ist ein MeshCore-Companion und spannt ein eigenes WLAN **`HaldenFunk-X
 
 **Download:** [Release v0.9.2](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.2) mit den Paketen für **LILYGO T-Deck Plus** (`HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck.zip`) und **LILYGO T-Watch S3** (`HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3.zip`), je mit `…-factory.bin` (an **0x0**; überschreibt Einstellungen, Identität und Kontakte), `…-firmware.bin` (Update an 0x10000), deutscher `ANLEITUNG.md` und `SHA256SUMS`. Weitere Geräte bleiben im Code, sind aber nicht im Release; ältere Releases bleiben unverändert.
 
-**Web-Flasher (nur LILYGO T-Deck Plus):** [pietwars.github.io/HaldenFunk-MeshCore/flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) – in Chrome/Edge am Computer, schreibt die `factory.bin` aus dem Release v0.9.1 an 0x0 (löscht Einstellungen). **Heltec V2 vorerst manuell** mit esptool bzw. esptool-js: [Anleitung Flashen](FLASHEN.md) (Port finden unter Windows/macOS/Linux, Befehle, Update ohne Datenverlust).
+**Web-Flasher (LILYGO T-Deck Plus und T-Watch S3):** [pietwars.github.io/HaldenFunk-MeshCore/flasher](https://pietwars.github.io/HaldenFunk-MeshCore/flasher/) – in Chrome/Edge am Computer, Dateien aus dem Release v0.9.2: „Update“ (`…-firmware.bin` an 0x10000, Einstellungen bleiben) oder „Neuinstallation“ (`…-factory.bin` an 0x0, löscht Einstellungen). Ohne Web-Flasher mit esptool bzw. esptool-js: [Anleitung Flashen](FLASHEN.md) (Port finden unter Windows/macOS/Linux, Befehle, Update ohne Datenverlust).
 
 ## Zugang auf einen Blick
 
