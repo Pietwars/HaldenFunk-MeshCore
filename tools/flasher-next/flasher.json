@@ -9,12 +9,12 @@
    "files": {
     "neu": {
      "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck/HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck-factory.bin",
-     "sha256": "be52bafb5cbf0de59a6d9f5bae72aa7baa9e0429ad24bb22b759f7139f75b572",
+     "sha256": "20a59425ffa822d3312be47c0c5f948500910befdbdd96df2ba123835159be68",
      "out": "tdeck-neu-factory.bin"
     },
     "update": {
      "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck/HaldenFunk-MeshCore-0.9.2-LilyGo_TDeck-firmware.bin",
-     "sha256": "b60da486127035df3a50666f4917051a28ac0c2fd565ebe884cec59479b0c0ae",
+     "sha256": "fa295290439640282310ffdf384b5a5c1ead7de057341de99a5f2f69351fa1fd",
      "out": "tdeck-update-firmware.bin"
     }
    },
@@ -62,12 +62,12 @@
    "files": {
     "neu": {
      "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3/HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3-factory.bin",
-     "sha256": "01eab7eee4124b6420309e325c423aa42d5616e0e5cf3eeb5e921c826ec6d0d1",
+     "sha256": "1c7a4952b97245fd0fe391e13b366554c783e9f52d1ec321e838cd8592e2cc3b",
      "out": "twatch-neu-factory.bin"
     },
     "update": {
      "member": "HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3/HaldenFunk-MeshCore-0.9.2-LilyGo_TWatchS3-firmware.bin",
-     "sha256": "dd285c9542e04f5dc455b3a4f037a97f6cda4d7495aab3b096a9a89bd1fe5106",
+     "sha256": "860b66910b3356fd24902124202faa2e3631719e26b94b5d7cd6b76838eb82aa",
      "out": "twatch-update-firmware.bin"
     }
    },

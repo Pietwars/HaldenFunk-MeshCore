@@ -9,9 +9,9 @@
 
 Paketaufbau ab 0.9.2 (wie DisAHRsterRadio-MeshCore): `HaldenFunk-MeshCore-0.9.2-<Gerät>-factory.bin`, `HaldenFunk-MeshCore-0.9.2-<Gerät>-firmware.bin`, Einzelteile in `teile/`, Vorschau der Anzeige in `vorschau/`, bei T-Deck Plus und T-Watch S3 zusätzlich `memory-report.md` (Flash-/RAM-Prüfung). Bis 0.9.1 hießen die Dateien `…-wifi-factory.bin` und `teile-wifi/firmware.bin`.
 
-## Web-Flasher (T-Deck Plus; ab der Umstellung auf 0.9.2 auch T-Watch S3)
+## Web-Flasher (T-Deck Plus und T-Watch S3)
 
-**https://pietwars.github.io/HaldenFunk-MeshCore/flasher/** in Chrome oder Edge am Computer öffnen, Gerät per USB-C-Datenkabel anschließen, Knopf wählen, Port wählen, bestätigen, danach neu starten. Bis zur Umstellung schreibt der Flasher die `factory.bin` aus dem [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1) an 0x0 (nur T-Deck Plus). Die 0.9.2-Fassung (vorbereitet in `tools/flasher-next/`) hat je Gerät **„Update auf 0.9.2 (Einstellungen bleiben)“** (`firmware.bin` an 0x10000) und **„Neuinstallation (alles löschen)“** (`factory.bin` an 0x0).
+**https://pietwars.github.io/HaldenFunk-MeshCore/flasher/** in Chrome oder Edge am Computer öffnen, Gerät per USB-C-Datenkabel anschließen, Knopf wählen, Port wählen, bestätigen, danach neu starten. Der Flasher nutzt die Dateien aus dem [Release v0.9.2](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.2) und hat je Gerät **„Update auf 0.9.2 (Einstellungen bleiben)“** (`firmware.bin` an 0x10000) und **„Neuinstallation (alles löschen)“** (`factory.bin` an 0x0).
 
 Heltec WiFi LoRa 32 V2 ist ab 0.9.2 nicht mehr unterstützt; das letzte Paket liegt im [Release v0.9.1](https://github.com/Pietwars/HaldenFunk-MeshCore/releases/tag/v0.9.1).
 
