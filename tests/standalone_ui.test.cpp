@@ -232,7 +232,7 @@ int main() {
   u.move(0, -1); u.click(); assert(fake.g.share);
   u.move(0, 1); u.click(); assert(fake.sends == 3);           // no fresh fix
   fake.g.fresh = true; fake.g.lat = 51.52791; fake.g.lon = 11.54799;
-  u.click(); assert(fake.sends == 4 && fake.lastText.compare(0, 23, "!DP1|51.5279,11.5480|179") == 0);
+  u.click(); assert(fake.sends == 4 && fake.lastText.find("!DP1|51.5279,11.5480|179") == 0);
   assert(fake.lastId == "c0");                                // last conversation was a Brett: default channel
   u.move(0, 1); u.click(); assert(fake.adverts == 1);
   u.move(0, -1); u.move(0, -1); u.move(0, -1); u.click(); assert(!fake.g.receiverOn);
