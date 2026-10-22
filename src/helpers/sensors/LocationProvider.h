@@ -17,6 +17,9 @@ public:
     virtual long getAltitude() = 0;
     virtual long satellitesCount() = 0;
     virtual bool isValid() = 0;
+    // Fail closed when a provider cannot establish the age of its last position.
+    virtual bool hasFreshFix(uint32_t max_age_ms) { return false; }
+    virtual uint32_t validatedSentenceCount() const { return 0; }
     virtual long getTimestamp() = 0;
     virtual void sendSentence(const char * sentence);
     virtual bool waitFor(const char* prefix, uint32_t timeout_ms) { return false; }

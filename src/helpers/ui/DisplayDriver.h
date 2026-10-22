@@ -49,6 +49,19 @@ public:
   virtual int  nativeTextWidth(const char* s, int size) { return 6 * size * (int)strlen(s); }
   virtual int  nativeTextHeight(int size) { return 8 * size; }   // Hoehe einer Textzeile in Pixeln
   virtual void nativeImage(int x, int y, int w, int h, const uint16_t* rgb565) { }
+  // Linien und Punkte (vereinfachte Karte im T-Deck-Standalone). Standard: Bresenham ueber nativeFill.
+  virtual void nativeLine(int x0, int y0, int x1, int y1, uint16_t c) {
+    int dx = x1 > x0 ? x1 - x0 : x0 - x1, sx = x0 < x1 ? 1 : -1;
+    int dy = y1 > y0 ? y0 - y1 : y1 - y0, sy = y0 < y1 ? 1 : -1, err = dx + dy;
+    for (;;) {
+      nativeFill(x0, y0, 1, 1, c);
+      if (x0 == x1 && y0 == y1) break;
+      int e2 = 2 * err;
+      if (e2 >= dy) { err += dy; x0 += sx; }
+      if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+  }
+  virtual void nativeDisc(int x, int y, int r, uint16_t c) { nativeFill(x - r, y - r, 2 * r + 1, 2 * r + 1, c); }
   virtual void drawTextCentered(int mid_x, int y, const char* str) {   // helper method (override to optimise)
     int w = getTextWidth(str);
     setCursor(mid_x - w/2, y);

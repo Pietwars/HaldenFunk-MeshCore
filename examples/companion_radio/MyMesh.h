@@ -22,6 +22,7 @@
 #include <SPIFFS.h>
 #endif
 
+#include "DarBuild.h"   // DAR_LOCAL_COMPANION (must be identical in every unit including this class)
 #include "DataStore.h"
 #include "NodePrefs.h"
 
@@ -198,9 +199,26 @@ public:
   void savePrefs() {
     _prefs.node_lat = sensors.node_lat;
     _prefs.node_lon = sensors.node_lon;
+#ifdef DISASTER_STANDALONE
+    // "Standort teilen" (GpsShare.h): a shared GPS fix is never persisted as the node location.
+    uint8_t policy = _prefs.advert_loc_policy;
+    if (_prefs_location) _prefs_location(_prefs.node_lat, _prefs.node_lon, _prefs.advert_loc_policy);
     _store->savePrefs(_prefs);
+    _prefs.node_lat = sensors.node_lat; _prefs.node_lon = sensors.node_lon; _prefs.advert_loc_policy = policy;
+#else
+    _store->savePrefs(_prefs);
+#endif
     _prefs.clearDirty();
   }
+#ifdef DISASTER_STANDALONE
+  // Standalone GPS sharing: replaces the location values that savePrefs() writes (lat, lon, advert policy).
+  void setPrefsLocationHook(void (*fn)(double &lat, double &lon, uint8_t &policy)) { _prefs_location = fn; }
+  uint8_t advertLocPolicy() const { return _prefs.advert_loc_policy; }
+  void setAdvertLocPolicy(uint8_t p) { _prefs.advert_loc_policy = p; }   // RAM only (not persisted here)
+private:
+  void (*_prefs_location)(double &lat, double &lon, uint8_t &policy) = nullptr;
+public:
+#endif
 
 #if ENV_INCLUDE_GPS == 1
   void applyGpsPrefs() {
@@ -224,13 +242,17 @@ private:
   void updateContactFromFrame(ContactInfo &contact, uint32_t& last_mod, const uint8_t *frame, int len);
   void addToOfflineQueue(const uint8_t frame[], int len);
   int getFromOfflineQueue(uint8_t frame[]);
-#ifdef DISASTER_PORTAL
-  // 0.9.3: Nachrichten zwischen Weboberflaeche und MeshCore-App teilen.
-  void queueWebEchoForApp(const uint8_t *cmd, size_t len);     // vom Portal gesendet -> App sieht sie
+#ifdef DAR_LOCAL_COMPANION
+  // 0.9.3: Nachrichten zwischen lokalem Client (Weboberflaeche bzw. T-Deck-Anzeige im Standalone) und
+  // MeshCore-App teilen.
+  void queueWebEchoForApp(const uint8_t *cmd, size_t len);     // vom lokalen Client gesendet -> App sieht sie
   void (*_app_sent_observer)(const uint8_t *cmd, size_t len, const uint8_t *ack_tag) = nullptr;
+  const char *_local_origin = "Web";                            // Herkunftsmarke im App-Echo
 public:
   // Wird aufgerufen, wenn die App (Bluetooth) eine Text-/Kanalnachricht erfolgreich abgeschickt hat.
   void setAppSentObserver(void (*fn)(const uint8_t *cmd, size_t len, const uint8_t *ack_tag)) { _app_sent_observer = fn; }
+  // Herkunft der lokal gesendeten Nachrichten im App-Echo ("Web" in den Web-Builds, "T-Deck" im Standalone).
+  void setLocalOrigin(const char *origin) { _local_origin = origin; }
 private:
 #endif
   int getBlobByKey(const uint8_t key[], int key_len, uint8_t dest_buf[]) override { 

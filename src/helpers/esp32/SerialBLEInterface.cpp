@@ -10,6 +10,24 @@
 
 #define ADVERT_RESTART_DELAY  1000   // millis
 
+// Kopplungszustand fuer die Display-Anzeige (wird aus dem BLE-Task gesetzt)
+static volatile unsigned long s_pair_notify_at = 0;   // Passkey-Ereignis (Kopplung laeuft)
+static volatile unsigned long s_conn_at = 0;          // Verbindung ohne Authentifizierung seit
+static volatile bool s_conn_unauth = false;
+#define PAIRING_SHOW_MAX_MS   60000
+#define PAIRING_UNAUTH_MS      2500   // gebondete Handys authentifizieren sich schneller -> keine PIN-Anzeige
+
+bool ble_pairing_active() {
+  unsigned long now = millis();
+  unsigned long n = s_pair_notify_at;
+  if (n && now - n < PAIRING_SHOW_MAX_MS) return true;
+  if (s_conn_unauth) {
+    unsigned long c = now - s_conn_at;
+    if (c >= PAIRING_UNAUTH_MS && c < PAIRING_SHOW_MAX_MS) return true;
+  }
+  return false;
+}
+
 void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code) {
   _pin_code = pin_code;
 
@@ -29,8 +47,14 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
   BLEDevice::setMTU(MAX_FRAME_SIZE);
 
   BLESecurity  sec;
-  sec.setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
-  sec.setCapability(ESP_IO_CAP_NONE); // Just Works: encrypted, no typed PIN
+  if (pin_code) {
+    // TEST pin123456: static passkey, MITM-protected pairing (PIN must be entered on the phone)
+    sec.setStaticPIN(pin_code);
+    sec.setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND);
+  } else {
+    sec.setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
+    sec.setCapability(ESP_IO_CAP_NONE); // Just Works: encrypted, no typed PIN
+  }
 
   //BLEDevice::setPower(ESP_PWR_LVL_N8);
 
@@ -43,11 +67,11 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
 
   // Create a BLE Characteristic
   pTxCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID_TX, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
-  pTxCharacteristic->setAccessPermissions(ESP_GATT_PERM_READ_ENCRYPTED);
+  pTxCharacteristic->setAccessPermissions(pin_code ? ESP_GATT_PERM_READ_ENC_MITM : ESP_GATT_PERM_READ_ENCRYPTED);
   pTxCharacteristic->addDescriptor(new BLE2902());
 
   BLECharacteristic * pRxCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID_RX, BLECharacteristic::PROPERTY_WRITE);
-  pRxCharacteristic->setAccessPermissions(ESP_GATT_PERM_WRITE_ENCRYPTED);
+  pRxCharacteristic->setAccessPermissions(pin_code ? ESP_GATT_PERM_WRITE_ENC_MITM : ESP_GATT_PERM_WRITE_ENCRYPTED);
   pRxCharacteristic->setCallbacks(this);
 
   pServer->getAdvertising()->addServiceUUID(SERVICE_UUID);
@@ -57,11 +81,13 @@ void SerialBLEInterface::begin(const char* prefix, char* name, uint32_t pin_code
 
 uint32_t SerialBLEInterface::onPassKeyRequest() {
   BLE_DEBUG_PRINTLN("onPassKeyRequest()");
+  s_pair_notify_at = millis() | 1;
   return _pin_code;
 }
 
 void SerialBLEInterface::onPassKeyNotify(uint32_t pass_key) {
   BLE_DEBUG_PRINTLN("onPassKeyNotify(%u)", pass_key);
+  s_pair_notify_at = millis() | 1;
 }
 
 bool SerialBLEInterface::onConfirmPIN(uint32_t pass_key) {
@@ -75,6 +101,8 @@ bool SerialBLEInterface::onSecurityRequest() {
 }
 
 void SerialBLEInterface::onAuthenticationComplete(esp_ble_auth_cmpl_t cmpl) {
+  s_pair_notify_at = 0;
+  s_conn_unauth = false;
   if (cmpl.success) {
     BLE_DEBUG_PRINTLN(" - SecurityCallback - Authentication Success");
     deviceConnected = true;
@@ -95,6 +123,8 @@ void SerialBLEInterface::onConnect(BLEServer* pServer) {
 void SerialBLEInterface::onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
   BLE_DEBUG_PRINTLN("onConnect(), conn_id=%d, mtu=%d", param->connect.conn_id, pServer->getPeerMTU(param->connect.conn_id));
   last_conn_id = param->connect.conn_id;
+  s_conn_at = millis();
+  s_conn_unauth = true;
 }
 
 void SerialBLEInterface::onMtuChanged(BLEServer* pServer, esp_ble_gatts_cb_param_t* param) {
@@ -103,6 +133,8 @@ void SerialBLEInterface::onMtuChanged(BLEServer* pServer, esp_ble_gatts_cb_param
 
 void SerialBLEInterface::onDisconnect(BLEServer* pServer) {
   BLE_DEBUG_PRINTLN("onDisconnect()");
+  s_pair_notify_at = 0;
+  s_conn_unauth = false;
   deviceConnected = false;
   if (_isEnabled) {
     adv_restart_time = millis() + ADVERT_RESTART_DELAY;

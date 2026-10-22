@@ -773,10 +773,36 @@ void EnvironmentSensorManager::initBasicGPS() {
   gps_detected = true;
 #else
   gps_detected = false;
+#if defined(LILYGO_TDECK) && defined(DISASTER_STANDALONE)
+  // T-Deck Plus standalone (Issue #35, from 0.9.5-test #34). The web T-Deck builds keep the old detection.
+  // T-Deck GPS shields/Plus units ship with L76K (9600) or u-blox (38400,
+  // sometimes 115200). UART noise at the wrong baud is not a GPS detection.
+  // Listen only; never rewrite the receiver's persistent configuration.
+  const uint32_t rates[] = {
+#ifdef GPS_BAUD_RATE
+    GPS_BAUD_RATE,
+#endif
+    9600, 38400, 115200};
+  for (unsigned rate = 0; rate < sizeof(rates) / sizeof(rates[0]) && !gps_detected; ++rate) {
+    bool duplicate = false;
+    for (unsigned previous = 0; previous < rate; ++previous) if (rates[previous] == rates[rate]) duplicate = true;
+    if (duplicate) continue;
+    Serial1.updateBaudRate(rates[rate]);
+    while (Serial1.available()) Serial1.read();
+    _location->syncTime();
+    uint32_t before = _location->validatedSentenceCount();
+    for (int i = 0; i < 12 && !gps_detected; ++i) {
+      delay(250); _location->loop();
+      gps_detected = _location->validatedSentenceCount() != before;
+    }
+    if (gps_detected) Serial.printf("[TDECK GPS] NMEA erkannt bei %lu Baud\n", (unsigned long)rates[rate]);
+  }
+#else
   for (int i = 0; i < 20 && !gps_detected; i++) {
     delay(250);
     gps_detected = (Serial1.available() > 0);
   }
+#endif
 #endif
 
   if (gps_detected) {

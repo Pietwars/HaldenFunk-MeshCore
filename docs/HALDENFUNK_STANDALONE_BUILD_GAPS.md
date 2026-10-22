@@ -1,20 +1,22 @@
-# HaldenFunk T-Deck Plus Standalone: verified build gaps
+# HaldenFunk-MeshCore Standalone – Entwicklungsstand
 
-Target branch: `dev/align-disahr-095`. Source baseline: `Pietwars/DisAHRsterRadio-MeshCore` 0.9.5, not upstream MeshCore.
+Branch: `dev/align-disahr-095`
 
-## Verified missing on HaldenFunk development branch
+## Umgesetzt
 
-- `examples/companion_radio/StandaloneFrontend.cpp`
-- `examples/companion_radio/ui-brand/StandaloneUI.cpp`
-- `examples/companion_radio/ui-brand/assets/tdeck-splash.rgb565`
+- Standalone-Unterbau der DisAHRsterRadio-MeshCore-Vorlage 0.9.5/test6 für LILYGO T-Deck Plus
+- lokale Bedienung für Chat, Schnellmeldungen, Brett, Karte, Standort und Geräteinfo
+- Touchscreen, Tastatur/Trackball, Akkuanzeige, GPS, SD-Karte und Bluetooth-Companion
+- Standard-Bluetooth-PIN mit voller MeshCore-App-Funktion nach PIN-Pairing
+- keine Admin-Oberfläche im Standalone
+- Kupfer/Anthrazit-Farbwelt sowie HaldenFunk-Karten, Orte und Bootgrafik
+- MeshCore-Funkprofil bleibt von der LoRaLayer2-Firmware getrennt
 
-All three paths exist in the DisAHRsterRadio-MeshCore source repository (the splash asset is binary). HaldenFunk `platformio.standalone.ini` does not currently declare `board_build.embed_files` for the splash asset.
+## Automatische Nachweise
 
-## Required before claiming a successful build
+GitHub Actions erzeugt regionale Assets, führt Hosttests aus, baut `HaldenFunk_TDeck_standalone` mit PlatformIO und prüft, dass keine WLAN-/Web-Schicht gelinkt ist. Ergebnisse gelten erst mit einem grünen Workflow-Lauf als bestanden.
 
-1. Port complete standalone frontend, local companion dependencies, UI headers, rendering and supporting modules from DisAHRsterRadio 0.9.5; check transitive includes and compile guards.
-2. Port or replace splash binary with HaldenFunk artwork, then add correct `board_build.embed_files` configuration.
-3. Preserve standard MeshCore PIN pairing; remove Admin button, menu and password dependencies; preserve HaldenFunk radio and regional configuration.
-4. Run `pio run -e HaldenFunk_TDeck_standalone`, inspect errors and linked output; run standalone checks and hardware tests.
+## Offen
 
-No build, hardware verification, merge or release is asserted by this document.
+- sämtliche realen Hardwaretests auf einem LILYGO T-Deck Plus
+- Review und Freigabe; kein Merge, Tag oder Release ohne ausdrückliche Zustimmung
