@@ -136,7 +136,7 @@ public:
         d->nativeDisc(int(px), int(py), 2, pt.kind == PHARMACY ? theme::PHARMACY : theme::WATER);
       }
     }
-    if (p < 8000) for (const auto &pl : quick::PLACES) {             // web: Ahrtal places in the overview
+    if (p < 8000) for (const auto &pl : quick::PLACES) {             // web: regional HaldenFunk places in the overview
       double x, y, px, py; toUnits(pl.lat, pl.lon, x, y); project(x, y, px, py);
       if (px < 2 || py < TOP + 10 || px > WIDTH - 3 || py > theme::H - 3) continue;
       d->nativeDisc(int(px), int(py), 1, theme::SAGE);

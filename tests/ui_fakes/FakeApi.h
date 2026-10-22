@@ -13,7 +13,7 @@ struct FakeApi : dev::Api {
   bool isReady = true, sendOk = true, loginOk = true;
   dev::Gps g; dev::Room rm{"", 0, false};
   int map = 0, sends = 0, logins = 0, adverts = 0, refreshes = 0, saves = 0;
-  const char *firmwareLabel = "v1.18.0-dar0.9.5-standalone-test";
+  const char *firmwareLabel = "v1.18.0-hf0.9.5-standalone-dev";
   std::string lastId, lastText; char st[96] = "Gesendet; Zustellung offen";
   FakeApi() { g.detected = true; g.receiverOn = true; g.sats = 7; }
   void add(const char *id, const char *name, dev::Kind k, double lat = 0, double lon = 0) {
@@ -82,7 +82,7 @@ struct FakeApi : dev::Api {
   bool advert(char *status, size_t size) override { ++adverts; snprintf(status, size, "%s", g.share && g.fresh ? "Bekanntgabe mit Standort gesendet" : "Bekanntgabe gesendet"); return true; }
   bool refresh() override { ++refreshes; return true; }
   void info(dev::Info &o) const override {
-    snprintf(o.name, sizeof(o.name), "DAR-TDeck-3f2a"); o.firmware = firmwareLabel;
+    snprintf(o.name, sizeof(o.name), "HF-TDeck-3f2a"); o.firmware = firmwareLabel;
     o.channels = 2; o.contacts = unsigned(targets.size()) - 2; o.history = seq; o.bleConnected = true; o.defaultPin = true;
     o.clockOK = true; o.heapFree = 142 * 1024; o.heapMin = 118 * 1024; o.sdCard = true; o.sdConfig = true; o.sdLog = true;
     o.txFlood = 12; o.txDirect = 3; o.rxFlood = 57; o.rxDirect = 9;
@@ -91,19 +91,19 @@ struct FakeApi : dev::Api {
   int mapIndex() const override { return map; }
   void setMapIndex(int i) override { map = i; }
 
-  // Demo network around Bad Neuenahr-Ahrweiler.
+  // Demo network around Mansfelder Land.
   void demo() {
     add("c0", "\xc3\x96" "ffentlich", dev::Kind::Channel);
-    add("c1", "Ahrtal-Hilfe", dev::Kind::Channel);
-    add("d0a1b2c3d4e5f", "Anna (Dernau)", dev::Kind::Chat, 50.5300, 7.0400);
-    add("d1122334455aa", "Feuerwehr-Lager", dev::Kind::Chat, 50.5432, 7.1130);
-    add("d99887766aabb", "Repeater Ahrweiler", dev::Kind::Repeater, 50.5395, 7.0955);
-    add("dcafe0012ab34", "Brett Ahrweiler", dev::Kind::Room, 50.5410, 7.0990);
-    add("dbeef7788cd90", "Brett Sinzig", dev::Kind::Room, 50.5440, 7.2470);
+    add("c1", "Mansfelder-Hilfe", dev::Kind::Channel);
+    add("d0a1b2c3d4e5f", "Anna (Eisleben)", dev::Kind::Chat, 51.5279, 11.5480);
+    add("d1122334455aa", "Feuerwehr-Lager", dev::Kind::Chat, 51.5960, 11.4540);
+    add("d99887766aabb", "Repeater Hettstedt", dev::Kind::Repeater, 51.6496, 11.5115);
+    add("dcafe0012ab34", "Brett Eisleben", dev::Kind::Room, 51.5279, 11.5480);
+    add("dbeef7788cd90", "Brett Sangerhausen", dev::Kind::Room, 51.4729, 11.2979);
     uint32_t t = clock - 3600;
-    channelIn(0, "Max: Wasser an der Ahrtorstra\xc3\x9f" "e wieder klar, Ausgabe ab 14 Uhr", t);
+    channelIn(0, "Max: Wasser am Markt wieder klar, Ausgabe ab 14 Uhr", t);
     channelOwn(0, "Danke, wir kommen mit 20 Kanistern vorbei.", t + 300);
-    channelIn(1, "Lea: HILFE Keller unter Wasser 50.5299,7.0408", t + 600);
+    channelIn(1, "Lea: HILFE Keller unter Wasser 51.5279,11.5480", t + 600);
     directIn("d0a1b2c3d4e5f", "Brauchst du noch Sands\xc3\xa4" "cke?", t + 900);
     directOwn("d0a1b2c3d4e5f", "Ja, 10 St\xc3\xbc" "ck w\xc3\xa4ren super.", t + 1000, 0x55aa, true);
     roomIn("dcafe0012ab34", "0a1b2c3d", "Suche Notstromaggregat f\xc3\xbcr K\xc3\xbchltruhe", t + 1200);

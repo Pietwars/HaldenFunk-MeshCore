@@ -1,5 +1,5 @@
 #pragma once
-// Marken-Anzeige (DisAHRsterRadio-MeshCore): Das Display zeigt NUR Schriftzug + Logo, eine Akku-Statuszeile
+// Marken-Anzeige (HaldenFunk-MeshCore): Das Display zeigt NUR Schriftzug + Logo, eine Akku-Statuszeile
 // (Ladestand, Spannung, geschaetzter Verbrauch, siehe BattTrend.h) und einen Knopf "Advert senden" (Flood-Advert). Nachrichten, Einstellungen usw. laufen
 // ausschliesslich ueber die MeshCore-App (Bluetooth mit PIN) und die Weboberflaeche.
 // Waehrend einer Bluetooth-Kopplung wird kurz die PIN eingeblendet.

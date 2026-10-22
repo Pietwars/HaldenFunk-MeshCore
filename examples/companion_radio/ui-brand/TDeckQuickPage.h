@@ -1,6 +1,6 @@
 #pragma once
 // Schnellmeldung on the T-Deck Plus standalone display (Issue #35, taken over from 0.9.5-test #33/#34):
-// the web UI's quick messages and Ahrtal places (QuickData.h, generated from web/index.html), keyboard input,
+// the web UI's quick messages and regional HaldenFunk places (QuickData.h, generated from web/index.html), keyboard input,
 // device GPS only with a fresh fix and only after "Standort teilen" was switched on.
 #if defined(LILYGO_TDECK) && defined(DISASTER_STANDALONE)
 #include "DeviceApi.h"

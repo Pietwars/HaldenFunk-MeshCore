@@ -27,7 +27,7 @@ static void startup(LocalCompanion &c) {
     } else if (f[0] == 4) {                        // contacts: chat, room, repeater, then end
       uint8_t p[148];
       c.writeFrame(p, contactFrame(p, 0x10, 1, "Anna", 50551500, 7186500));
-      c.writeFrame(p, contactFrame(p, 0x20, 3, "Brett Heimersheim", 50542600, 7176100));
+      c.writeFrame(p, contactFrame(p, 0x20, 3, "Brett Eisleben", 51527900, 11548000));
       c.writeFrame(p, contactFrame(p, 0x30, 2, "Repeater"));
       uint8_t end[5] = {4}; c.writeFrame(end, 5);
     } else c.writeFrame(ok, 1);

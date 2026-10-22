@@ -36,17 +36,17 @@ static void testMap() {
   double x0 = -5, y0 = 100, x1 = 400, y1 = 100;
   assert(devmap::View::clip(x0, y0, x1, y1) && x0 == 0 && x1 == 319);
   x0 = -5; y0 = 5; x1 = -1; y1 = 300; assert(!devmap::View::clip(x0, y0, x1, y1));
-  assert(v.inside(50.53, 7.05));                 // Ahrtal overview contains Dernau / Ahrweiler
+  assert(v.inside(51.5279, 11.5480));                 // Mansfelder-Land overview contains Lutherstadt Eisleben
   // View-only fallback: the village centre must project to the screen centre.
-  v.centerOn(50.543333, 7.175806);
+  v.centerOn(51.527900, 11.548000);
   double ux, uy, px, py;
-  v.toUnits(50.543333, 7.175806, ux, uy); v.project(ux, uy, px, py);
+  v.toUnits(51.527900, 11.548000, ux, uy); v.project(ux, uy, px, py);
   assert(fabs(px - 160) < 0.01 && fabs(py - (devmap::View::TOP + devmap::View::HEIGHT / 2.0)) < 0.01);
   v.select(0);
   assert(!v.inside(52.52, 13.40));               // Berlin is not on the map
   double before = v.ppd(); v.zoom(2); assert(v.ppd() > 1.9 * before);
   v.zoom(1000); assert(v.zoomFactor() <= 32.0001);
-  v.centerOn(50.5432, 7.1130); assert(v.ppd() >= 29999); assert(v.inside(50.5432, 7.1130));
+  v.centerOn(51.5279, 11.5480); assert(v.ppd() >= 29999); assert(v.inside(51.5279, 11.5480));
   FakeDisplay d; d.startFrame(0);
   for (int i = 0; i < devmap::MAP_COUNT; ++i) { v.select(i); unsigned s = v.render(&d, nullptr, 0, nullptr); assert(s > 50); }
   assert(d.outOfBounds == 0);
@@ -114,7 +114,7 @@ int main() {
   assert(!u.tap(theme::W - 10, theme::TAB_H + 5));                                   // battery field is no back button
   u.render(&d); assert(u.tap(100, theme::NAV_H + 12) && u.current() == sui::CHAT_LIST);   // "Chat" row
   u.render(&d); assert(d.outOfBounds == 0);
-  assert(d.allText.find("Ahrtal-Hilfe") != std::string::npos);
+  assert(d.allText.find("Mansfelder-Hilfe") != std::string::npos);
 
   // chat list -> conversation; letters are text there, Enter sends, own line appears
   assert(u.click() && u.current() == sui::CHAT_VIEW && !strcmp(u.conversation(), "c0"));
@@ -169,10 +169,10 @@ int main() {
 
   // Brett: join with an empty Enter, post with text
   openEntry(u, d, M_BOARD); assert(u.current() == sui::BOARD_LIST);
-  u.render(&d); assert(d.outOfBounds == 0 && d.allText.find("Brett Ahrweiler") != std::string::npos);
+  u.render(&d); assert(d.outOfBounds == 0 && d.allText.find("Brett Eisleben") != std::string::npos);
   u.click(); assert(u.current() == sui::BOARD_VIEW);
   u.render(&d); assert(d.allText.find("Bautrockner") != std::string::npos);
-  assert(d.allText.find("Anna (Dernau)") != std::string::npos);     // author resolved by key prefix
+  assert(d.allText.find("Anna (Eisleben)") != std::string::npos);     // author resolved by key prefix
   u.key(sui::K_ENTER); assert(fake.logins == 1 && !strcmp(fake.rm.id, "dcafe0012ab34"));
   fake.rm.pending = false; fake.rm.rights = 2; step(u, d);
   assert(d.allText.find("beigetreten") != std::string::npos);
@@ -185,7 +185,7 @@ int main() {
   // map: "Zurück" button top left (tap, trackball click, ALT+Backspace) back to the menu
   openEntry(u, d, M_MAP); assert(u.current() == sui::MAP && u.mapReturnPage() == sui::MENU);
   double fallbackX, fallbackY, fallbackPX, fallbackPY;
-  u.mapView().toUnits(50.543333,7.175806,fallbackX,fallbackY);
+  u.mapView().toUnits(51.527900,11.548000,fallbackX,fallbackY);
   u.mapView().project(fallbackX,fallbackY,fallbackPX,fallbackPY);
   assert(fabs(fallbackPX-160)<0.01 && fabs(fallbackPY-(devmap::View::TOP+devmap::View::HEIGHT/2.0))<0.01);
   assert(!fake.g.fresh && fake.g.lat==0 && fake.g.lon==0);
@@ -210,7 +210,7 @@ int main() {
 
   // Map touch controls and GPS following are local only, never enable sharing.
   bool shareBefore = fake.g.share;
-  fake.g.fresh=true; fake.g.lat=50.5432; fake.g.lon=7.1130;
+  fake.g.fresh=true; fake.g.lat=51.5279; fake.g.lon=11.5480;
   openEntry(u,d,M_MAP); u.render(&d);
   assert(u.mapView().ppd() >= 29999);
   assert(u.tap(20,215));
@@ -231,8 +231,8 @@ int main() {
   assert(fake.sends == 3 && std::string(u.statusText()).find("Standort teilen") != std::string::npos);
   u.move(0, -1); u.click(); assert(fake.g.share);
   u.move(0, 1); u.click(); assert(fake.sends == 3);           // no fresh fix
-  fake.g.fresh = true; fake.g.lat = 50.54321; fake.g.lon = 7.11299;
-  u.click(); assert(fake.sends == 4 && fake.lastText.compare(0, 23, "!DP1|50.5432,7.1130|179") == 0);
+  fake.g.fresh = true; fake.g.lat = 51.52791; fake.g.lon = 11.54799;
+  u.click(); assert(fake.sends == 4 && fake.lastText.compare(0, 23, "!DP1|51.5279,11.5480|179") == 0);
   assert(fake.lastId == "c0");                                // last conversation was a Brett: default channel
   u.move(0, 1); u.click(); assert(fake.adverts == 1);
   u.move(0, -1); u.move(0, -1); u.move(0, -1); u.click(); assert(!fake.g.receiverOn);
@@ -277,7 +277,7 @@ int main() {
   u.move(0, 1); u.move(0, 1); u.move(0, 1);  // PlaceSelect, Target, Send
   u.click();
   assert(fake.sends == 5 && fake.lastId == "c0");
-  assert(fake.lastText.find("bitte") != std::string::npos && fake.lastText.find("50.5432") != std::string::npos);
+  assert(fake.lastText.find("bitte") != std::string::npos && fake.lastText.find("51.5279") != std::string::npos);
   u.render(&d); assert(d.outOfBounds == 0);
   u.key(sui::K_BACK); assert(u.current() == sui::MENU);               // ALT+Backspace, also from the text field
   openEntry(u, d, M_QUICK); u.render(&d);

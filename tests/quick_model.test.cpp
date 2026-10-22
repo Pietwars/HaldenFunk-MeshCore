@@ -14,14 +14,14 @@ int main() {
   assert(m.compose(true, {}, stamp, out, sizeof(out)) == Result::NoFix);
   assert(!validFix(Fix(true, 0, 0)) && !validFix(Fix(true, NAN, 7)));
   assert(!validFix(Fix(true, 91, 7)) && !validFix(Fix(true, 50, 181)));
-  Fix gps(true, 50.5426, 7.1761);
+  Fix gps(true, 51.5279, 11.5480);
   assert(m.compose(false, gps, stamp, out, sizeof(out)) == Result::Ready);
-  assert(strcmp(out, "[HILFE] Trinkwasser benötigt, Personen: @ 50.5426,7.1761") == 0);
+  assert(strcmp(out, "[HILFE] Trinkwasser benötigt, Personen: @ 51.5279,11.5480") == 0);
   assert(m.compose(true, gps, stamp, out, sizeof(out)) == Result::Ready);
-  assert(strcmp(out, "!DP1|50.5426,7.1761|1792400000") == 0);
+  assert(strcmp(out, "!DP1|51.5279,11.5480|1792400000") == 0);
   m.place = 1; // explicitly selected manual place, without a GPS fix
   assert(m.compose(false, {}, stamp, out, sizeof(out)) == Result::Ready);
-  assert(strstr(out, "@ Ahrweiler 50.5430,7.0965"));
+  assert(strstr(out, "@ Allstedt 51.4019,11.3867"));
   m.place = -1;
   assert(m.compose(false, {}, stamp, out, sizeof(out)) == Result::Ready);
   assert(!strstr(out, " @ "));

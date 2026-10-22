@@ -1,7 +1,7 @@
 #pragma once
 // Native operation of the LilyGO T-Deck Plus standalone build (Issue #35): the pages of the web UI
 // (web/index.html: Chat, Schnellmeldung, Brett, Karte, Standort, Gerät) on 320 x 240 with keyboard, trackball and
-// touch. DisAHRsterRadio standalone appearance: full boot image, CHAT/HILFE/BRETT/KARTE/SETUP tabs,
+// touch. HaldenFunk standalone appearance: full boot image, CHAT/HILFE/BRETT/KARTE/SETUP tabs,
 // explicit SEND button and swipe scrolling. MeshCore adds back/unread/battery below the tabs.
 // ALT+Backspace keeps the hierarchical back path and opens the auxiliary six-entry menu.
 // Hardware-free: everything goes through dev::Api (DeviceApi.h), so host tests and the preview harness
@@ -41,7 +41,7 @@ constexpr size_t COMPOSE_BYTES = 100;   // disaster::LOCAL_TEXT_LIMIT
 constexpr unsigned MAX_LIST = 72;       // 8 channels + 64 contacts
 constexpr int MENU_COUNT = 6;           // Chat, Meldung, Brett, Karte, Standort, Gerät
 
-// Map keys of MapData.h ("ahrtal", ...) for the SD settings file; -1 / nullptr if unknown.
+// Map keys of MapData.h ("mansfelder-land", ...) for the SD settings file; -1 / nullptr if unknown.
 int mapIndexForKey(const char *key);
 const char *mapKey(int index);
 

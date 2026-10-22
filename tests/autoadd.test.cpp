@@ -1,4 +1,4 @@
-// DisAHRsterRadio default: only repeaters (2) and room servers (3) are added automatically.
+// HaldenFunk MeshCore default: only repeaters (2) and room servers (3) are added automatically.
 #include <assert.h>
 #include "../examples/companion_radio/AutoAddPolicy.h"
 int main() {
