@@ -82,7 +82,7 @@ int main() {
   // Boot logo: brand image + version + 112 line, then the main menu after BOOT_MS
   assert(u.onBoot());
   u.render(&d); assert(d.outOfBounds == 0);
-  assert(d.allText.find("standalone-test") != std::string::npos && d.allText.find("112") != std::string::npos);
+  assert(d.allText.find("standalone-dev") != std::string::npos && d.allText.find("112") != std::string::npos);
   ms += sui::UI::BOOT_MS - 100; u.tick(ms); assert(u.onBoot());
   ms += 200; u.tick(ms); assert(u.current() == sui::CHAT_LIST);
   u.key(sui::K_BACK);
