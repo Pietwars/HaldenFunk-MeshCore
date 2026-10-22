@@ -36,12 +36,18 @@
       240
     ],
     "touch_calibration_persistent": true,
-    "confirm_send_explicitly": true
+    "confirm_send_explicitly": true,
+    "bluetooth_pairing": "MeshCore standard PIN pairing (no Just Works)",
+    "admin_button": false,
+    "admin_menu": false,
+    "admin_password": false,
+    "settings_access": "normal standalone setup menu"
   },
   "porting_requirements": [
     "Re-use tested Ahrtal 0.9.5 standalone application logic, not just menus",
-    "Preserve HaldenFunk maps, places, radio settings and distinct BLE security semantics until explicitly reviewed",
+    "Preserve HaldenFunk maps, places and radio settings; change BLE from Just Works to standard MeshCore PIN pairing; remove all Admin UI and password dependencies",
     "Wire theme constants and existing logo into rendering and splash assets",
-    "Validate USB/Touch/trackball/GPS/SD/BLE and memory and firmware builds before merge"
+    "Validate USB/Touch/trackball/GPS/SD/BLE and memory and firmware builds before merge",
+    "Do not expose an unauthenticated WiFi admin portal; standalone excludes WiFi and WebFrontend"
   ]
 }
