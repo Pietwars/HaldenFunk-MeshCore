@@ -20,8 +20,12 @@ MultiSerialInterface interface_manager;
 
 // include bluetooth interface
 #if defined(BLE_PIN_CODE)
-  #ifdef ESP32
-    // include esp32 bluetooth interface
+  #if defined(ESP32) && defined(DISASTER_NIMBLE)
+    // ESP32-WLAN-Profile: NimBLE spart Heap; begin() erhält weiterhin die effektive PIN.
+    #include <helpers/esp32/SerialNimBLEInterface.h>
+    SerialNimBLEInterface bluetooth_interface;
+  #elif defined(ESP32)
+    // Klassische ESP32-BLE-Implementierung (u. a. T-Deck Standalone).
     #include <helpers/esp32/SerialBLEInterface.h>
     SerialBLEInterface bluetooth_interface;
   #elif defined(NRF52_PLATFORM)

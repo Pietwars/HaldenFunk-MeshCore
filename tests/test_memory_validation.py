@@ -174,7 +174,7 @@ class MemoryValidation(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             d = Path(directory)
             for device, board in json.loads(v.BOARDS.read_text()).items():
-                name = f'DisAHRsterRadio-MeshCore-0.9.3-{device}'
+                name = f'HaldenFunk-MeshCore-0.9.3-{device}'
                 boot_app = b'ota'
                 factory = bytearray(b'\xff' * (0x310000 + len(self.fs)))
                 for off, data in [(0, self.boot), (0x8000, self.table), (0xE000, boot_app),
@@ -218,7 +218,7 @@ class MemoryValidation(unittest.TestCase):
             fake = d / 'pio'
             fake.write_text('#!/bin/sh\nexit 1\n')
             fake.chmod(0o755)
-            archive = d / 'DisAHRsterRadio-MeshCore-0.9.3-LilyGo_TDeck.zip'
+            archive = d / 'HaldenFunk-MeshCore-0.9.3-LilyGo_TDeck.zip'
             archive.write_bytes(b'stale release')
             result = subprocess.run(['bash', str(ROOT / 'tools/build_device.sh'), 'LilyGo_TDeck', str(d)],
                                     env={**os.environ, 'PATH': str(d) + os.pathsep + os.environ['PATH'],
