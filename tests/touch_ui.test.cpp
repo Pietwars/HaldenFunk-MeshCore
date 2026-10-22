@@ -157,7 +157,7 @@ static void testMapAndSettings() {
   start(u);
   tab(u, 3);
   double x, y, px, py;
-  u.mapView().toUnits(50.543333, 7.175806, x, y);
+  u.mapView().toUnits(51.527900, 11.548000, x, y);
   u.mapView().project(x, y, px, py);
   assert(abs(px - 160) < 1);
   assert(u.gesture(150, 140, 210, 170));
@@ -202,8 +202,8 @@ static void testMapAndSettings() {
   tap(u, 80, 190);
   assert(api.sends == 0); // enabled sharing is not a fresh fix
   api.g.fresh = true;
-  api.g.lat = 50.54;
-  api.g.lon = 7.17;
+  api.g.lat = 51.53;
+  api.g.lon = 11.55;
   draw(u);
   tap(u, 80, 190);
   assert(api.sends == 1 && api.lastText.find("!DP1|") == 0);
