@@ -1,6 +1,8 @@
+#include "OpenAccess.h"  // DISASTER_BLE_PIN (TEST pin123456)
 #include <Arduino.h>   // needed for PlatformIO
 #include <Mesh.h>
 #include "MyMesh.h"
+#include "Frontend.h"   // optional extra frontend (web layer or none), see Frontend.h
 
 // Believe it or not, this std C function is busted on some platforms!
 static uint32_t _atoi(const char* sp) {
@@ -12,13 +14,6 @@ static uint32_t _atoi(const char* sp) {
   return n;
 }
 
-#ifdef DISASTER_PORTAL
-#include "DisasterPortal.h"
-DisasterPortal disaster_portal;
-#include "DisasterBootGuard.h"
-disaster::BootGuard boot_guard;
-#endif
-
 // interface manager
 #include <helpers/MultiSerialInterface.h>
 MultiSerialInterface interface_manager;
@@ -26,11 +21,11 @@ MultiSerialInterface interface_manager;
 // include bluetooth interface
 #if defined(BLE_PIN_CODE)
   #if defined(ESP32) && defined(DISASTER_NIMBLE)
-    // klassische ESP32 mit WLAN-Portal: NimBLE (weniger Heap, Classic-BT-Speicher freigegeben)
+    // ESP32-WLAN-Profile: NimBLE spart Heap; begin() erhält weiterhin die effektive PIN.
     #include <helpers/esp32/SerialNimBLEInterface.h>
     SerialNimBLEInterface bluetooth_interface;
   #elif defined(ESP32)
-    // include esp32 bluetooth interface
+    // Klassische ESP32-BLE-Implementierung (u. a. T-Deck Standalone).
     #include <helpers/esp32/SerialBLEInterface.h>
     SerialBLEInterface bluetooth_interface;
   #elif defined(NRF52_PLATFORM)
@@ -146,9 +141,6 @@ void halt() {
 #ifdef DISASTER_DIAG
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
-#define DIAG(m) do { Serial.printf("[DIAG %lu] %s heap=%u\n", millis(), m, (unsigned)ESP.getFreeHeap()); Serial.flush(); } while (0)
-#else
-#define DIAG(m) do {} while (0)
 #endif
 
 void setup() {
@@ -160,9 +152,6 @@ void setup() {
   delay(300);
   Serial.printf("\n[DIAG] boot, reset reason=%d\n", (int)esp_reset_reason());
   Serial.flush();
-#endif
-#ifdef DISASTER_PORTAL
-  boot_guard.begin();
 #endif
   DIAG("board.begin");
   board.begin();
@@ -212,37 +201,34 @@ void setup() {
   store.begin();
   the_mesh.begin();
 #elif defined(ESP32)
-#ifdef DISASTER_PORTAL
-  DIAG("SPIFFS.begin");
-  if (!SPIFFS.begin(false)) {
-    Serial.println("SPIFFS mount failed. Initialize the filesystem with uploadfs (after backup).");
-    halt();
-  }
-#else
-  SPIFFS.begin(true);
-#endif
+  if (!frontend::mountFilesystem()) halt();
   store.begin();
   the_mesh.begin();
 #else
   #error "need to define filesystem"
 #endif
 
-// Open access is the project default, including upgrades with a saved PIN.
-  if (the_mesh.getNodePrefs()->ble_pin != 0) {
-    the_mesh.getNodePrefs()->ble_pin = 0;
-    the_mesh.savePrefs();
+// Bluetooth always pairs with a 6-digit PIN: the saved one (set in the app) or the default DISASTER_BLE_PIN.
+  {
+    uint32_t pin = disaster::effectiveBlePin(the_mesh.getNodePrefs()->ble_pin);
+    if (the_mesh.getNodePrefs()->ble_pin != pin) {
+      the_mesh.getNodePrefs()->ble_pin = pin;
+      the_mesh.savePrefs();
+    }
+    the_mesh.setBLEPin(pin);
   }
-  the_mesh.setBLEPin(0);
 #if defined(BLE_PIN_CODE)
-  Serial.println("[BLE] Verbindung ohne PIN; Konfiguration ueber USB/Web-Admin");
+  if (the_mesh.getBLEPin() == DISASTER_BLE_PIN)
+    Serial.printf("[BLE] Bluetooth-PIN %06lu (Standard); volle MeshCore-App ueber PIN-Bluetooth\n", (unsigned long)DISASTER_BLE_PIN);
+  else
+    Serial.println("[BLE] Bluetooth mit eigener PIN (in der App gesetzt); volle MeshCore-App ueber PIN-Bluetooth");
 #endif
 
 // add bluetooth interface
-#if defined(BLE_PIN_CODE) && !defined(DISASTER_PORTAL)
+#if defined(BLE_PIN_CODE)
   bluetooth_interface.begin(BLE_NAME_PREFIX, the_mesh.getNodePrefs()->node_name, the_mesh.getBLEPin());
   interface_manager.addInterface(InterfaceType::Bluetooth, &bluetooth_interface);
 #endif
-// DisAHRsterRadio: Bluetooth erst NACH dem WLAN-Portal und nur mit genug Heap (siehe unten).
 
 // add wifi interface
 #ifdef ENABLE_WIFI_INTERFACE
@@ -308,48 +294,7 @@ void setup() {
   interface_manager.addInterface(InterfaceType::HardwareSerial, &hardware_serial_interface);
 #endif
 
-#ifdef DISASTER_PORTAL
-  board.setInhibitSleep(true);
-  DIAG("mesh ok, wait before WiFi");
-#ifdef DISASTER_WIFI_DELAY_MS
-  delay(DISASTER_WIFI_DELAY_MS);  // WLAN zuletzt und verzoegert (Brownout-Schutz)
-#elif defined(DISASTER_DIAG)
-  delay(1500);
-#endif
-  DIAG("portal.begin (softAP)");
-  boot_guard.heap("vor WLAN");
-  boot_guard.enter(disaster::STAGE_PORTAL);
-#if defined(BLE_PIN_CODE)
-  // WLAN+BLE-Koexistenz verlangt WLAN-Modem-Sleep (sonst IDF-Abbruch im STA-Betrieb); AP bleibt unberuehrt.
-  disaster_portal.setModemSleep(!boot_guard.bleBlocked);
-#endif
-  disaster_portal.begin();
-  DIAG("portal ok");
-  boot_guard.heap("nach WLAN");
-#if defined(BLE_PIN_CODE)
-  // Das WLAN-Portal hat Vorrang. Bluetooth (MeshCore-App) nur, wenn danach noch genug Heap bleibt
-  // und der letzte Start nicht beim Bluetooth-Start abgestuerzt ist (sonst Bootschleife).
-  if (boot_guard.allowBle()) {
-    boot_guard.enter(disaster::STAGE_BLE);
-    bluetooth_interface.begin(BLE_NAME_PREFIX, the_mesh.getNodePrefs()->node_name, the_mesh.getBLEPin());
-    interface_manager.addInterface(InterfaceType::Bluetooth, &bluetooth_interface);
-    boot_guard.enter(disaster::STAGE_RUN_BLE);
-    boot_guard.heap("nach Bluetooth");
-    Serial.println("[BLE] MeshCore-App: Bluetooth an, Kopplung ohne PIN");
-  } else {
-    Serial.printf("[BLE] Bluetooth AUS (%s). WLAN-Portal: http://192.168.4.1\n", boot_guard.reason);
-  }
-#endif
-  // Portal-Schnittstelle NACH Bluetooth eintragen: MultiSerialInterface fragt die Schnittstellen in
-  // Eintragsreihenfolge ab und bricht beim ersten Frame ab. Das Portal ist ein synthetischer Client,
-  // der selbst laufend Befehle erzeugt (Start-Abfragen, CMD_SYNC_NEXT_MESSAGE jede Sekunde); steht es
-  // vorn, kommen BLE-Befehle der App und das Leeren der BLE-Sendewarteschlange erst danach dran.
-  // Wie im Original-MeshCore steht Bluetooth deshalb an erster Stelle.
-  // Eigener Transporttyp: HTTP-Handler pruefen den Admin-Bereich selbst (nicht "oeffentlich" wie BLE/WLAN-Companion).
-  interface_manager.addInterface(InterfaceType::Portal, &disaster_portal);
-  // 0.9.2: von der App gesendete Nachrichten auch im Web-Verlauf zeigen
-  the_mesh.setAppSentObserver([](const uint8_t *cmd, size_t len, const uint8_t *tag) { disaster_portal.recordAppSend(cmd, len, tag); });
-#endif
+  frontend::begin(interface_manager);
 
   the_mesh.startInterface(interface_manager);
   sensors.begin();
@@ -357,9 +302,7 @@ void setup() {
 #if ENV_INCLUDE_GPS == 1
   the_mesh.applyGpsPrefs();
 #endif
-#if defined(DISASTER_PORTAL) && defined(DISASTER_GPS)
-  sensors.setSettingValue("gps", "1");  // GPS profile: module on by default
-#endif
+  frontend::sensorsReady();
 
 #ifdef DISPLAY_CLASS
   ui_task.begin(disp, &sensors, the_mesh.getNodePrefs());  // still want to pass this in as dependency, as prefs might be moved
@@ -371,29 +314,7 @@ void setup() {
 
 void loop() {
   the_mesh.loop();
-#ifdef DISASTER_PORTAL
-  boot_guard.loop();
-  disaster_portal.serviceAP();
-#ifdef DISPLAY_CLASS
-  {
-    static unsigned long lastOled = 0; static bool showPw = false;
-    if (millis() - lastOled > 15000) {  // abwechselnd WLAN-Name und offener Zugang auf dem OLED
-      lastOled = millis(); showPw = !showPw;
-      String t = showPw ? String("WLAN offen / BLE ohne PIN")
-                        : (disaster_portal.apRunning() ? String("WLAN ") : String("WLAN FEHLER ")) + disaster_portal.ssid().substring(16);
-      ui_task.showAlert(t.c_str(), 6000);
-    }
-  }
-#endif
-  disaster_portal.setRadioDiagnostics(the_mesh.getNumSentFlood(), the_mesh.getNumSentDirect(),
-    the_mesh.getNumRecvFlood(), the_mesh.getNumRecvDirect(), the_mesh.getTotalAirTime(),
-    the_mesh.getReceiveAirTime(), the_mesh.getRemainingTxBudget(),
-    the_mesh.isTxBudgetWaiting(), the_mesh.getTxBudgetWaitEvents(),
-    the_mesh.getTxBudgetWaitSeconds(), the_mesh.getTxQueuePackets());
-#if defined(DISASTER_GPS) && ENV_INCLUDE_GPS
-  disaster_portal.setGps(true, nmea.isValid(), sensors.node_lat, sensors.node_lon);
-#endif
-#endif
+  frontend::loop();
   interface_manager.loop();
   sensors.loop();
 #ifdef DISPLAY_CLASS

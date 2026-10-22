@@ -2,7 +2,16 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// TEST pin123456: fixed Bluetooth passkey for this test build (0 = Just Works without PIN).
+#ifndef DISASTER_BLE_PIN
+#define DISASTER_BLE_PIN 123456
+#endif
+
 namespace disaster {
+// Bluetooth PIN: any 6-digit value 100000..999999 (set via app CMD_SET_DEVICE_PIN or CLI "set pin").
+// 0 or anything else falls back to the default DISASTER_BLE_PIN, so Bluetooth always needs a PIN.
+inline bool validBlePin(uint32_t pin) { return pin >= 100000 && pin <= 999999; }
+inline uint32_t effectiveBlePin(uint32_t saved) { return validBlePin(saved) ? saved : (uint32_t)DISASTER_BLE_PIN; }
 // Validate received bytes before any dispatcher access (including memcmp).
 inline size_t companionMinimumLength(uint8_t cmd) {
   switch (cmd) {
@@ -48,5 +57,13 @@ inline bool publicCompanionCommand(uint8_t cmd) {
       return true;
     default: return false;
   }
+}
+// TEST pin123456 (test/091-ble-voll): a PIN-paired Bluetooth link is trusted like USB, so the
+// MeshCore app gets every companion command (stock MeshCore behaviour). Open WiFi/Ethernet
+// clients keep the restricted public list; without PIN, Bluetooth stays restricted too.
+inline bool allowCompanionCommand(uint8_t cmd, bool publicTransport, bool bluetooth, uint32_t blePin) {
+  if (!publicTransport || publicCompanionCommand(cmd)) return true;
+  if (bluetooth && blePin != 0) return true;
+  return false;
 }
 }

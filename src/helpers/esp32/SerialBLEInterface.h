@@ -8,6 +8,11 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
+// Laeuft gerade eine Bluetooth-Kopplung (PIN-Eingabe am Handy)? Fuer die Anzeige der PIN nur waehrend der Kopplung.
+// true ab Kopplungsbeginn (Passkey-Ereignis) bzw. wenn eine Verbindung >2,5 s ohne Authentifizierung besteht,
+// false sobald die Kopplung fertig/abgebrochen ist; spaetestens nach 60 s.
+bool ble_pairing_active();
+
 class SerialBLEInterface : public BaseSerialInterface, BLESecurityCallbacks, BLEServerCallbacks, BLECharacteristicCallbacks {
   BLEServer *pServer;
   BLEService *pService;

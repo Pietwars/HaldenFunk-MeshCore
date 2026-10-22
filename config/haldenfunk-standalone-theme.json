@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "project": "HaldenFunk-MeshCore",
+  "target": "LilyGo_TDeck_standalone",
+  "base_project": "DisAHRsterRadio-MeshCore",
+  "base_version": "0.9.5",
+  "status": "design-specification-not-yet-integrated",
+  "brand": {
+    "name": "HaldenFunk",
+    "tagline": "Glück Auf – Mesh fürs Mansfelder Land",
+    "region": "Mansfelder Land",
+    "colors": {
+      "background": "#24282B",
+      "surface": "#353A3E",
+      "accent": "#B87333",
+      "accent_text": "#FFFFFF",
+      "text": "#F6F2EB",
+      "muted": "#B2ADA6",
+      "warning": "#F0B64D"
+    },
+    "logo": "HaldenFunk regionales Haldenmotiv (existing project asset to reuse after verification)"
+  },
+  "standalone": {
+    "wifi_portal": false,
+    "meshcore_bluetooth": true,
+    "navigation": [
+      "Chat",
+      "Meldung",
+      "Brett",
+      "Karte",
+      "Standort",
+      "Gerät"
+    ],
+    "display_pixels": [
+      320,
+      240
+    ],
+    "touch_calibration_persistent": true,
+    "confirm_send_explicitly": true,
+    "bluetooth_pairing": "MeshCore standard PIN pairing (no Just Works)",
+    "admin_button": false,
+    "admin_menu": false,
+    "admin_password": false,
+    "settings_access": "normal standalone setup menu"
+  },
+  "porting_requirements": [
+    "Re-use tested Ahrtal 0.9.5 standalone application logic, not just menus",
+    "Preserve HaldenFunk maps, places and radio settings; change BLE from Just Works to standard MeshCore PIN pairing; remove all Admin UI and password dependencies",
+    "Wire theme constants and existing logo into rendering and splash assets",
+    "Validate USB/Touch/trackball/GPS/SD/BLE and memory and firmware builds before merge",
+    "Do not expose an unauthenticated WiFi admin portal; standalone excludes WiFi and WebFrontend"
+  ]
+}

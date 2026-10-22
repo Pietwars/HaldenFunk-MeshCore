@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LocationProvider.h"
+#include "FixFreshness.h"
 #include <MicroNMEA.h>
 #include <RTClib.h>
 #include <helpers/RefCountedDigitalPin.h>
@@ -167,6 +168,10 @@ public :
     }
     long satellitesCount() override { return nmea.getNumSatellites(); }
     bool isValid() override { return nmea.isValid(); }
+    bool hasFreshFix(uint32_t max_age_ms) override {
+        return gpsfix::fresh(isValid(), _fix_seen, millis(), _last_fix_ms, max_age_ms);
+    }
+    uint32_t validatedSentenceCount() const override { return _nmea_checksum_ok; }
 
     long getTimestamp() override { 
         DateTime dt(nmea.getYear(), nmea.getMonth(),nmea.getDay(),nmea.getHour(),nmea.getMinute(),nmea.getSecond());

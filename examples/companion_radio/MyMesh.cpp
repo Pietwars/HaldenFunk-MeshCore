@@ -1,4 +1,6 @@
 #include "MyMesh.h"
+#include "DarBuild.h"   // DAR_MESH_POLICY
+#include "AutoAddPolicy.h"
 #include "OpenAccess.h"
 #include "SharedQueue.h"
 
@@ -223,7 +225,7 @@ bool MyMesh::Frame::isChannelMsg() const {
          buf[0] == RESP_CODE_CHANNEL_DATA_RECV;
 }
 
-#ifdef DISASTER_PORTAL
+#ifdef DAR_LOCAL_COMPANION
 // 0.9.3: gemeinsame Warteschlange fuer Weboberflaeche und App (SharedQueue.h).
 void MyMesh::addToOfflineQueue(const uint8_t frame[], int len) {
   if (!disaster::sqAdd(offline_queue, offline_queue_len, OFFLINE_QUEUE_SIZE, frame, len, 0, true)) {
@@ -236,7 +238,7 @@ int MyMesh::getFromOfflineQueue(uint8_t frame[]) {
   return disaster::sqTake(offline_queue, offline_queue_len, who, frame);
 }
 
-// Vom Portal gesendete Nachricht (Kommando 2 bzw. 3) als Eintrag nur fuer die App einreihen, damit die
+// Vom lokalen Client (Portal bzw. T-Deck-Anzeige) gesendete Nachricht (Kommando 2 bzw. 3) als Eintrag nur fuer die App einreihen, damit die
 // MeshCore-App sie anzeigt. Das Companion-Protokoll kennt keinen Rahmen "von einem anderen Client gesendet";
 // deshalb erscheint sie in der App als empfangene Nachricht und ist im Text markiert.
 void MyMesh::queueWebEchoForApp(const uint8_t *cmd, size_t len) {
@@ -253,7 +255,7 @@ void MyMesh::queueWebEchoForApp(const uint8_t *cmd, size_t len) {
     f[i++] = 0xFF;                   // kein Funkweg (lokal gesendet)
     f[i++] = TXT_TYPE_PLAIN;
     memcpy(&f[i], &cmd[3], 4); i += 4;
-    snprintf(mark, sizeof(mark), "%s (Web): ", _prefs.node_name);   // App zeigt "Name (Web)" als Absender
+    snprintf(mark, sizeof(mark), "%s (%s): ", _prefs.node_name, _local_origin);   // App zeigt "Name (Web)" bzw. "Name (T-Deck)"
   } else if (cmd[0] == CMD_SEND_TXT_MSG && len >= 13) {
     text = (const char *)&cmd[13]; tlen = len - 13;
     if (app_target_ver >= 3) { f[i++] = RESP_CODE_CONTACT_MSG_RECV_V3; f[i++] = 0; f[i++] = 0; f[i++] = 0; }
@@ -262,7 +264,7 @@ void MyMesh::queueWebEchoForApp(const uint8_t *cmd, size_t len) {
     f[i++] = 0xFF;
     f[i++] = TXT_TYPE_PLAIN;
     memcpy(&f[i], &cmd[3], 4); i += 4;
-    snprintf(mark, sizeof(mark), "[von mir über Web] ");
+    snprintf(mark, sizeof(mark), "[von mir über %s] ", _local_origin);
   } else {
     return;
   }
@@ -317,7 +319,7 @@ int MyMesh::getFromOfflineQueue(uint8_t frame[]) {
 #endif
 
 float MyMesh::getAirtimeBudgetFactor() const {
-#ifdef DISASTER_PORTAL
+#ifdef DAR_MESH_POLICY
   return 9.0f; // fixed internal 10% budget, including existing saved preferences
 #else
   return _prefs.airtime_factor;
@@ -367,29 +369,7 @@ bool MyMesh::isAutoAddEnabled() const {
 }
 
 bool MyMesh::shouldAutoAddContactType(uint8_t contact_type) const {
-  if ((_prefs.manual_add_contacts & 1) == 0) {
-    return true;
-  }
-
-  uint8_t type_bit = 0;
-  switch (contact_type) {
-    case ADV_TYPE_CHAT:
-      type_bit = AUTO_ADD_CHAT;
-      break;
-    case ADV_TYPE_REPEATER:
-      type_bit = AUTO_ADD_REPEATER;
-      break;
-    case ADV_TYPE_ROOM:
-      type_bit = AUTO_ADD_ROOM_SERVER;
-      break;
-    case ADV_TYPE_SENSOR:
-      type_bit = AUTO_ADD_SENSOR;
-      break;
-    default:
-      return false;  // Unknown type, don't auto-add
-  }
-
-  return (_prefs.autoadd_config & type_bit) != 0;
+  return autoadd::shouldAdd(_prefs.manual_add_contacts, _prefs.autoadd_config, contact_type);
 }
 
 bool MyMesh::shouldOverwriteWhenFull() const {
@@ -986,6 +966,12 @@ MyMesh::MyMesh(mesh::Radio &radio, mesh::RNG &rng, mesh::RTCClock &rtc, SimpleMe
   _prefs.tx_power_dbm = LORA_TX_POWER;
   _prefs.gps_enabled = 0;       // GPS disabled by default
   _prefs.gps_interval = 0;      // No automatic GPS updates by default
+#ifdef DAR_MESH_POLICY
+  // DisAHRsterRadio: only repeaters and room servers are added automatically, chat users stay
+  // manual. Applies to fresh prefs only; a saved /prefs.json (man_add, auto_add) overrides it.
+  _prefs.manual_add_contacts = autoadd::DISASTER_DEFAULT_MANUAL;
+  _prefs.autoadd_config = autoadd::DISASTER_DEFAULT_CONFIG;
+#endif
   _prefs.radio_fem_rxgain = 1;
 #ifdef RADIO_FEM_TXGAIN
   _prefs.radio_fem_txgain = RADIO_FEM_TXGAIN;   // board-specific default for PA
@@ -1039,7 +1025,7 @@ void MyMesh::begin() {
 
   // load persisted prefs
   _store->loadPrefs(_prefs);
-#ifdef DISASTER_PORTAL
+#ifdef DAR_MESH_POLICY
   _prefs.tx_power_dbm = constrain(_prefs.tx_power_dbm, -9, 10);
 #endif
   sensors.node_lat = _prefs.node_lat;
@@ -1120,7 +1106,7 @@ void MyMesh::handleCmdFrame(size_t len) {
   if (!disaster::validCompanionLength(cmd_frame,len,MAX_FRAME_SIZE)) {
     writeErrFrame(ERR_CODE_ILLEGAL_ARG); return;
   }
-  if (_serial->isPublicTransport() && !disaster::publicCompanionCommand(cmd_frame[0])) {
+  if (!disaster::allowCompanionCommand(cmd_frame[0], _serial->isPublicTransport(), _serial->isBluetoothTransport(), _active_ble_pin)) {
     writeDisabledFrame(); return;
   }
   // Clear stale bytes and terminate variable text fields within the allocated buffer.
@@ -1250,7 +1236,7 @@ void MyMesh::handleCmdFrame(size_t len) {
         memcpy(&out_frame[2], &expected_ack, 4);
         memcpy(&out_frame[6], &est_timeout, 4);
         _serial->writeFrame(out_frame, 10);
-#ifdef DISASTER_PORTAL
+#ifdef DAR_LOCAL_COMPANION
         // 0.9.3: nur der erste Versuch einer normalen Textnachricht (Wiederholungen nicht doppelt zeigen)
         if (txt_type == TXT_TYPE_PLAIN && attempt == 0) {
           if (_serial->isPortalTransport()) queueWebEchoForApp(cmd_frame, len);
@@ -1279,7 +1265,7 @@ void MyMesh::handleCmdFrame(size_t len) {
       bool success = getChannel(channel_idx, channel);
       if (success && sendGroupMessage(msg_timestamp, channel.channel, _prefs.node_name, text, len - i)) {
         writeOKFrame();
-#ifdef DISASTER_PORTAL
+#ifdef DAR_LOCAL_COMPANION
         if (_serial->isPortalTransport()) queueWebEchoForApp(cmd_frame, len);
         else if (_app_sent_observer) _app_sent_observer(cmd_frame, len, nullptr);
 #endif
@@ -1367,8 +1353,8 @@ void MyMesh::handleCmdFrame(size_t len) {
     if (lat <= 90 * 1E6 && lat >= -90 * 1E6 && lon <= 180 * 1E6 && lon >= -180 * 1E6) {
       sensors.node_lat = ((double)lat) / 1000000.0;
       sensors.node_lon = ((double)lon) / 1000000.0;
-#ifdef DISASTER_PORTAL
-      // Weboberflaeche: ausdruecklich gesetzter Standort wird in Bekanntgaben geteilt, (0,0) = nicht teilen
+#ifdef DAR_MESH_POLICY
+      // DAR-MC (Web, App, Standalone): ausdruecklich gesetzter Standort wird in Bekanntgaben geteilt, (0,0) = nicht teilen
       _prefs.advert_loc_policy = (lat == 0 && lon == 0) ? ADVERT_LOC_NONE : ADVERT_LOC_SHARE;
 #endif
       savePrefs();
@@ -1543,7 +1529,7 @@ void MyMesh::handleCmdFrame(size_t len) {
       _prefs.freq = (float)freq / 1000.0;
       _prefs.bw = (float)bw / 1000.0;
       _prefs.setRepeatEn(repeat != 0);
-#ifdef DISASTER_PORTAL
+#ifdef DAR_MESH_POLICY
       _prefs.tx_power_dbm = 10;
       _prefs.airtime_factor = 9.0f;
       radio_driver.setTxPower(10);
@@ -1944,10 +1930,10 @@ void MyMesh::handleCmdFrame(size_t len) {
     }
   } else if (cmd_frame[0] == CMD_SET_DEVICE_PIN && len >= 5) {
 
-    // PIN-free firmware: a nonzero PIN cannot be enabled by an app or USB.
+    // Any 6-digit PIN (100000..999999); saved now, active after reboot (phone must re-pair).
     uint32_t pin; memcpy(&pin,&cmd_frame[1],4);
-    if(pin) { writeDisabledFrame(); }
-    else { _prefs.ble_pin=0; savePrefs(); writeOKFrame(); }
+    if(!disaster::validBlePin(pin)) { writeErrFrame(ERR_CODE_ILLEGAL_ARG); }
+    else { _prefs.ble_pin=pin; savePrefs(); writeOKFrame(); }
   } else if (cmd_frame[0] == CMD_GET_CUSTOM_VARS) {
     out_frame[0] = RESP_CODE_CUSTOM_VARS;
     char *dp = (char *)&out_frame[1];
@@ -2221,10 +2207,12 @@ bool MyMesh::handleCommand(const char* command, uint32_t sender_timestamp, char*
   }
 
   if (memcmp(command, "set pin ", 8) == 0) {
-    // PIN-free firmware: Bluetooth always pairs without PIN (Just Works).
-    _prefs.ble_pin = 0;
+    // "set pin <6 Ziffern>": saved now, active after reboot (phone must re-pair).
+    uint32_t pin = (uint32_t)strtoul(&command[8], nullptr, 10);
+    if (!disaster::validBlePin(pin)) { strcpy(reply, "> PIN muss 6 Ziffern haben (100000-999999)"); return true; }
+    _prefs.ble_pin = pin;
     savePrefs();
-    strcpy(reply, "> Bluetooth ohne PIN (fest)");
+    strcpy(reply, "> Bluetooth-PIN gespeichert; aktiv nach Neustart, Handy neu koppeln");
     return true;
   }
 

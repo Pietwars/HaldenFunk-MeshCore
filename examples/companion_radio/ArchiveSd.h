@@ -6,16 +6,29 @@
 #include <SD.h>
 #include <SPI.h>
 #include "ArchiveBusConfig.h"
+#ifdef DISASTER_SD_SHARED_BUS
+extern SPIClass tdeck_shared_spi;   // variants/lilygo_tdeck/target.cpp
+void tdeck_shared_spi_begin();
+#endif
 #endif
 class ArchiveSd {
 #ifdef DISASTER_SD
+#ifdef DISASTER_SD_SHARED_BUS
+ SPIClass &bus=tdeck_shared_spi;    // shared with LoRa and display; SD only uses its own chip select
+#else
  SPIClass bus{disaster::sdBus};
+#endif
 #endif
  bool mounted=false;
 public:
  void begin(){
 #ifdef DISASTER_SD
+#ifdef DISASTER_SD_SHARED_BUS
+  pinMode(disaster::sdCs,OUTPUT);digitalWrite(disaster::sdCs,HIGH);
+  tdeck_shared_spi_begin();          // no-op if display/radio started it already
+#else
   bus.begin(disaster::sdSck,disaster::sdMiso,disaster::sdMosi,disaster::sdCs);
+#endif
   mounted=SD.begin(disaster::sdCs,bus,4000000,"/sd",2,false);
   if(mounted&&!SD.exists("/disaster"))mounted=SD.mkdir("/disaster");
   Serial.println(mounted?"SD archive ready":"SD archive unavailable; internal history remains active");

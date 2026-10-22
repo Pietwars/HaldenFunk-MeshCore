@@ -84,4 +84,6 @@ public:
   void nativeImage(int x, int y, int w, int h, const uint16_t* rgb565) override {
     display.drawRGBBitmap(x, y, rgb565, w, h);
   }
+  void nativeLine(int x0, int y0, int x1, int y1, uint16_t c) override { display.drawLine(x0, y0, x1, y1, c); }
+  void nativeDisc(int x, int y, int r, uint16_t c) override { display.fillCircle(x, y, r, c); }
 };

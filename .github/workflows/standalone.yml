@@ -1,0 +1,72 @@
+name: HaldenFunk T-Deck Standalone
+on:
+  push:
+    branches: [dev/align-disahr-095]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regionale Standalone-Daten erzeugen
+        run: |
+          python3 tools/gen_quick_messages.py
+          python3 tools/gen_device_map.py
+      - name: Sicherheits- und Standalone-Hosttests
+        run: |
+          C17="g++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined"
+          C11="g++ -std=c++11 -Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined"
+          $C17 -I tests/open_access_fakes tests/open_access.test.cpp -o /tmp/open-access && /tmp/open-access
+          $C11 -Wno-misleading-indentation -DLORA_TX_POWER=10 -I tests/companion_fakes -I src tests/local_companion.test.cpp -o /tmp/local-companion && /tmp/local-companion
+          $C11 tests/quick_model.test.cpp -o /tmp/quick-model && /tmp/quick-model
+          $C11 -Wno-unused-parameter -DLILYGO_TDECK -DDISASTER_STANDALONE -I tests/ui_fakes -I src tests/quick_page.test.cpp examples/companion_radio/ui-brand/TDeckQuickPage.cpp -o /tmp/quick-page && /tmp/quick-page
+          $C11 -I tests/ui_fakes -I src tests/chat_log.test.cpp -o /tmp/chat-log && /tmp/chat-log
+          $C11 -Wno-unused-parameter -DLILYGO_TDECK -DDISASTER_STANDALONE -I tests/ui_fakes -I src tests/standalone_ui.test.cpp examples/companion_radio/ui-brand/StandaloneUI.cpp examples/companion_radio/ui-brand/TDeckQuickPage.cpp -o /tmp/standalone-ui && /tmp/standalone-ui
+          $C11 -Wno-unused-parameter -Wno-misleading-indentation -DLILYGO_TDECK -DDISASTER_STANDALONE -I tests/ui_fakes -I src tests/touch_ui.test.cpp examples/companion_radio/ui-brand/StandaloneUI.cpp examples/companion_radio/ui-brand/TDeckQuickPage.cpp -o /tmp/touch-ui && /tmp/touch-ui
+          $C11 tests/gps_share.test.cpp -o /tmp/gps-share && /tmp/gps-share
+          $C11 tests/device_config.test.cpp -o /tmp/device-config && /tmp/device-config
+          $C11 tests/tdeck_input.test.cpp -o /tmp/tdeck-input && /tmp/tdeck-input
+          $C11 tests/tdeck_calibration.test.cpp -o /tmp/tdeck-calibration && /tmp/tdeck-calibration
+          $C11 -I tests/tdeck_board_fakes tests/tdeck_board.test.cpp variants/lilygo_tdeck/TDeckBoard.cpp -o /tmp/tdeck-board && /tmp/tdeck-board
+  platformio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: hf-standalone-${{ hashFiles('platformio.ini', 'platformio.standalone.ini', 'variants/**/platformio.ini') }}
+      - name: Buildwerkzeuge installieren
+        run: pip install platformio==6.2.0 pillow==11.3.0
+      - name: HaldenFunk-Karten, Orte und Bootgrafik erzeugen
+        run: |
+          python3 tools/gen_quick_messages.py
+          python3 tools/gen_device_map.py
+          python3 tools/gen_tdeck_splash.py
+      - name: Firmware bauen
+        shell: bash
+        run: pio run -e HaldenFunk_TDeck_standalone | tee .pio-HaldenFunk_TDeck_standalone.log
+      - name: Standalone-Abgrenzung prüfen
+        run: python3 tools/check_standalone.py --build-dir .pio/build/HaldenFunk_TDeck_standalone --build-log .pio-HaldenFunk_TDeck_standalone.log --output .pio/build/HaldenFunk_TDeck_standalone/standalone-report
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HaldenFunk_TDeck_standalone-dev-ungetestet
+          path: |
+            .pio/build/HaldenFunk_TDeck_standalone/firmware.bin
+            .pio/build/HaldenFunk_TDeck_standalone/bootloader.bin
+            .pio/build/HaldenFunk_TDeck_standalone/partitions.bin
+            .pio/build/HaldenFunk_TDeck_standalone/standalone-report.json
+            .pio/build/HaldenFunk_TDeck_standalone/standalone-report.md
+            .pio-HaldenFunk_TDeck_standalone.log
